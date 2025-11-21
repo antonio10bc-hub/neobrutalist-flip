@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Neobrutalist Coin Leaderboard</title>
+    <style>
+      :root {
+        --lime: #c6ff33;
+        --lime-soft: #e8ff9f;
+        --black: #050505;
+        --white: #f7f7f7;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: flex;
+        align-items: stretch;
+        justify-content: center;
+        padding: 16px;
+        background: var(--lime);
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, 'SF Pro Text',
+          sans-serif;
+        color: var(--black);
+      }
+
+      .app {
+        width: min(960px, 100%);
+        background: var(--white);
+        border: 4px solid var(--black);
+        box-shadow: 12px 12px 0 var(--black);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+
+      .header {
+        border-bottom: 4px solid var(--black);
+        background: var(--lime-soft);
+        padding: 24px 20px 32px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 16px;
+      }
+
+      .header-title {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        font-size: 0.9rem;
+      }
+
+      .header-badge {
+        padding: 4px 10px;
+        border-radius: 999px;
+        border: 2px solid var(--black);
+        background: var(--white);
+      }
+
+      .coin-panel {
+        display: grid;
+        grid-template-columns: 1.2fr 1fr;
+        gap: 24px;
+        width: 100%;
+        align-items: center;
+      }
+
+      @media (max-width: 720px) {
+        .coin-panel {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .coin-wrapper {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 16px;
+      }
+
+      .coin {
+        width: 140px;
+        height: 140px;
+        border-radius: 50%;
+        border: 4px solid var(--black);
+        background: var(--white);
+        box-shadow: 8px 8px 0 var(--black);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        /* Este Font size cambia el tamaño de la cara de la moneda */
+        font-size: 2.26rem;
+        font-weight: 800;
+        cursor: pointer;
+        outline: none;
+        transition:
+          transform 120ms ease-out,
+          box-shadow 120ms ease-out,
+          background 120ms ease-out;
+      }
+
+      .coin:active {
+        transform: translate(4px, 4px);
+        box-shadow: 2px 2px 0 var(--black);
+        background: var(--lime-soft);
+      }
+
+      .coin-face-label {
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        margin-top: 4px;
+      }
+
+      .coin-face-label.cta {
+        animation: ctaPulse 1s ease-in-out infinite;
+      }
+
+      @keyframes ctaPulse {
+        0%,
+        100% {
+          opacity: 0.5;
+          transform: translateY(0);
+        }
+        50% {
+          opacity: 1;
+          transform: translateY(-2px);
+        }
+      }
+
+      .speech-bubble {
+        position: absolute;
+        top: -52px;
+        left: 50%;
+        transform: translateX(-50%);
+        padding: 6px 14px;
+        background: var(--black);
+        color: var(--lime);
+        border-radius: 999px;
+        font-weight: 800;
+        font-size: 1.1rem;
+        box-shadow: 4px 4px 0 var(--black);
+        border: 2px solid var(--white);
+        white-space: nowrap;
+      }
+
+      .speech-bubble::after {
+        content: '';
+        position: absolute;
+        bottom: -6px;
+        left: 50%;
+        transform: translateX(-50%);
+        border-width: 6px 6px 0 6px;
+        border-style: solid;
+        border-color: var(--black) transparent transparent transparent;
+      }
+
+      .coin-info {
+        font-size: 0.9rem;
+        line-height: 1.4;
+      }
+
+      .coin-info p {
+        margin: 4px 0;
+      }
+
+      .coin-info strong {
+        text-transform: uppercase;
+      }
+
+      .claim-wrapper {
+        margin-top: 12px;
+      }
+
+      .claim-button {
+        margin-top: 12px;
+        padding: 10px 24px;
+        border-radius: 999px;
+        border: 3px solid var(--black);
+        background: var(--lime);
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        font-size: 0.8rem;
+        cursor: pointer;
+        box-shadow: 6px 6px 0 var(--black);
+        transition:
+          transform 120ms ease-out,
+          box-shadow 120ms ease-out,
+          background 120ms ease-out,
+          opacity 120ms ease-out;
+      }
+
+      .claim-button:disabled {
+        opacity: 0.4;
+        cursor: default;
+        box-shadow: 0 0 0 var(--black);
+        transform: none;
+      }
+
+      .claim-button:not(:disabled):active {
+        transform: translate(3px, 3px);
+        box-shadow: 2px 2px 0 var(--black);
+        background: var(--white);
+      }
+
+      .result-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 10px;
+        margin-top: 8px;
+        border-radius: 999px;
+        border: 2px solid var(--black);
+        background: var(--white);
+        font-size: 0.8rem; /* back to original size */
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+      }
+
+      .result-pill span {
+        font-weight: 700;
+      }
+
+      .result-sub {
+        margin-top: 4px;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+      }
+
+      .main {
+        padding: 24px 20px 28px;
+        background: var(--white);
+      }
+
+      .leaderboard-section {
+        border-radius: 18px 18px 0 0;
+        border: 3px solid var(--black);
+        padding: 18px 16px 20px;
+        background: #ffffff;
+        box-shadow: 8px 8px 0 var(--black);
+      }
+
+      .leaderboard-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: 12px;
+        margin-bottom: 16px;
+      }
+
+      .leaderboard-header h1 {
+        margin: 0;
+        font-size: 1.4rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+      }
+
+      .leaderboard-hint {
+        margin: 6px 0 14px;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+      }
+
+      .leaderboard {
+        border-radius: 12px;
+        overflow: hidden;
+        border: 2px solid var(--black);
+      }
+
+      .leaderboard-row {
+        display: grid;
+        grid-template-columns: 56px minmax(0, 1.4fr) minmax(0, 1fr);
+        align-items: center;
+        padding: 8px 12px;
+        border-bottom: 2px solid var(--black);
+        font-size: 0.9rem;
+        background: var(--white);
+      }
+
+      .leaderboard-row:last-child {
+        border-bottom: none;
+      }
+
+      .leaderboard-row:nth-child(odd) {
+        background: #f1f1f1;
+      }
+
+      .leaderboard-row.is-user {
+        background: var(--lime-soft);
+      }
+
+      .leaderboard-pos {
+        font-weight: 800;
+      }
+
+      .leaderboard-name {
+        font-weight: 600;
+      }
+
+      .leaderboard-score {
+        text-align: right;
+        font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo,
+          Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+      }
+
+      .leaderboard-tag {
+        display: inline-block;
+        margin-left: 6px;
+        padding: 1px 6px;
+        border-radius: 999px;
+        border: 1px solid var(--black);
+        font-size: 0.65rem;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+      }
+
+      .toast {
+        position: fixed;
+        left: 50%;
+        bottom: 24px;
+        transform: translateX(-50%);
+        padding: 8px 14px;
+        background: var(--black);
+        color: var(--lime);
+        border-radius: 999px;
+        border: 2px solid var(--white);
+        font-size: 0.85rem;
+        font-weight: 600;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        box-shadow: 4px 4px 0 var(--black);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 160ms ease-out, transform 160ms ease-out;
+      }
+
+      .toast.visible {
+        opacity: 1;
+        transform: translate(-50%, -4px);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <header class="header">
+        <div class="header-title">
+          <div>Neobrutalist Flip</div>
+          <div class="header-badge">HEAD 49.998% / TAILS 49.998% / EDGE 0.002%</div>
+        </div>
+
+        <div class="coin-panel">
+          <div class="coin-wrapper">
+            <div class="speech-bubble" id="speechBubble" hidden>0</div>
+            <button class="coin" id="coinButton" aria-label="Flip coin">
+              <span id="coinFace">?</span>
+            </button>
+            <div class="coin-face-label" id="coinFaceLabel"><strong>Tap to flip</strong></div>
+
+            <button class="claim-button" id="claimButton" disabled>
+              CLAIM
+            </button>
+          </div>
+
+          <div class="coin-info">
+            <p>
+              Each consecutive <strong>HEAD</strong> 😊 doubles your score.<br />
+              <strong>TAILS</strong> ❌ resets your streak.<br />
+              <strong>EDGE</strong> ⭐ gives you 1000 points.<br />
+              <strong>CLAIM</strong> banks your points but resets the streak.
+            </p>
+            <div class="result-pill" id="resultPill">
+              BEST STREAK:
+              <span>0</span>
+            </div>
+            <div class="result-pill" id="bestClaimedPill" style="margin-top: 10px;">
+              BEST <strong>CLAIMED</strong> STREAK:
+              <span id="bestClaimedValue">0</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main class="main">
+        <section class="leaderboard-section">
+          <div class="leaderboard-header">
+            <h1>Leaderboard</h1>
+          </div>
+          
+          <div class="leaderboard" id="leaderboard"></div>
+        </section>
+      </main>
+    </div>
+
+    <div class="toast" id="toast">EDGE IMPOSSIBLE (?)</div>
+
+    <script>
+      (function () {
+        const coinButton = document.getElementById('coinButton');
+        const coinFace = document.getElementById('coinFace');
+        const coinFaceLabel = document.getElementById('coinFaceLabel');
+        const speechBubble = document.getElementById('speechBubble');
+        const claimButton = document.getElementById('claimButton');
+        const leaderboardEl = document.getElementById('leaderboard');
+        const resultPill = document.getElementById('resultPill');
+        const resultPillValue = resultPill.querySelector('span');
+        const bestClaimedValue = document.getElementById('bestClaimedValue');
+        const toast = document.getElementById('toast');
+
+        // Probabilities as percentages, kept in the proportions you defined
+        const P_HEADS = 49.998;
+        const P_TAILS = 49.998;
+        const P_EDGE = 0.002;
+        const P_TOTAL = P_HEADS + P_TAILS + P_EDGE; // 99.998
+
+        let currentPoints = 0; // current streak score (1,2,4,8,...)
+        let bestCombo = 0; // best combo achieved in this session
+        let bestClaimedCombo = 0; // best combo that has been claimed
+        let ctaTimeoutId = null; // idle CTA timer id
+
+        const historicalNames = [
+          "Antonio Bastos de Córdoba",
+          "Malala Yousafzai",
+          "Tim Berners-Lee",
+          "Rigoberta Menchú",
+          "Valentina Tereshkova",
+          "Gabriel Garcia Marquez",
+          "Nelson Mandela",
+          "Rosa Parks",
+          "The Beatles",
+          "Deng Xiaoping",
+          "Simone de Beauvoir",
+          "Charlie Chaplin",
+          "Mao Zedong",
+          "Pablo Picasso",
+          "Kwame Nkrumah",
+          "Martin Luther King Jr.",
+          "Walt Disney",
+          "Winston Churchill",
+          "Eleanor Roosevelt",
+          "Rosalind Franklin",
+          "Albert Einstein",
+          "Alexander Fleming",
+          "Alan Turing",
+          "Frida Kahlo",
+          "Mahatma Gandhi",
+          "The Wright Brothers",
+          "Franklin D. Roosevelt",
+          "Nikola Tesla",
+          "George Washington Carver",
+          "Sigmund Freud",
+          "Mustafa Kemal Ataturk",
+          "Marie Curie",
+          "Fritz Haber",
+          "Emmeline Pankhurst",
+          "Lenin",
+          "Harriet Tubman",
+          "Florence Nightingale",
+          "Queen Victoria",
+          "Louis Pasteur",
+          "Karl Marx",
+          "Charles Darwin",
+          "Abraham Lincoln",
+          "Ada Lovelace",
+          "José de San Martín",
+          "Simón Bolívar",
+          "Ludwig van Beethoven",
+          "Napoleon Bonaparte",
+          "James Watt",
+          "Immanuel Kant",
+          "George Washington",
+          "Catherine the Great",
+          "Wolfgang Amadeus Mozart",
+          "Jean-Jacques Rousseau",
+          "Voltaire",
+          "Isaac Newton",
+          "René Descartes",
+          "Galileo Galilei",
+          "William Shakespeare",
+          "Miguel de Cervantes",
+          "Suleiman the Magnificent",
+          "Michelangelo",
+          "Martin Luther",
+          "Nicolaus Copernicus",
+          "Guru Nanak",
+          "Vasco da Gama",
+          "Leonardo da Vinci",
+          "Christopher Columbus",
+          "Isabella I of Castile",
+          "Johannes Gutenberg",
+          "Mansa Musa",
+          "Dante Alighieri",
+          "Thomas Aquinas",
+          "Genghis Khan",
+          "Saladin",
+          "Avicenna",
+          "Murasaki Shikibu",
+          "Al-Khwarizmi",
+          "Charlemagne",
+          "Wu Zetian",
+          "Muhammad",
+          "Cai Lun",
+          "Jesus of Nazareth",
+          "Augustus",
+          "Cleopatra",
+          "Julius Caesar",
+          "Qin Shi Huang",
+          "Ashoka",
+          "Alexander the Great",
+          "Aristotle",
+          "Plato",
+          "Socrates",
+          "Confucius",
+          "Buddha",
+          "Cyrus the Great",
+          "Laozi",
+          "Homer",
+          "Zoroaster",
+          "Moses",
+          "Hatshepsut"
+        ];
+
+        const players = [];
+        players.push({ id: 'user', name: 'You', score: 0, isUser: true });
+        
+        // Asignar puntuaciones fijas decrecientes de 999 a 0
+        for (let i = 0; i < historicalNames.length; i++) {
+          const score = Math.floor(999 - (i * (999 / (historicalNames.length - 1))));
+          players.push({
+            id: 'historical' + i,
+            name: historicalNames[i],
+            score: score,
+            isUser: false,
+          });
+        }
+
+        function rollOutcome() {
+          const r = Math.random() * P_TOTAL;
+
+          if (r < P_HEADS) return 'cara';
+          if (r < P_HEADS + P_TAILS) return 'cruz';
+          return 'canto';
+        }
+
+        function showToast(message) {
+          toast.textContent = message;
+          toast.classList.add('visible');
+          setTimeout(function () {
+            toast.classList.remove('visible');
+          }, 1300);
+        }
+
+        function updateSpeechBubble() {
+          if (currentPoints > 0) {
+            speechBubble.hidden = false;
+            speechBubble.textContent = String(currentPoints);
+          } else {
+            speechBubble.hidden = true;
+          }
+        }
+
+        function updateBestCombo() {
+          resultPillValue.textContent = String(bestCombo);
+        }
+
+        function updateBestClaimedCombo() {
+          bestClaimedValue.textContent = String(bestClaimedCombo);
+        }
+
+        function resetStreak() {
+          currentPoints = 0;
+          updateSpeechBubble();
+          claimButton.disabled = true;
+        }
+
+        function formatScore(score) {
+          return score.toLocaleString('es-ES');
+        }
+
+        function updateLeaderboard() {
+          const sorted = players.slice().sort(function (a, b) {
+            return b.score - a.score;
+          });
+
+          leaderboardEl.innerHTML = '';
+
+          for (let i = 0; i < sorted.length; i++) {
+            const player = sorted[i];
+            const row = document.createElement('div');
+            row.className = 'leaderboard-row' + (player.isUser ? ' is-user' : '');
+
+            const pos = document.createElement('div');
+            pos.className = 'leaderboard-pos';
+            pos.textContent = (i + 1) + '.';
+
+            const name = document.createElement('div');
+            name.className = 'leaderboard-name';
+            name.textContent = player.name;
+
+            if (player.isUser) {
+              const tag = document.createElement('span');
+              tag.className = 'leaderboard-tag';
+              tag.textContent = 'You';
+              name.appendChild(tag);
+            }
+
+            const score = document.createElement('div');
+            score.className = 'leaderboard-score';
+            score.textContent = formatScore(player.score);
+
+            row.appendChild(pos);
+            row.appendChild(name);
+            row.appendChild(score);
+
+            leaderboardEl.appendChild(row);
+          }
+        }
+
+        function randomBotProgress(claimValue) {
+          if (claimValue <= 0) return;
+
+          for (let i = 0; i < players.length; i++) {
+            const p = players[i];
+            if (p.isUser) continue;
+            const delta = Math.floor(Math.random() * (claimValue * 0.75));
+            p.score += delta;
+          }
+        }
+
+        function scheduleIdleCta() {
+          if (ctaTimeoutId !== null) {
+            clearTimeout(ctaTimeoutId);
+          }
+          coinFaceLabel.classList.remove('cta');
+          ctaTimeoutId = setTimeout(function () {
+            coinFaceLabel.classList.add('cta');
+          }, 5000);
+        }
+
+        function handleCoinClick() {
+          coinFace.textContent = '·';
+          coinFaceLabel.textContent = 'Flipping...';
+          coinFaceLabel.classList.remove('cta');
+
+          setTimeout(function () {
+            const outcome = rollOutcome();
+
+            if (outcome === 'cara') {
+              coinFace.innerHTML = '<strong>😊</strong>';
+              coinFaceLabel.textContent = 'Heads';
+
+              currentPoints = currentPoints === 0 ? 1 : currentPoints * 2;
+              if (currentPoints > bestCombo) {
+                bestCombo = currentPoints;
+              }
+              claimButton.disabled = false;
+            } else if (outcome === 'cruz') {
+              coinFace.innerHTML = '<strong>❌</strong>';
+              coinFaceLabel.textContent = 'Tails (reset)';
+              resetStreak();
+            } else {
+              coinFace.innerHTML = '<strong>⭐</strong>';
+              coinFaceLabel.textContent = 'Edge (rare)';
+
+              // EDGE gives you +1000 points, keeps your streak
+              currentPoints += 1000;
+              if (currentPoints > bestCombo) {
+                bestCombo = currentPoints;
+              }
+              claimButton.disabled = false;
+              showToast('⭐ EDGE! +1000 points');
+            }
+
+            updateSpeechBubble();
+            updateBestCombo();
+            scheduleIdleCta();
+          }, 110);
+        }
+
+        function handleClaimClick() {
+          if (currentPoints <= 0) return;
+
+          const user = players.find(function (p) {
+            return p.isUser;
+          });
+
+          if (!user) return;
+
+          // Update best claimed combo before resetting
+          if (currentPoints > bestClaimedCombo) {
+            bestClaimedCombo = currentPoints;
+          }
+
+          user.score += currentPoints;
+          randomBotProgress(currentPoints);
+          updateLeaderboard();
+
+          showToast('You claimed ' + currentPoints + ' points');
+
+          resetStreak();
+          coinFace.textContent = '?';
+          coinFaceLabel.textContent = 'Tap to flip';
+          scheduleIdleCta();
+          updateBestClaimedCombo();
+        }
+
+        // --- Simple runtime checks ("test cases") ---
+        (function selfTest() {
+          console.assert(typeof rollOutcome === 'function', 'rollOutcome should exist');
+          const testOutcome = rollOutcome();
+          console.assert(
+            testOutcome === 'cara' || testOutcome === 'cruz' || testOutcome === 'canto',
+            'rollOutcome should return cara, cruz or canto'
+          );
+          console.assert(players.length === 101, 'There should be 1 user + 100 historical names');
+          console.assert(players[0].isUser === true, 'First player should be user');
+        })();
+
+        coinButton.addEventListener('click', handleCoinClick);
+        claimButton.addEventListener('click', handleClaimClick);
+
+        updateLeaderboard();
+        updateSpeechBubble();
+        updateBestCombo();
+        updateBestClaimedCombo();
+        scheduleIdleCta();
+      })();
+    </script>
+  </body>
+</html>
+
