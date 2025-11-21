@@ -465,6 +465,44 @@
         let bestClaimedCombo = 0; // best combo that has been claimed
         let ctaTimeoutId = null; // idle CTA timer id
 
+        // LocalStorage functions
+        function saveGameData() {
+          const user = players.find(function (p) {
+            return p.isUser;
+          });
+          const gameData = {
+            userScore: user ? user.score : 0,
+            bestCombo: bestCombo,
+            bestClaimedCombo: bestClaimedCombo
+          };
+          try {
+            localStorage.setItem('coinfliip_gameData', JSON.stringify(gameData));
+          } catch (e) {
+            console.warn('Could not save game data:', e);
+          }
+        }
+
+        function loadGameData() {
+          try {
+            const savedData = localStorage.getItem('coinfliip_gameData');
+            if (savedData) {
+              const gameData = JSON.parse(savedData);
+              const user = players.find(function (p) {
+                return p.isUser;
+              });
+              if (user) {
+                user.score = gameData.userScore || 0;
+              }
+              bestCombo = gameData.bestCombo || 0;
+              bestClaimedCombo = gameData.bestClaimedCombo || 0;
+              return true;
+            }
+          } catch (e) {
+            console.warn('Could not load game data:', e);
+          }
+          return false;
+        }
+
         const historicalNames = [
           "Antonio Bastos de Córdoba",
           "Malala Yousafzai",
@@ -699,6 +737,7 @@
               currentPoints = currentPoints === 0 ? 1 : currentPoints * 2;
               if (currentPoints > bestCombo) {
                 bestCombo = currentPoints;
+                saveGameData();
               }
               claimButton.disabled = false;
             } else if (outcome === 'cruz') {
@@ -713,6 +752,7 @@
               currentPoints += 1000;
               if (currentPoints > bestCombo) {
                 bestCombo = currentPoints;
+                saveGameData();
               }
               claimButton.disabled = false;
               showToast('⭐ EDGE! +1000 points');
@@ -741,6 +781,7 @@
           user.score += currentPoints;
           randomBotProgress(currentPoints);
           updateLeaderboard();
+          saveGameData();
 
           showToast('You claimed ' + currentPoints + ' points');
 
@@ -762,6 +803,9 @@
           console.assert(players.length === 101, 'There should be 1 user + 100 historical names');
           console.assert(players[0].isUser === true, 'First player should be user');
         })();
+
+        // Load saved game data
+        loadGameData();
 
         coinButton.addEventListener('click', handleCoinClick);
         claimButton.addEventListener('click', handleClaimClick);
