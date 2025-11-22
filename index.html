@@ -508,6 +508,22 @@
 
     <script>
       (function () {
+        // Google Analytics / Google Tag Manager - Utilidad para enviar eventos
+        window.dataLayer = window.dataLayer || [];
+
+        function sendAnalyticsEvent(eventName, params = {}) {
+          window.dataLayer.push({
+            event: eventName,
+            ...params,
+          });
+        }
+
+        // Contadores para analytics
+        let totalFlips = 0;
+        let headsCount = 0;
+        let tailsCount = 0;
+        let edgesCount = 0;
+
         const coinButton = document.getElementById('coinButton');
         const coinFace = document.getElementById('coinFace');
         const coinFaceLabel = document.getElementById('coinFaceLabel');
@@ -897,6 +913,8 @@
 
           leaderboardEl.innerHTML = '';
 
+          let userPosition = null;
+
           for (let i = 0; i < sorted.length; i++) {
             const player = sorted[i];
             const row = document.createElement('div');
@@ -911,6 +929,7 @@
             name.textContent = player.name;
 
             if (player.isUser) {
+              userPosition = i + 1;
               const tag = document.createElement('span');
               tag.className = 'leaderboard-tag';
               tag.textContent = isSpanish ? 'Tú' : 'You';
@@ -927,6 +946,8 @@
 
             leaderboardEl.appendChild(row);
           }
+
+          return userPosition;
         }
 
         function randomBotProgress(claimValue) {
@@ -958,7 +979,11 @@
           setTimeout(function () {
             const outcome = rollOutcome();
 
+            let flipResult = '';
+            
             if (outcome === 'cara') {
+              flipResult = 'HEAD';
+              headsCount++;
               coinFace.innerHTML = '<strong>😊</strong>';
               coinFaceLabel.textContent = isSpanish ? 'Cara' : 'Heads';
 
@@ -969,10 +994,14 @@
               }
               claimButton.disabled = false;
             } else if (outcome === 'cruz') {
+              flipResult = 'TAILS';
+              tailsCount++;
               coinFace.innerHTML = '<strong>❌</strong>';
               coinFaceLabel.textContent = isSpanish ? 'Cruz (reinicio)' : 'Tails (reset)';
               resetStreak();
             } else {
+              flipResult = 'EDGE';
+              edgesCount++;
               coinFace.innerHTML = '<strong>⭐</strong>';
               coinFaceLabel.textContent = isSpanish ? 'Canto (raro)' : 'Edge (rare)';
 
@@ -990,6 +1019,20 @@
               );
             }
 
+            totalFlips++;
+
+            // Enviar evento de analytics para el flip
+            const user = players.find(function (p) {
+              return p.isUser;
+            });
+            sendAnalyticsEvent('coin_flip', {
+              flip_result: flipResult,
+              current_streak: currentPoints,
+              best_streak: bestCombo,
+              best_claimed_streak: bestClaimedCombo,
+              score: user ? user.score : 0
+            });
+
             updateSpeechBubble();
             updateBestCombo();
             scheduleIdleCta();
@@ -1005,6 +1048,12 @@
 
           if (!user) return;
 
+          // Evento de click en CLAIM
+          sendAnalyticsEvent('claim_click', {
+            current_streak: currentPoints,
+            current_score: user.score
+          });
+
           // Update best claimed combo before resetting
           if (currentPoints > bestClaimedCombo) {
             bestClaimedCombo = currentPoints;
@@ -1012,8 +1061,25 @@
 
           user.score += currentPoints;
           randomBotProgress(currentPoints);
-          updateLeaderboard();
+          const leaderboardPosition = updateLeaderboard();
           saveGameData();
+
+          // Evento resumen run_stats
+          sendAnalyticsEvent('run_stats', {
+            best_streak: bestCombo,
+            best_claimed_streak: bestClaimedCombo,
+            leaderboard_position: leaderboardPosition,
+            total_flips: totalFlips,
+            heads_count: headsCount,
+            tails_count: tailsCount,
+            edges_count: edgesCount
+          });
+
+          // Resetear contadores para el próximo run
+          totalFlips = 0;
+          headsCount = 0;
+          tailsCount = 0;
+          edgesCount = 0;
 
           const pointsText = isSpanish
             ? (currentPoints === 1 ? ' punto' : ' puntos')
@@ -1050,6 +1116,26 @@
 
         coinButton.addEventListener('click', handleCoinClick);
         claimButton.addEventListener('click', handleClaimClick);
+
+        // Event listeners para botones sociales
+        const instagramLink = document.querySelector('.social-link[href*="instagram"]');
+        const donateLink = document.querySelector('.social-link[href*="paypal"]');
+
+        if (instagramLink) {
+          instagramLink.addEventListener('click', function() {
+            sendAnalyticsEvent('social_click', {
+              social_platform: 'instagram'
+            });
+          });
+        }
+
+        if (donateLink) {
+          donateLink.addEventListener('click', function() {
+            sendAnalyticsEvent('social_click', {
+              social_platform: 'donate'
+            });
+          });
+        }
 
         updateLeaderboard();
         updateSpeechBubble();
