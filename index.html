@@ -113,6 +113,9 @@
         .toast {
           font-size: 0.7rem;
           padding: 6px 12px;
+          max-width: 90%;
+          width: auto;
+          white-space: nowrap;
         }
       }
 
@@ -224,6 +227,7 @@
         border-radius: 999px;
         border: 3px solid var(--black);
         background: var(--lime);
+        color: var(--black);
         font-weight: 800;
         text-transform: uppercase;
         letter-spacing: 0.08em;
@@ -418,7 +422,7 @@
             <p>
               Each consecutive <strong>HEAD</strong> 😊 doubles your score.<br />
               <strong>TAILS</strong> ❌ resets your streak.<br />
-              <strong>EDGE</strong> ⭐ gives you 1000 points.<br />
+              <strong>EDGE</strong> ⭐ gives you 50000 points.<br />
               <strong>CLAIM</strong> banks your points but resets the streak.
             </p>
             <div class="result-pill" id="resultPill">
@@ -485,7 +489,7 @@
             rulesParagraph.innerHTML =
               'Cada <strong>CARA</strong> 😊 consecutiva dobla tu marcador.<br />' +
               '<strong>CRUZ</strong> ❌ reinicia tu racha.<br />' +
-              '<strong>CANTO</strong> ⭐ te da 1000 puntos.<br />' +
+              '<strong>CANTO</strong> ⭐ te da 50000 puntos.<br />' +
               '<strong>COBRAR</strong> guarda tus puntos pero reinicia la racha.';
           }
 
@@ -883,7 +887,7 @@
         }
 
         function handleCoinClick() {
-          coinFace.textContent = '·';
+          coinFace.textContent = '';
           coinFaceLabel.textContent = isSpanish ? 'Lanzando...' : 'Flipping...';
           coinFaceLabel.classList.remove('cta');
 
@@ -908,8 +912,8 @@
               coinFace.innerHTML = '<strong>⭐</strong>';
               coinFaceLabel.textContent = isSpanish ? 'Canto (raro)' : 'Edge (rare)';
 
-              // EDGE gives you +1000 points, keeps your streak
-              currentPoints += 1000;
+              // EDGE gives you +50000 points, keeps your streak
+              currentPoints += 50000;
               if (currentPoints > bestCombo) {
                 bestCombo = currentPoints;
                 saveGameData();
@@ -917,8 +921,8 @@
               claimButton.disabled = false;
               showToast(
                 isSpanish
-                  ? '⭐ ¡CANTO! +1000 puntos'
-                  : '⭐ EDGE! +1000 points'
+                  ? '⭐ ¡CANTO! +50000 puntos'
+                  : '⭐ EDGE! +50000 points'
               );
             }
 
