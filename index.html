@@ -18,6 +18,8 @@
         --lime-soft: #e8ff9f;
         --black: #050505;
         --white: #f7f7f7;
+        --gray: #a0a0a0;
+        --green-trend: #2ecc71;
       }
 
       * {
@@ -37,6 +39,65 @@
         color: var(--black);
       }
 
+      /* --- FX CONTAINERS --- */
+      .fx-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        pointer-events: none;
+        z-index: 9999;
+        overflow: hidden;
+      }
+
+      /* FIRE PARTICLES */
+      .fire-particle {
+        position: absolute;
+        user-select: none;
+        filter: drop-shadow(3px 3px 0 var(--black));
+        animation: firePulse 0.8s infinite alternate ease-in-out;
+        line-height: 1;
+      }
+
+      @keyframes firePulse {
+        0% { transform: scale(1) rotate(-5deg); }
+        100% { transform: scale(1.2) rotate(5deg); }
+      }
+
+      /* SAD PARTICLES */
+      .sad-particle {
+        position: absolute;
+        user-select: none;
+        font-size: 2.5rem;
+        filter: drop-shadow(2px 2px 0 rgba(0,0,0,0.2));
+        animation: sadFall 0.75s forwards ease-in;
+        opacity: 1;
+      }
+
+      @keyframes sadFall {
+        0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+        100% { transform: translateY(100px) rotate(20deg); opacity: 0; }
+      }
+
+      /* HAPPY PARTICLES (NUEVO) */
+      .happy-particle {
+        position: absolute;
+        user-select: none;
+        font-size: 2.5rem;
+        filter: drop-shadow(2px 2px 0 rgba(255,255,255,0.5));
+        animation: happyRise 1.2s forwards ease-out;
+        opacity: 1;
+        z-index: 10000;
+      }
+
+      @keyframes happyRise {
+        0% { transform: translateY(0) scale(0.5); opacity: 1; }
+        50% { transform: translateY(-80px) scale(1.2); opacity: 1; }
+        100% { transform: translateY(-150px) scale(1); opacity: 0; }
+      }
+      /* -------------------------- */
+
       .app {
         width: min(960px, 100%);
         background: var(--white);
@@ -45,6 +106,8 @@
         display: flex;
         flex-direction: column;
         overflow: hidden;
+        position: relative; 
+        z-index: 1;
       }
 
       .header {
@@ -137,7 +200,6 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        /* Este Font size cambia el tamaño de la cara de la moneda */
         font-size: 2.26rem;
         font-weight: 800;
         color: var(--black);
@@ -264,20 +326,23 @@
         border-radius: 999px;
         border: 2px solid var(--black);
         background: var(--white);
-        font-size: 0.8rem; /* back to original size */
+        font-size: 0.8rem;
         text-transform: uppercase;
         letter-spacing: 0.08em;
+        transition: background-color 200ms ease, color 200ms ease, transform 200ms ease, box-shadow 200ms ease;
+      }
+
+      .result-pill.highlight {
+        background-color: var(--lime) !important;
+        color: var(--white) !important;
+        transform: scale(1.1);
+        box-shadow: 4px 4px 0 var(--black);
+        text-shadow: 1px 1px 0 var(--black), -1px -1px 0 var(--black), 1px -1px 0 var(--black), -1px 1px 0 var(--black);
+        border-color: var(--black);
       }
 
       .result-pill span {
         font-weight: 700;
-      }
-
-      .result-sub {
-        margin-top: 4px;
-        font-size: 0.8rem;
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
       }
 
       .main {
@@ -304,13 +369,6 @@
       .leaderboard-header h1 {
         margin: 0;
         font-size: 1.4rem;
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
-      }
-
-      .leaderboard-hint {
-        margin: 6px 0 14px;
-        font-size: 0.8rem;
         text-transform: uppercase;
         letter-spacing: 0.08em;
       }
@@ -349,6 +407,9 @@
 
       .leaderboard-name {
         font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 6px;
       }
 
       .leaderboard-score {
@@ -359,14 +420,32 @@
 
       .leaderboard-tag {
         display: inline-block;
-        margin-left: 6px;
         padding: 1px 6px;
         border-radius: 999px;
         border: 1px solid var(--black);
         font-size: 0.65rem;
         text-transform: uppercase;
         letter-spacing: 0.06em;
+        white-space: nowrap;
       }
+
+      /* Trend indicators */
+      .trend-icon {
+        font-weight: 800;
+        font-size: 0.8rem;
+        line-height: 1;
+        display: inline-block;
+        opacity: 0; /* Oculto por defecto */
+        transition: opacity 200ms ease;
+      }
+      
+      .trend-icon.visible {
+        opacity: 1; /* Se muestra cuando cambia */
+      }
+
+      .trend-up { color: var(--green-trend); }
+      .trend-down { color: var(--black); }
+      .trend-equal { color: var(--gray); }
 
       .toast {
         position: fixed;
@@ -386,6 +465,7 @@
         opacity: 0;
         pointer-events: none;
         transition: opacity 160ms ease-out, transform 160ms ease-out;
+        z-index: 10000;
       }
 
       .toast.visible {
@@ -446,6 +526,13 @@
     <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-N77K3KBS"
     height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <!-- End Google Tag Manager (noscript) -->
+    
+    <!-- Containers for the effects -->
+    <div id="fireContainer" class="fx-container"></div>
+    <div id="sadContainer" class="fx-container"></div>
+    <!-- Nuevo contenedor para la animación de Happy -->
+    <div id="happyContainer" class="fx-container"></div>
+
     <div class="app">
       <header class="header">
         <div class="header-title">
@@ -508,7 +595,7 @@
 
     <script>
       (function () {
-        // Google Analytics / Google Tag Manager - Utilidad para enviar eventos
+        // Google Analytics / Google Tag Manager
         window.dataLayer = window.dataLayer || [];
 
         function sendAnalyticsEvent(eventName, params = {}) {
@@ -518,7 +605,6 @@
           });
         }
 
-        // Contadores para analytics
         let totalFlips = 0;
         let headsCount = 0;
         let tailsCount = 0;
@@ -530,32 +616,28 @@
         const speechBubble = document.getElementById('speechBubble');
         const claimButton = document.getElementById('claimButton');
         const leaderboardEl = document.getElementById('leaderboard');
+        
         const resultPill = document.getElementById('resultPill');
+        const bestClaimedPill = document.getElementById('bestClaimedPill');
+        
         const resultPillValue = document.getElementById('bestStreakValue');
         const bestClaimedValue = document.getElementById('bestClaimedValue');
+        
         const toast = document.getElementById('toast');
+        const fireContainer = document.getElementById('fireContainer');
+        const sadContainer = document.getElementById('sadContainer');
+        const happyContainer = document.getElementById('happyContainer');
 
-        // Detectar si el navegador está en español
         const isSpanish = (navigator.language || navigator.userLanguage || '')
           .toLowerCase()
           .startsWith('es');
 
-        // Aplicar textos estáticos en función del idioma
         if (isSpanish) {
-          // Cambiar atributo lang del <html>
           document.documentElement.lang = 'es';
-
-          // Badge con probabilidades
           const headerBadge = document.querySelector('.header-badge');
-          if (headerBadge) {
-            headerBadge.textContent = 'CARA 49.998% / CRUZ 49.998% / CANTO 0.002%';
-          }
-
-          // Botón moneda: aria-label + texto inicial
+          if (headerBadge) headerBadge.textContent = 'CARA 49.998% / CRUZ 49.998% / CANTO 0.002%';
           coinButton.setAttribute('aria-label', 'Lanzar moneda');
           coinFaceLabel.innerHTML = '<strong>Toca para lanzar</strong>';
-
-          // Texto de reglas bajo la moneda
           const rulesParagraph = document.querySelector('.coin-info p');
           if (rulesParagraph) {
             rulesParagraph.innerHTML =
@@ -564,52 +646,150 @@
               '<strong>CANTO</strong> ⭐ te da 50000 puntos.<br />' +
               '<strong>COBRAR</strong> guarda tus puntos pero reinicia la racha.';
           }
-
-          // Labels de racha
           const bestStreakLabel = document.getElementById('bestStreakLabel');
           if (bestStreakLabel) bestStreakLabel.textContent = 'MEJOR RACHA:';
           const bestClaimedLabel = document.getElementById('bestClaimedLabel');
           if (bestClaimedLabel) bestClaimedLabel.textContent = 'MEJOR RACHA COBRADA:';
-
-          // Título del leaderboard
           const leaderboardTitle = document.querySelector('.leaderboard-header h1');
           if (leaderboardTitle) leaderboardTitle.textContent = 'Clasificación';
-
-          // Texto por defecto del toast
           toast.textContent = '¿CANTO IMPOSIBLE?';
-
-          // Botón CLAIM
           claimButton.textContent = 'COBRAR';
-
-          // Autor
           const headerAuthor = document.getElementById('headerAuthor');
           if (headerAuthor) headerAuthor.textContent = 'por antonio10bc';
         } else {
-          // Asegurar valores en inglés por defecto
           document.documentElement.lang = 'en';
           coinButton.setAttribute('aria-label', 'Flip coin');
         }
 
-        // Configuración de distancia de los botones sociales (en píxeles)
-        const SOCIAL_LINKS_MARGIN_TOP = 24; // Cambia este valor para ajustar la distancia
+        const SOCIAL_LINKS_MARGIN_TOP = 24;
         document.documentElement.style.setProperty('--social-links-margin-top', SOCIAL_LINKS_MARGIN_TOP + 'px');
 
-        // Probabilities as percentages, kept in the proportions you defined
         const P_HEADS = 49.998;
         const P_TAILS = 49.998;
         const P_EDGE = 0.002;
-        const P_TOTAL = P_HEADS + P_TAILS + P_EDGE; // 99.998
+        const P_TOTAL = P_HEADS + P_TAILS + P_EDGE; 
 
-        let currentPoints = 0; // current streak score (1,2,4,8,...)
-        let bestCombo = 0; // best combo achieved in this session
-        let bestClaimedCombo = 0; // best combo that has been claimed
-        let ctaTimeoutId = null; // idle CTA timer id
+        let currentPoints = 0; 
+        let bestCombo = 0; 
+        let bestClaimedCombo = 0; 
+        let ctaTimeoutId = null; 
 
-        // LocalStorage functions
+        // --- OPTIMIZED FIRE EFFECT (WITH NEW MARGINS) ---
+        function updateFireEffect(score) {
+          fireContainer.innerHTML = ''; 
+          
+          if (score < 2) return;
+
+          const streakLevel = Math.log2(score);
+          const count = Math.floor(streakLevel * 12); 
+          
+          const fragment = document.createDocumentFragment();
+
+          for (let i = 0; i < count; i++) {
+            const el = document.createElement('div');
+            el.textContent = '🔥';
+            el.className = 'fire-particle';
+            
+            const size = 1.5 + Math.random() * 2.0;
+            el.style.fontSize = size + 'rem';
+
+            // Changed: Offset is now 10% to 90% to avoid being too close to the edge
+            // Changed: Depth is positive to place it visible on top of border
+            const side = Math.floor(Math.random() * 4); 
+            const offset = 10 + Math.random() * 80; 
+            const depth = (Math.random() * 10 - 5) + 'px'; // -5 to 5px wiggle
+
+            switch(side) {
+                case 0: // Top
+                    el.style.top = depth;
+                    el.style.left = offset + '%';
+                    break;
+                case 1: // Right
+                    el.style.right = depth;
+                    el.style.top = offset + '%';
+                    break;
+                case 2: // Bottom
+                    el.style.bottom = depth;
+                    el.style.left = offset + '%';
+                    break;
+                case 3: // Left
+                    el.style.left = depth;
+                    el.style.top = offset + '%';
+                    break;
+            }
+            
+            el.style.animationDelay = (Math.random() * 1) + 's';
+            fragment.appendChild(el);
+          }
+          fireContainer.appendChild(fragment);
+        }
+        
+        // --- SAD FACE EFFECT ---
+        function triggerSadness() {
+          sadContainer.innerHTML = ''; 
+          
+          const fragment = document.createDocumentFragment();
+          const count = 15; 
+
+          for (let i = 0; i < count; i++) {
+            const el = document.createElement('div');
+            el.textContent = '😢';
+            el.className = 'sad-particle';
+            
+            el.style.left = (Math.random() * 100) + 'vw';
+            el.style.top = (Math.random() * 80) + 'vh'; 
+            
+            el.style.animationDuration = (0.6 + Math.random() * 0.3) + 's';
+            
+            fragment.appendChild(el);
+          }
+          
+          sadContainer.appendChild(fragment);
+
+          setTimeout(() => {
+            sadContainer.innerHTML = '';
+          }, 850);
+        }
+
+        // --- NEW HAPPY FACE EFFECT ---
+        function triggerHappiness() {
+          happyContainer.innerHTML = '';
+          
+          const fragment = document.createDocumentFragment();
+          const count = 20;
+          const happyEmojis = ['🤩', '😄'];
+
+          for (let i = 0; i < count; i++) {
+            const el = document.createElement('div');
+            el.textContent = happyEmojis[Math.floor(Math.random() * happyEmojis.length)];
+            el.className = 'happy-particle';
+            
+            // Start from bottom area mostly
+            el.style.left = (Math.random() * 100) + 'vw';
+            el.style.top = (50 + Math.random() * 40) + 'vh';
+            
+            el.style.animationDuration = (0.8 + Math.random() * 0.4) + 's';
+            
+            fragment.appendChild(el);
+          }
+          
+          happyContainer.appendChild(fragment);
+
+          setTimeout(() => {
+            happyContainer.innerHTML = '';
+          }, 1300);
+        }
+
+        function triggerHighlight(element) {
+          if (!element) return;
+          element.classList.add('highlight');
+          setTimeout(() => {
+            element.classList.remove('highlight');
+          }, 1000);
+        }
+
         function saveGameData() {
-          const user = players.find(function (p) {
-            return p.isUser;
-          });
+          const user = players.find(p => p.isUser);
           const gameData = {
             userScore: user ? user.score : 0,
             bestCombo: bestCombo,
@@ -627,12 +807,8 @@
             const savedData = localStorage.getItem('coinfliip_gameData');
             if (savedData) {
               const gameData = JSON.parse(savedData);
-              const user = players.find(function (p) {
-                return p.isUser;
-              });
-              if (user) {
-                user.score = gameData.userScore || 0;
-              }
+              const user = players.find(p => p.isUser);
+              if (user) user.score = gameData.userScore || 0;
               bestCombo = gameData.bestCombo || 0;
               bestClaimedCombo = gameData.bestClaimedCombo || 0;
               return true;
@@ -644,215 +820,18 @@
         }
 
         const historicalNamesEn = [
-          "Antonio Bastos de Córdoba",
-          "Malala Yousafzai",
-          "Tim Berners-Lee",
-          "Rigoberta Menchú",
-          "Valentina Tereshkova",
-          "Gabriel Garcia Marquez",
-          "Nelson Mandela",
-          "Rosa Parks",
-          "The Beatles",
-          "Deng Xiaoping",
-          "Simone de Beauvoir",
-          "Charlie Chaplin",
-          "Mao Zedong",
-          "Pablo Picasso",
-          "Kwame Nkrumah",
-          "Martin Luther King Jr.",
-          "Walt Disney",
-          "Winston Churchill",
-          "Eleanor Roosevelt",
-          "Rosalind Franklin",
-          "Albert Einstein",
-          "Alexander Fleming",
-          "Alan Turing",
-          "Frida Kahlo",
-          "Mahatma Gandhi",
-          "The Wright Brothers",
-          "Franklin D. Roosevelt",
-          "Nikola Tesla",
-          "George Washington Carver",
-          "Sigmund Freud",
-          "Mustafa Kemal Ataturk",
-          "Marie Curie",
-          "Fritz Haber",
-          "Emmeline Pankhurst",
-          "Lenin",
-          "Harriet Tubman",
-          "Florence Nightingale",
-          "Queen Victoria",
-          "Louis Pasteur",
-          "Karl Marx",
-          "Charles Darwin",
-          "Abraham Lincoln",
-          "Ada Lovelace",
-          "José de San Martín",
-          "Simón Bolívar",
-          "Ludwig van Beethoven",
-          "Napoleon Bonaparte",
-          "James Watt",
-          "Immanuel Kant",
-          "George Washington",
-          "Catherine the Great",
-          "Wolfgang Amadeus Mozart",
-          "Jean-Jacques Rousseau",
-          "Voltaire",
-          "Isaac Newton",
-          "René Descartes",
-          "Galileo Galilei",
-          "William Shakespeare",
-          "Miguel de Cervantes",
-          "Suleiman the Magnificent",
-          "Michelangelo",
-          "Martin Luther",
-          "Nicolaus Copernicus",
-          "Guru Nanak",
-          "Vasco da Gama",
-          "Leonardo da Vinci",
-          "Christopher Columbus",
-          "Isabella I of Castile",
-          "Johannes Gutenberg",
-          "Mansa Musa",
-          "Dante Alighieri",
-          "Thomas Aquinas",
-          "Genghis Khan",
-          "Saladin",
-          "Avicenna",
-          "Murasaki Shikibu",
-          "Al-Khwarizmi",
-          "Charlemagne",
-          "Wu Zetian",
-          "Muhammad",
-          "Cai Lun",
-          "Jesus of Nazareth",
-          "Augustus",
-          "Cleopatra",
-          "Julius Caesar",
-          "Qin Shi Huang",
-          "Ashoka",
-          "Alexander the Great",
-          "Aristotle",
-          "Plato",
-          "Socrates",
-          "Confucius",
-          "Buddha",
-          "Cyrus the Great",
-          "Laozi",
-          "Homer",
-          "Zoroaster",
-          "Moses",
-          "Hatshepsut"
+          "Antonio Bastos de Córdoba","Malala Yousafzai","Tim Berners-Lee","Rigoberta Menchú","Valentina Tereshkova","Gabriel Garcia Marquez","Nelson Mandela","Rosa Parks","The Beatles","Deng Xiaoping","Simone de Beauvoir","Charlie Chaplin","Mao Zedong","Pablo Picasso","Kwame Nkrumah","Martin Luther King Jr.","Walt Disney","Winston Churchill","Eleanor Roosevelt","Rosalind Franklin","Albert Einstein","Alexander Fleming","Alan Turing","Frida Kahlo","Mahatma Gandhi","The Wright Brothers","Franklin D. Roosevelt","Nikola Tesla","George Washington Carver","Sigmund Freud","Mustafa Kemal Ataturk","Marie Curie","Fritz Haber","Emmeline Pankhurst","Lenin","Harriet Tubman","Florence Nightingale","Queen Victoria","Louis Pasteur","Karl Marx","Charles Darwin","Abraham Lincoln","Ada Lovelace","José de San Martín","Simón Bolívar","Ludwig van Beethoven","Napoleon Bonaparte","James Watt","Immanuel Kant","George Washington","Catherine the Great","Wolfgang Amadeus Mozart","Jean-Jacques Rousseau","Voltaire","Isaac Newton","René Descartes","Galileo Galilei","William Shakespeare","Miguel de Cervantes","Suleiman the Magnificent","Michelangelo","Martin Luther","Nicolaus Copernicus","Guru Nanak","Vasco da Gama","Leonardo da Vinci","Christopher Columbus","Isabella I of Castile","Johannes Gutenberg","Mansa Musa","Dante Alighieri","Thomas Aquinas","Genghis Khan","Saladin","Avicenna","Murasaki Shikibu","Al-Khwarizmi","Charlemagne","Wu Zetian","Muhammad","Cai Lun","Jesus of Nazareth","Augustus","Cleopatra","Julius Caesar","Qin Shi Huang","Ashoka","Alexander the Great","Aristotle","Plato","Socrates","Confucius","Buddha","Cyrus the Great","Laozi","Homer","Zoroaster","Moses","Hatshepsut"
         ];
 
         const historicalNamesEs = [
-          "Antonio Bastos de Córdoba",
-          "Malala Yousafzai",
-          "Tim Berners-Lee",
-          "Rigoberta Menchú",
-          "Valentina Tereshkova",
-          "Gabriel García Márquez",
-          "Nelson Mandela",
-          "Rosa Parks",
-          "The Beatles",
-          "Deng Xiaoping",
-          "Simone de Beauvoir",
-          "Charlie Chaplin",
-          "Mao Zedong",
-          "Pablo Picasso",
-          "Kwame Nkrumah",
-          "Martin Luther King Jr.",
-          "Walt Disney",
-          "Winston Churchill",
-          "Eleanor Roosevelt",
-          "Rosalind Franklin",
-          "Albert Einstein",
-          "Alexander Fleming",
-          "Alan Turing",
-          "Frida Kahlo",
-          "Mahatma Gandhi",
-          "Los Hermanos Wright",
-          "Franklin D. Roosevelt",
-          "Nikola Tesla",
-          "George Washington Carver",
-          "Sigmund Freud",
-          "Mustafa Kemal Ataturk",
-          "Marie Curie",
-          "Fritz Haber",
-          "Emmeline Pankhurst",
-          "Lenin",
-          "Harriet Tubman",
-          "Florence Nightingale",
-          "Reina Victoria",
-          "Louis Pasteur",
-          "Karl Marx",
-          "Charles Darwin",
-          "Abraham Lincoln",
-          "Ada Lovelace",
-          "José de San Martín",
-          "Simón Bolívar",
-          "Ludwig van Beethoven",
-          "Napoleón Bonaparte",
-          "James Watt",
-          "Immanuel Kant",
-          "George Washington",
-          "Catalina la Grande",
-          "Wolfgang Amadeus Mozart",
-          "Jean-Jacques Rousseau",
-          "Voltaire",
-          "Isaac Newton",
-          "René Descartes",
-          "Galileo Galilei",
-          "William Shakespeare",
-          "Miguel de Cervantes",
-          "Solimán el Magnífico",
-          "Miguel Ángel",
-          "Martín Lutero",
-          "Nicolás Copérnico",
-          "Guru Nanak",
-          "Vasco de Gama",
-          "Leonardo da Vinci",
-          "Cristóbal Colón",
-          "Isabel I de Castilla",
-          "Johannes Gutenberg",
-          "Mansa Musa",
-          "Dante Alighieri",
-          "Tomás de Aquino",
-          "Gengis Kan",
-          "Saladino",
-          "Avicena",
-          "Murasaki Shikibu",
-          "Al-Juarismi",
-          "Carlomagno",
-          "Wu Zetian",
-          "Mahoma",
-          "Cai Lun",
-          "Jesús de Nazaret",
-          "Augusto",
-          "Cleopatra",
-          "Julio César",
-          "Qin Shi Huang",
-          "Ashoka",
-          "Alejandro Magno",
-          "Aristóteles",
-          "Platón",
-          "Sócrates",
-          "Confucio",
-          "Buda",
-          "Ciro el Grande",
-          "Laozi",
-          "Homero",
-          "Zoroastro",
-          "Moisés",
-          "Hatshepsut"
+          "Antonio Bastos de Córdoba","Malala Yousafzai","Tim Berners-Lee","Rigoberta Menchú","Valentina Tereshkova","Gabriel García Márquez","Nelson Mandela","Rosa Parks","The Beatles","Deng Xiaoping","Simone de Beauvoir","Charlie Chaplin","Mao Zedong","Pablo Picasso","Kwame Nkrumah","Martin Luther King Jr.","Walt Disney","Winston Churchill","Eleanor Roosevelt","Rosalind Franklin","Albert Einstein","Alexander Fleming","Alan Turing","Frida Kahlo","Mahatma Gandhi","Los Hermanos Wright","Franklin D. Roosevelt","Nikola Tesla","George Washington Carver","Sigmund Freud","Mustafa Kemal Ataturk","Marie Curie","Fritz Haber","Emmeline Pankhurst","Lenin","Harriet Tubman","Florence Nightingale","Reina Victoria","Louis Pasteur","Karl Marx","Charles Darwin","Abraham Lincoln","Ada Lovelace","José de San Martín","Simón Bolívar","Ludwig van Beethoven","Napoleón Bonaparte","James Watt","Immanuel Kant","George Washington","Catalina la Grande","Wolfgang Amadeus Mozart","Jean-Jacques Rousseau","Voltaire","Isaac Newton","René Descartes","Galileo Galilei","William Shakespeare","Miguel de Cervantes","Solimán el Magnífico","Miguel Ángel","Martín Lutero","Nicolás Copérnico","Guru Nanak","Vasco de Gama","Leonardo da Vinci","Cristóbal Colón","Isabel I de Castilla","Johannes Gutenberg","Mansa Musa","Dante Alighieri","Tomás de Aquino","Gengis Kan","Saladino","Avicena","Murasaki Shikibu","Al-Juarismi","Carlomagno","Wu Zetian","Mahoma","Cai Lun","Jesús de Nazaret","Augusto","Cleopatra","Julio César","Qin Shi Huang","Ashoka","Alejandro Magno","Aristóteles","Platón","Sócrates","Confucio","Buda","Ciro el Grande","Laozi","Homero","Zoroastro","Moisés","Hatshepsut"
         ];
 
         const historicalNames = isSpanish ? historicalNamesEs : historicalNamesEn;
 
         const players = [];
-        players.push({ id: 'user', name: isSpanish ? 'Tú' : 'You', score: 0, isUser: true });
+        players.push({ id: 'user', name: isSpanish ? 'Tú' : 'You', score: 0, isUser: true, lastRank: 0 });
         
-        // Asignar puntuaciones fijas decrecientes de 999 a 0
         for (let i = 0; i < historicalNames.length; i++) {
           const score = Math.floor(999 - (i * (999 / (historicalNames.length - 1))));
           players.push({
@@ -860,12 +839,15 @@
             name: historicalNames[i],
             score: score,
             isUser: false,
+            lastRank: 0 
           });
         }
+        
+        const initialSorted = players.slice().sort((a, b) => b.score - a.score);
+        initialSorted.forEach((p, i) => p.lastRank = i + 1);
 
         function rollOutcome() {
           const r = Math.random() * P_TOTAL;
-
           if (r < P_HEADS) return 'cara';
           if (r < P_HEADS + P_TAILS) return 'cruz';
           return 'canto';
@@ -899,6 +881,7 @@
         function resetStreak() {
           currentPoints = 0;
           updateSpeechBubble();
+          updateFireEffect(0); 
           claimButton.disabled = true;
         }
 
@@ -906,36 +889,77 @@
           return score.toLocaleString('es-ES');
         }
 
+        // --- UPDATED LEADERBOARD WITH TIMED TRENDS ---
         function updateLeaderboard() {
-          const sorted = players.slice().sort(function (a, b) {
-            return b.score - a.score;
-          });
-
+          const sorted = players.slice().sort((a, b) => b.score - a.score);
           leaderboardEl.innerHTML = '';
 
           let userPosition = null;
 
           for (let i = 0; i < sorted.length; i++) {
             const player = sorted[i];
+            const currentRank = i + 1;
+            const previousRank = player.lastRank;
+            
             const row = document.createElement('div');
             row.className = 'leaderboard-row' + (player.isUser ? ' is-user' : '');
 
+            // Rank
             const pos = document.createElement('div');
             pos.className = 'leaderboard-pos';
-            pos.textContent = (i + 1) + '.';
+            pos.textContent = currentRank + '.';
 
+            // Name + Tags + Trend
             const name = document.createElement('div');
             name.className = 'leaderboard-name';
             name.textContent = player.name;
 
             if (player.isUser) {
-              userPosition = i + 1;
+              userPosition = currentRank;
               const tag = document.createElement('span');
               tag.className = 'leaderboard-tag';
               tag.textContent = isSpanish ? 'Tú' : 'You';
               name.appendChild(tag);
             }
 
+            // Trend Indicator Logic
+            let trendIcon = document.createElement('span');
+            trendIcon.className = 'trend-icon';
+            let hasChanged = false;
+            
+            if (previousRank !== 0 && currentRank !== previousRank) {
+                // Determine direction
+                if (currentRank < previousRank) {
+                    trendIcon.textContent = '▲';
+                    trendIcon.classList.add('trend-up');
+                } else {
+                    trendIcon.textContent = '▼';
+                    trendIcon.classList.add('trend-down');
+                }
+                hasChanged = true;
+            } else {
+               // No change or first run: text content empty or equal, but opacity 0 handled by CSS
+               trendIcon.textContent = ''; 
+            }
+            
+            // Update the stored rank
+            player.lastRank = currentRank;
+
+            // Append icon
+            name.appendChild(trendIcon);
+
+            // Trigger Visibility for 3s if changed
+            if (hasChanged) {
+                // We must delay the adding of the class slightly or do it immediately.
+                // Since element is fresh, we can just add the class, then remove it with setTimeout.
+                trendIcon.classList.add('visible');
+                setTimeout(() => {
+                    if (trendIcon) trendIcon.classList.remove('visible');
+                    //Tiempo de 10 segundos para que se vea el cambio de posición
+                }, 10000);
+            }
+
+            // Score
             const score = document.createElement('div');
             score.className = 'leaderboard-score';
             score.textContent = formatScore(player.score);
@@ -952,7 +976,6 @@
 
         function randomBotProgress(claimValue) {
           if (claimValue <= 0) return;
-
           for (let i = 0; i < players.length; i++) {
             const p = players[i];
             if (p.isUser) continue;
@@ -978,7 +1001,6 @@
 
           setTimeout(function () {
             const outcome = rollOutcome();
-
             let flipResult = '';
             
             if (outcome === 'cara') {
@@ -991,40 +1013,42 @@
               if (currentPoints > bestCombo) {
                 bestCombo = currentPoints;
                 saveGameData();
+                triggerHighlight(resultPill);
               }
               claimButton.disabled = false;
+              updateFireEffect(currentPoints);
+
             } else if (outcome === 'cruz') {
               flipResult = 'TAILS';
               tailsCount++;
               coinFace.innerHTML = '<strong>❌</strong>';
               coinFaceLabel.textContent = isSpanish ? 'Cruz (reinicio)' : 'Tails (reset)';
+              
+              if (currentPoints >= 2) {
+                triggerSadness();
+              }
               resetStreak();
+
             } else {
               flipResult = 'EDGE';
               edgesCount++;
               coinFace.innerHTML = '<strong>⭐</strong>';
               coinFaceLabel.textContent = isSpanish ? 'Canto (raro)' : 'Edge (rare)';
 
-              // EDGE gives you +50000 points, keeps your streak
               currentPoints += 50000;
               if (currentPoints > bestCombo) {
                 bestCombo = currentPoints;
                 saveGameData();
+                triggerHighlight(resultPill);
               }
               claimButton.disabled = false;
-              showToast(
-                isSpanish
-                  ? '⭐ ¡CANTO! +50000 puntos'
-                  : '⭐ EDGE! +50000 points'
-              );
+              showToast(isSpanish ? '⭐ ¡CANTO! +50000 puntos' : '⭐ EDGE! +50000 points');
+              updateFireEffect(currentPoints);
             }
 
             totalFlips++;
 
-            // Enviar evento de analytics para el flip
-            const user = players.find(function (p) {
-              return p.isUser;
-            });
+            const user = players.find(p => p.isUser);
             sendAnalyticsEvent('coin_flip', {
               flip_result: flipResult,
               current_streak: currentPoints,
@@ -1041,30 +1065,30 @@
 
         function handleClaimClick() {
           if (currentPoints <= 0) return;
-
-          const user = players.find(function (p) {
-            return p.isUser;
-          });
-
+          const user = players.find(p => p.isUser);
           if (!user) return;
 
-          // Evento de click en CLAIM
           sendAnalyticsEvent('claim_click', {
             current_streak: currentPoints,
             current_score: user.score
           });
 
-          // Update best claimed combo before resetting
           if (currentPoints > bestClaimedCombo) {
             bestClaimedCombo = currentPoints;
+            triggerHighlight(bestClaimedPill);
           }
 
           user.score += currentPoints;
+          
+          // Trigger Happiness Animation
+          triggerHappiness();
+
           randomBotProgress(currentPoints);
+          
           const leaderboardPosition = updateLeaderboard();
+          
           saveGameData();
 
-          // Evento resumen run_stats
           sendAnalyticsEvent('run_stats', {
             best_streak: bestCombo,
             best_claimed_streak: bestClaimedCombo,
@@ -1075,7 +1099,6 @@
             edges_count: edgesCount
           });
 
-          // Resetear contadores para el próximo run
           totalFlips = 0;
           headsCount = 0;
           tailsCount = 0;
@@ -1084,22 +1107,15 @@
           const pointsText = isSpanish
             ? (currentPoints === 1 ? ' punto' : ' puntos')
             : (currentPoints === 1 ? ' point' : ' points');
-          showToast(
-            isSpanish
-              ? 'Has cobrado ' + currentPoints + pointsText
-              : 'You claimed ' + currentPoints + pointsText
-          );
+          showToast(isSpanish ? 'Has cobrado ' + currentPoints + pointsText : 'You claimed ' + currentPoints + pointsText);
 
           resetStreak();
           coinFace.textContent = '?';
-          coinFaceLabel.innerHTML = isSpanish
-            ? '<strong>Toca para lanzar</strong>'
-            : '<strong>Tap to flip</strong>';
+          coinFaceLabel.innerHTML = isSpanish ? '<strong>Toca para lanzar</strong>' : '<strong>Tap to flip</strong>';
           scheduleIdleCta();
           updateBestClaimedCombo();
         }
 
-        // --- Simple runtime checks ("test cases") ---
         (function selfTest() {
           console.assert(typeof rollOutcome === 'function', 'rollOutcome should exist');
           const testOutcome = rollOutcome();
@@ -1111,29 +1127,23 @@
           console.assert(players[0].isUser === true, 'First player should be user');
         })();
 
-        // Load saved game data
         loadGameData();
 
         coinButton.addEventListener('click', handleCoinClick);
         claimButton.addEventListener('click', handleClaimClick);
 
-        // Event listeners para botones sociales
         const instagramLink = document.querySelector('.social-link[href*="instagram"]');
         const donateLink = document.querySelector('.social-link[href*="paypal"]');
 
         if (instagramLink) {
           instagramLink.addEventListener('click', function() {
-            sendAnalyticsEvent('social_click', {
-              social_platform: 'instagram'
-            });
+            sendAnalyticsEvent('social_click', { social_platform: 'instagram' });
           });
         }
 
         if (donateLink) {
           donateLink.addEventListener('click', function() {
-            sendAnalyticsEvent('social_click', {
-              social_platform: 'donate'
-            });
+            sendAnalyticsEvent('social_click', { social_platform: 'donate' });
           });
         }
 
@@ -1146,4 +1156,3 @@
     </script>
   </body>
 </html>
-
