@@ -140,6 +140,7 @@
         /* Este Font size cambia el tamaño de la cara de la moneda */
         font-size: 2.26rem;
         font-weight: 800;
+        color: var(--black);
         cursor: pointer;
         outline: none;
         transition:
@@ -391,6 +392,53 @@
         opacity: 1;
         transform: translate(-50%, -4px);
       }
+
+      .header-author {
+        font-size: 0.65rem;
+        font-weight: 400;
+        text-transform: none;
+        letter-spacing: 0;
+        margin-top: 4px;
+        color: var(--black);
+      }
+
+      .social-links {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 12px;
+        margin-top: var(--social-links-margin-top, 24px);
+      }
+
+      .social-link {
+        display: inline-block;
+        padding: 8px 16px;
+        border-radius: 999px;
+        border: 2px solid var(--black);
+        background: #e0e0e0;
+        color: var(--black);
+        text-decoration: none;
+        font-size: 0.65rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        box-shadow: 4px 4px 0 var(--black);
+        transition:
+          transform 120ms ease-out,
+          box-shadow 120ms ease-out,
+          background 120ms ease-out;
+      }
+
+      .social-link:hover {
+        transform: translate(2px, 2px);
+        box-shadow: 2px 2px 0 var(--black);
+        background: #d0d0d0;
+      }
+
+      .social-link:active {
+        transform: translate(3px, 3px);
+        box-shadow: 1px 1px 0 var(--black);
+      }
     </style>
   </head>
   <body>
@@ -401,7 +449,10 @@
     <div class="app">
       <header class="header">
         <div class="header-title">
-          <div>Coinfliip</div>
+          <div>
+            Coinfliip
+            <div class="header-author" id="headerAuthor">by antonio10bc</div>
+          </div>
           <div class="header-badge">HEAD 49.998% / TAILS 49.998% / EDGE 0.002%</div>
         </div>
 
@@ -445,6 +496,11 @@
           
           <div class="leaderboard" id="leaderboard"></div>
         </section>
+
+        <div class="social-links">
+          <a href="https://www.instagram.com/antonio10bc/" target="_blank" rel="noopener noreferrer" class="social-link">Instagram</a>
+          <a href="https://www.paypal.com/paypalme/antonio10bc" target="_blank" rel="noopener noreferrer" class="social-link">Donate</a>
+        </div>
       </main>
     </div>
 
@@ -508,11 +564,19 @@
 
           // Botón CLAIM
           claimButton.textContent = 'COBRAR';
+
+          // Autor
+          const headerAuthor = document.getElementById('headerAuthor');
+          if (headerAuthor) headerAuthor.textContent = 'por antonio10bc';
         } else {
           // Asegurar valores en inglés por defecto
           document.documentElement.lang = 'en';
           coinButton.setAttribute('aria-label', 'Flip coin');
         }
+
+        // Configuración de distancia de los botones sociales (en píxeles)
+        const SOCIAL_LINKS_MARGIN_TOP = 24; // Cambia este valor para ajustar la distancia
+        document.documentElement.style.setProperty('--social-links-margin-top', SOCIAL_LINKS_MARGIN_TOP + 'px');
 
         // Probabilities as percentages, kept in the proportions you defined
         const P_HEADS = 49.998;
