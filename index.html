@@ -99,6 +99,123 @@
     text-align: center;
   }
 }
+
+/* --- NAME MODAL STYLES --- */
+.name-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(5, 5, 5, 0.6);
+  z-index: 30000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.name-modal-overlay.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.name-modal {
+  background: var(--white);
+  border: 4px solid var(--black);
+  box-shadow: 12px 12px 0 var(--black);
+  padding: 24px;
+  max-width: 400px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  transform: scale(0.9);
+  transition: transform 0.2s ease;
+}
+
+.name-modal-overlay.visible .name-modal {
+  transform: scale(1);
+}
+
+.name-modal h3 {
+  margin: 0;
+  text-transform: uppercase;
+  font-size: 1.2rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+}
+
+.name-modal input {
+  padding: 12px 16px;
+  border: 3px solid var(--black);
+  background: var(--white);
+  font-size: 1rem;
+  font-weight: 600;
+  font-family: inherit;
+  color: var(--black);
+  box-shadow: 4px 4px 0 var(--black);
+  transition: transform 0.1s, box-shadow 0.1s;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.name-modal input:focus {
+  outline: none;
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 var(--black);
+  background: var(--lime-soft);
+}
+
+.name-modal-buttons {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 8px;
+}
+
+.name-modal-btn {
+  padding: 10px 20px;
+  font-weight: 800;
+  text-transform: uppercase;
+  border: 3px solid var(--black);
+  cursor: pointer;
+  font-size: 0.85rem;
+  box-shadow: 4px 4px 0 var(--black);
+  transition: transform 0.1s, box-shadow 0.1s;
+  font-family: inherit;
+}
+
+.name-modal-btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 var(--black);
+}
+
+.name-modal-btn.cancel {
+  background: #e0e0e0;
+  color: var(--black);
+}
+
+.name-modal-btn.save {
+  background: var(--lime);
+  color: var(--black);
+}
+
+@media (max-width: 600px) {
+  .name-modal {
+    padding: 20px;
+    max-width: 90%;
+  }
+  .name-modal-buttons {
+    flex-direction: column;
+  }
+  .name-modal-btn {
+    width: 100%;
+  }
+}
       :root {
         --lime: #c6ff33;
         --lime-soft: #e8ff9f;
@@ -1013,6 +1130,104 @@
           return score.toLocaleString('es-ES');
         }
 
+        // --- NAME MODAL FUNCTIONS ---
+        let nameModalHandlers = null;
+        
+        function showNameModal(player) {
+          const overlay = document.getElementById('nameModalOverlay');
+          const input = document.getElementById('nameModalInput');
+          const title = document.getElementById('nameModalTitle');
+          const cancelBtn = document.getElementById('nameModalCancel');
+          const saveBtn = document.getElementById('nameModalSave');
+          
+          if (!overlay || !input || !title || !cancelBtn || !saveBtn) return;
+          
+          // Remove old handlers if they exist
+          if (nameModalHandlers) {
+            saveBtn.removeEventListener('click', nameModalHandlers.save);
+            cancelBtn.removeEventListener('click', nameModalHandlers.cancel);
+            input.removeEventListener('keydown', nameModalHandlers.keydown);
+            overlay.removeEventListener('click', nameModalHandlers.overlay);
+          }
+          
+          // Set current name
+          input.value = player.name;
+          input.maxLength = 10;
+          
+          // Translate
+          if (isSpanish) {
+            title.textContent = 'Cambiar nombre';
+            cancelBtn.textContent = 'Cancelar';
+            saveBtn.textContent = 'Guardar';
+            input.placeholder = 'Máx. 10 caracteres';
+          } else {
+            title.textContent = 'Change name';
+            cancelBtn.textContent = 'Cancel';
+            saveBtn.textContent = 'Save';
+            input.placeholder = 'Max. 10 characters';
+          }
+          
+          // Create handlers
+          const handleSave = function() {
+            const trimmedName = input.value.trim().substring(0, 10);
+            if (trimmedName.length > 0) {
+              player.name = trimmedName;
+              saveGameData();
+              updateLeaderboard();
+            }
+            hideNameModal();
+          };
+          
+          const handleCancel = function() {
+            hideNameModal();
+          };
+          
+          const handleKeyPress = function(e) {
+            if (e.key === 'Enter') {
+              e.preventDefault();
+              handleSave();
+            } else if (e.key === 'Escape') {
+              e.preventDefault();
+              handleCancel();
+            }
+          };
+          
+          const handleOverlayClick = function(e) {
+            if (e.target === overlay) {
+              handleCancel();
+            }
+          };
+          
+          // Store handlers for cleanup
+          nameModalHandlers = {
+            save: handleSave,
+            cancel: handleCancel,
+            keydown: handleKeyPress,
+            overlay: handleOverlayClick
+          };
+          
+          // Add event listeners
+          saveBtn.addEventListener('click', handleSave);
+          cancelBtn.addEventListener('click', handleCancel);
+          input.addEventListener('keydown', handleKeyPress);
+          overlay.addEventListener('click', handleOverlayClick);
+          
+          // Show modal
+          overlay.classList.add('visible');
+          // Small delay to ensure transition works
+          setTimeout(() => {
+            input.focus();
+            input.select();
+          }, 50);
+        }
+        
+        function hideNameModal() {
+          const overlay = document.getElementById('nameModalOverlay');
+          if (overlay) {
+            overlay.classList.remove('visible');
+          }
+        }
+
         // --- UPDATED LEADERBOARD WITH TIMED TRENDS ---
         function updateLeaderboard() {
           const sorted = players.slice().sort((a, b) => b.score - a.score);
@@ -1044,16 +1259,7 @@
               name.style.cursor = 'pointer';
               name.title = isSpanish ? 'Toca para cambiar tu nombre' : 'Click to change your name';
               name.addEventListener('click', function() {
-                const currentName = player.name;
-                const newName = prompt(isSpanish ? 'Introduce tu nombre (máx. 10 caracteres):' : 'Enter your name (max. 10 characters):', currentName);
-                if (newName !== null) {
-                  const trimmedName = newName.trim().substring(0, 10);
-                  if (trimmedName.length > 0) {
-                    player.name = trimmedName;
-                    saveGameData();
-                    updateLeaderboard();
-                  }
-                }
+                showNameModal(player);
               });
               const tag = document.createElement('span');
               tag.className = 'leaderboard-tag';
@@ -1305,6 +1511,18 @@
           </div>
         </div>
       </div>
+
+    <!-- Name Edit Modal -->
+    <div id="nameModalOverlay" class="name-modal-overlay">
+      <div class="name-modal">
+        <h3 id="nameModalTitle">Change name</h3>
+        <input type="text" id="nameModalInput" maxlength="10" />
+        <div class="name-modal-buttons">
+          <button id="nameModalCancel" class="name-modal-btn cancel">Cancel</button>
+          <button id="nameModalSave" class="name-modal-btn save">Save</button>
+        </div>
+      </div>
+    </div>
       <script>
         (function() {
           const cookieBanner = document.getElementById('cookieBanner');
