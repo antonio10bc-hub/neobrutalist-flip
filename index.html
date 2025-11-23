@@ -742,9 +742,21 @@
           claimButton.textContent = 'COBRAR';
           const headerAuthor = document.getElementById('headerAuthor');
           if (headerAuthor) headerAuthor.textContent = 'por antonio10bc';
+          
+          // Translate cookie banner buttons
+          const btnAccept = document.getElementById('btnAccept');
+          const btnReject = document.getElementById('btnReject');
+          if (btnAccept) btnAccept.textContent = 'Aceptar';
+          if (btnReject) btnReject.textContent = 'Denegar';
         } else {
           document.documentElement.lang = 'en';
           coinButton.setAttribute('aria-label', 'Flip coin');
+          
+          // Translate cookie banner buttons to English
+          const btnAccept = document.getElementById('btnAccept');
+          const btnReject = document.getElementById('btnReject');
+          if (btnAccept) btnAccept.textContent = 'Accept';
+          if (btnReject) btnReject.textContent = 'Reject';
         }
 
         const SOCIAL_LINKS_MARGIN_TOP = 24;
@@ -879,7 +891,13 @@
           const gameData = {
             userScore: user ? user.score : 0,
             bestCombo: bestCombo,
-            bestClaimedCombo: bestClaimedCombo
+            bestClaimedCombo: bestClaimedCombo,
+            // Save all players' scores for leaderboard persistence
+            playersScores: players.map(p => ({
+              id: p.id,
+              score: p.score,
+              name: p.isUser ? p.name : undefined // Only save user's custom name
+            }))
           };
           try {
             localStorage.setItem('coinfliip_gameData', JSON.stringify(gameData));
@@ -894,9 +912,29 @@
             if (savedData) {
               const gameData = JSON.parse(savedData);
               const user = players.find(p => p.isUser);
-              if (user) user.score = gameData.userScore || 0;
+              if (user) {
+                user.score = gameData.userScore || 0;
+                // Restore custom name if saved
+                if (gameData.playersScores) {
+                  const savedUser = gameData.playersScores.find(p => p.id === 'user');
+                  if (savedUser && savedUser.name) {
+                    user.name = savedUser.name;
+                  }
+                }
+              }
               bestCombo = gameData.bestCombo || 0;
               bestClaimedCombo = gameData.bestClaimedCombo || 0;
+              
+              // Restore all players' scores if available
+              if (gameData.playersScores) {
+                gameData.playersScores.forEach(savedPlayer => {
+                  const player = players.find(p => p.id === savedPlayer.id);
+                  if (player && !player.isUser) {
+                    player.score = savedPlayer.score || player.score;
+                  }
+                });
+              }
+              
               return true;
             }
           } catch (e) {
@@ -999,9 +1037,24 @@
             const name = document.createElement('div');
             name.className = 'leaderboard-name';
             name.textContent = player.name;
-
+            
+            // Make user row clickable to edit name
             if (player.isUser) {
               userPosition = currentRank;
+              name.style.cursor = 'pointer';
+              name.title = isSpanish ? 'Toca para cambiar tu nombre' : 'Click to change your name';
+              name.addEventListener('click', function() {
+                const currentName = player.name;
+                const newName = prompt(isSpanish ? 'Introduce tu nombre (máx. 10 caracteres):' : 'Enter your name (max. 10 characters):', currentName);
+                if (newName !== null) {
+                  const trimmedName = newName.trim().substring(0, 10);
+                  if (trimmedName.length > 0) {
+                    player.name = trimmedName;
+                    saveGameData();
+                    updateLeaderboard();
+                  }
+                }
+              });
               const tag = document.createElement('span');
               tag.className = 'leaderboard-tag';
               tag.textContent = isSpanish ? 'Tú' : 'You';
@@ -1034,15 +1087,15 @@
             // Append icon
             name.appendChild(trendIcon);
 
-            // Trigger Visibility for 3s if changed
+            // Trigger Visibility for 60s if changed
             if (hasChanged) {
                 // We must delay the adding of the class slightly or do it immediately.
                 // Since element is fresh, we can just add the class, then remove it with setTimeout.
                 trendIcon.classList.add('visible');
                 setTimeout(() => {
                     if (trendIcon) trendIcon.classList.remove('visible');
-                    //Tiempo de 10 segundos para que se vea el cambio de posición
-                }, 10000);
+                    //Tiempo de 60 segundos para que se vea el cambio de posición
+                }, 60000);
             }
 
             // Score
@@ -1173,7 +1226,7 @@
           
           const leaderboardPosition = updateLeaderboard();
           
-          saveGameData();
+          saveGameData(); // Save includes leaderboard state now (all players' scores)
 
           sendAnalyticsEvent('run_stats', {
             best_streak: bestCombo,
