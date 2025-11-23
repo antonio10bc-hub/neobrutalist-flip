@@ -159,7 +159,6 @@
   color: var(--black);
   box-shadow: 4px 4px 0 var(--black);
   transition: transform 0.1s, box-shadow 0.1s;
-  text-transform: uppercase;
   letter-spacing: 0.05em;
 }
 
@@ -394,8 +393,8 @@
       }
 
       .coin {
-        width: 140px;
-        height: 140px;
+        width: 200px;
+        height: 200px;
         border-radius: 50%;
         border: 4px solid var(--black);
         background: var(--white);
@@ -722,9 +721,228 @@
         transform: translate(3px, 3px);
         box-shadow: 1px 1px 0 var(--black);
       }
+
+      /* ========== DEBUG TOOL STYLES - boton debug ========== */
+      /* Estos estilos solo se usan si window.__DEBUG_ENABLED es true */
+      /* Puedes comentar todo este bloque si quieres, pero no es necesario */
+      /* ========== DEBUG TOOL STYLES ========== */
+      .debug-toggle {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        border: 3px solid var(--black);
+        background: #ff5e5e;
+        color: var(--black);
+        font-weight: 800;
+        font-size: 1.2rem;
+        cursor: pointer;
+        box-shadow: 4px 4px 0 var(--black);
+        z-index: 25000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: transform 0.1s, box-shadow 0.1s;
+        user-select: none;
+      }
+
+      .debug-toggle:active {
+        transform: translate(2px, 2px);
+        box-shadow: 2px 2px 0 var(--black);
+      }
+
+      .debug-panel {
+        position: fixed;
+        bottom: 80px;
+        right: 20px;
+        width: 300px;
+        background: var(--white);
+        border: 4px solid var(--black);
+        box-shadow: 8px 8px 0 var(--black);
+        padding: 16px;
+        z-index: 25000;
+        display: none;
+        flex-direction: column;
+        gap: 12px;
+        max-height: 80vh;
+        overflow-y: auto;
+      }
+
+      .debug-panel.visible {
+        display: flex;
+      }
+
+      .debug-panel.minimized {
+        width: 60px;
+        height: 60px;
+        padding: 8px;
+        overflow: hidden;
+      }
+
+      .debug-panel.minimized .debug-content {
+        display: none;
+      }
+
+      .debug-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+        border-bottom: 2px solid var(--black);
+        padding-bottom: 8px;
+      }
+
+      .debug-header h3 {
+        margin: 0;
+        font-size: 1rem;
+        text-transform: uppercase;
+        font-weight: 800;
+        letter-spacing: 0.05em;
+      }
+
+      .debug-close,
+      .debug-minimize {
+        width: 24px;
+        height: 24px;
+        border: 2px solid var(--black);
+        background: var(--white);
+        cursor: pointer;
+        font-weight: 800;
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 2px 2px 0 var(--black);
+        transition: transform 0.1s, box-shadow 0.1s;
+      }
+
+      .debug-close:active,
+      .debug-minimize:active {
+        transform: translate(1px, 1px);
+        box-shadow: 1px 1px 0 var(--black);
+      }
+
+      .debug-content {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .debug-section {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .debug-section-title {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        font-weight: 700;
+        letter-spacing: 0.05em;
+        color: var(--gray);
+      }
+
+      .debug-btn {
+        padding: 8px 12px;
+        border: 3px solid var(--black);
+        background: var(--lime);
+        color: var(--black);
+        font-weight: 800;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        cursor: pointer;
+        box-shadow: 4px 4px 0 var(--black);
+        transition: transform 0.1s, box-shadow 0.1s;
+        letter-spacing: 0.05em;
+      }
+
+      .debug-btn:active {
+        transform: translate(2px, 2px);
+        box-shadow: 2px 2px 0 var(--black);
+      }
+
+      .debug-btn.danger {
+        background: #ff5e5e;
+      }
+
+      .debug-input-group {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+
+      .debug-input {
+        flex: 1;
+        padding: 6px 10px;
+        border: 2px solid var(--black);
+        background: var(--white);
+        font-size: 0.8rem;
+        font-weight: 600;
+        font-family: inherit;
+        box-shadow: 2px 2px 0 var(--black);
+      }
+
+      .debug-input:focus {
+        outline: none;
+        transform: translate(1px, 1px);
+        box-shadow: 1px 1px 0 var(--black);
+      }
+
+      .debug-slider-group {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .debug-slider {
+        width: 100%;
+        height: 6px;
+        border-radius: 3px;
+        background: var(--white);
+        border: 2px solid var(--black);
+        outline: none;
+        -webkit-appearance: none;
+      }
+
+      .debug-slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: var(--black);
+        cursor: pointer;
+        border: 2px solid var(--white);
+        box-shadow: 2px 2px 0 var(--black);
+      }
+
+      .debug-slider::-moz-range-thumb {
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: var(--black);
+        cursor: pointer;
+        border: 2px solid var(--white);
+        box-shadow: 2px 2px 0 var(--black);
+      }
+
+      .debug-slider-value {
+        font-size: 0.7rem;
+        font-weight: 600;
+        text-align: center;
+      }
+      /* ========== END DEBUG TOOL STYLES ========== */
     </style>
   </head>
   <body>
+    <!-- ========== boton debug - Cambia este valor a false para desactivar completamente el debug tool ========== -->
+    <script>
+      window.__DEBUG_ENABLED = false; // <-- CAMBIAR A false PARA DESACTIVAR
+    </script>
+    <!-- ========== END boton debug ========== -->
+    
     <!-- Google Tag Manager (noscript) -->
     <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-N77K3KBS"
     height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
@@ -743,7 +961,7 @@
             Coinfliip
             <div class="header-author" id="headerAuthor">by antonio10bc</div>
           </div>
-          <div class="header-badge">HEAD 49.998% / TAILS 49.998% / EDGE 0.002%</div>
+          <div class="header-badge">HEAD 49.999% / TAILS 49.999% / EDGE 0.002%</div>
         </div>
 
         <div class="coin-panel">
@@ -838,7 +1056,7 @@
         if (isSpanish) {
           document.documentElement.lang = 'es';
           const headerBadge = document.querySelector('.header-badge');
-          if (headerBadge) headerBadge.textContent = 'CARA 49.998% / CRUZ 49.998% / CANTO 0.002%';
+          if (headerBadge) headerBadge.textContent = 'CARA 49.999% / CRUZ 49.999% / CANTO 0.002%';
           coinButton.setAttribute('aria-label', 'Lanzar moneda');
           coinFaceLabel.innerHTML = '<strong>Toca para lanzar</strong>';
           const rulesParagraph = document.querySelector('.coin-info p');
@@ -879,8 +1097,8 @@
         const SOCIAL_LINKS_MARGIN_TOP = 24;
         document.documentElement.style.setProperty('--social-links-margin-top', SOCIAL_LINKS_MARGIN_TOP + 'px');
 
-        const P_HEADS = 49.998;
-        const P_TAILS = 49.998;
+        const P_HEADS = 49.999;
+        const P_TAILS = 49.999;
         const P_EDGE = 0.002;
         const P_TOTAL = P_HEADS + P_TAILS + P_EDGE; 
 
@@ -1497,6 +1715,47 @@
         updateBestCombo();
         updateBestClaimedCombo();
         scheduleIdleCta();
+
+        // ========== DEBUG TOOL EXPOSURE - boton debug ==========
+        // Solo expone funciones si el debug está habilitado
+        if (window.__DEBUG_ENABLED === true) {
+          window.__DEBUG_COINFLIIP = {
+            resetGame: function() {
+              localStorage.removeItem('coinfliip_gameData');
+              location.reload();
+            },
+            resetStreaks: function() {
+              bestCombo = 0;
+              bestClaimedCombo = 0;
+              currentPoints = 0;
+              updateBestCombo();
+              updateBestClaimedCombo();
+              updateSpeechBubble();
+              updateFireEffect(0);
+              saveGameData();
+            },
+            resetLeaderboard: function() {
+              const user = players.find(p => p.isUser);
+              if (user) {
+                user.score = 0;
+                updateLeaderboard();
+                saveGameData();
+              }
+            },
+            addPoints: function(points) {
+              const user = players.find(p => p.isUser);
+              if (user) {
+                user.score += points;
+                updateLeaderboard();
+                saveGameData();
+              }
+            },
+            getCoinElement: function() {
+              return coinButton;
+            }
+          };
+        }
+        // ========== END DEBUG TOOL EXPOSURE - boton debug ==========
       })();
     </script>
     <div id="cookieBanner" class="cookie-banner" style="display: none;">
@@ -1570,5 +1829,171 @@
           });
         })();
       </script>
+
+    <!-- ========== DEBUG TOOL ========== -->
+    <button class="debug-toggle" id="debugToggle" title="Debug Tool" style="display: none;">🐛</button>
+    <div class="debug-panel" id="debugPanel" style="display: none;">
+      <div class="debug-header">
+        <h3>Debug Tool</h3>
+        <div style="display: flex; gap: 4px;">
+          <button class="debug-minimize" id="debugMinimize" title="Minimize">−</button>
+          <button class="debug-close" id="debugClose" title="Close">×</button>
+        </div>
+      </div>
+      <div class="debug-content">
+        <div class="debug-section">
+          <div class="debug-section-title">Game Reset</div>
+          <button class="debug-btn danger" id="debugResetGame">Reset Game</button>
+        </div>
+        <div class="debug-section">
+          <div class="debug-section-title">Streaks</div>
+          <button class="debug-btn danger" id="debugResetStreaks">Reset Streaks</button>
+        </div>
+        <div class="debug-section">
+          <div class="debug-section-title">Leaderboard</div>
+          <button class="debug-btn danger" id="debugResetLeaderboard">Reset Leaderboard Score</button>
+        </div>
+        <div class="debug-section">
+          <div class="debug-section-title">Points</div>
+          <div class="debug-input-group">
+            <input type="number" class="debug-input" id="debugPointsInput" placeholder="Points" value="1000">
+            <button class="debug-btn" id="debugAddPoints">Add</button>
+          </div>
+        </div>
+        <div class="debug-section">
+          <div class="debug-section-title">Coin Size</div>
+          <div class="debug-slider-group">
+            <input type="range" class="debug-slider" id="debugCoinSize" min="80" max="200" value="200">
+            <div class="debug-slider-value" id="debugCoinSizeValue">200px</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // ========== DEBUG TOOL SCRIPT - boton debug ==========
+      // Solo se ejecuta si window.__DEBUG_ENABLED es true
+      if (window.__DEBUG_ENABLED === true) {
+        (function() {
+          const debugToggle = document.getElementById('debugToggle');
+          const debugPanel = document.getElementById('debugPanel');
+          
+          // Mostrar elementos de debug
+          if (debugToggle) {
+            debugToggle.removeAttribute('style'); // Eliminar estilo inline del HTML
+            debugToggle.style.display = 'flex'; // Mostrar el botón
+          }
+          // Eliminar estilo inline del panel para que las clases CSS funcionen
+          if (debugPanel) {
+            debugPanel.removeAttribute('style'); // Eliminar el style="display: none;" inline del HTML
+            // El panel estará oculto por defecto (clase CSS), se mostrará con la clase 'visible'
+          }
+        const debugClose = document.getElementById('debugClose');
+        const debugMinimize = document.getElementById('debugMinimize');
+        const debugResetGame = document.getElementById('debugResetGame');
+        const debugResetStreaks = document.getElementById('debugResetStreaks');
+        const debugResetLeaderboard = document.getElementById('debugResetLeaderboard');
+        const debugAddPoints = document.getElementById('debugAddPoints');
+        const debugPointsInput = document.getElementById('debugPointsInput');
+        const debugCoinSize = document.getElementById('debugCoinSize');
+        const debugCoinSizeValue = document.getElementById('debugCoinSizeValue');
+        const coinButton = document.getElementById('coinButton');
+
+        let isMinimized = false;
+
+        // Toggle panel
+        debugToggle.addEventListener('click', function() {
+          if (debugPanel.classList.contains('visible')) {
+            debugPanel.classList.remove('visible');
+            debugPanel.style.display = 'none'; // Asegurar que se oculte
+          } else {
+            debugPanel.style.display = ''; // Eliminar estilo inline para que funcione la clase
+            debugPanel.classList.add('visible');
+            debugPanel.classList.remove('minimized');
+            isMinimized = false;
+          }
+        });
+
+        // Close panel
+        debugClose.addEventListener('click', function(e) {
+          e.stopPropagation();
+          debugPanel.classList.remove('visible');
+          debugPanel.style.display = 'none'; // Asegurar que se oculte
+        });
+
+        // Minimize panel
+        debugMinimize.addEventListener('click', function(e) {
+          e.stopPropagation();
+          isMinimized = !isMinimized;
+          if (isMinimized) {
+            debugPanel.classList.add('minimized');
+          } else {
+            debugPanel.classList.remove('minimized');
+          }
+        });
+
+        // Reset Game
+        debugResetGame.addEventListener('click', function() {
+          if (confirm('¿Resetear completamente el juego? Esto borrará todo.')) {
+            if (window.__DEBUG_COINFLIIP && window.__DEBUG_COINFLIIP.resetGame) {
+              window.__DEBUG_COINFLIIP.resetGame();
+            }
+          }
+        });
+
+        // Reset Streaks
+        debugResetStreaks.addEventListener('click', function() {
+          if (window.__DEBUG_COINFLIIP && window.__DEBUG_COINFLIIP.resetStreaks) {
+            window.__DEBUG_COINFLIIP.resetStreaks();
+            alert('Rachas reseteadas');
+          }
+        });
+
+        // Reset Leaderboard Score
+        debugResetLeaderboard.addEventListener('click', function() {
+          if (window.__DEBUG_COINFLIIP && window.__DEBUG_COINFLIIP.resetLeaderboard) {
+            window.__DEBUG_COINFLIIP.resetLeaderboard();
+            alert('Puntuación del leaderboard resetada');
+          }
+        });
+
+        // Add Points
+        debugAddPoints.addEventListener('click', function() {
+          const points = parseInt(debugPointsInput.value) || 0;
+          if (points > 0 && window.__DEBUG_COINFLIIP && window.__DEBUG_COINFLIIP.addPoints) {
+            window.__DEBUG_COINFLIIP.addPoints(points);
+            alert(`Añadidos ${points} puntos`);
+          }
+        });
+
+        // Coin Size Slider
+        debugCoinSize.addEventListener('input', function() {
+          const size = this.value;
+          debugCoinSizeValue.textContent = size + 'px';
+          const coinEl = window.__DEBUG_COINFLIIP && window.__DEBUG_COINFLIIP.getCoinElement ? window.__DEBUG_COINFLIIP.getCoinElement() : coinButton;
+          if (coinEl) {
+            coinEl.style.width = size + 'px';
+            coinEl.style.height = size + 'px';
+          }
+        });
+
+        // Initialize coin size display (wait for game to load)
+        function initCoinSize() {
+          const coinEl = window.__DEBUG_COINFLIIP && window.__DEBUG_COINFLIIP.getCoinElement ? window.__DEBUG_COINFLIIP.getCoinElement() : coinButton;
+          if (coinEl) {
+            const currentSize = parseInt(window.getComputedStyle(coinEl).width) || 200;
+            debugCoinSize.value = currentSize;
+            debugCoinSizeValue.textContent = currentSize + 'px';
+          } else if (window.__DEBUG_COINFLIIP) {
+            // Retry after a short delay if coin element not ready yet
+            setTimeout(initCoinSize, 100);
+          }
+        }
+        initCoinSize();
+        })();
+      } // Cierre del if (window.__DEBUG_ENABLED === true)
+      // ========== END DEBUG TOOL SCRIPT - boton debug ==========
+    </script>
+    <!-- ========== END DEBUG TOOL ========== -->
   </body>
 </html>
