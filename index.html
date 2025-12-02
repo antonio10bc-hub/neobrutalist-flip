@@ -3,218 +3,20 @@
   <head>
     <!-- Google Tag Manager -->
     <script>
-        // Definir dataLayer para que no de error si se llama antes de aceptar
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
       </script>
     <!-- End Google Tag Manager -->
+    
+    <!-- FIREBASE SCRIPTS (COMPAT VERSION 9) -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Coinfliip</title>
     <link rel="icon" type="image/png" href="favicon.png">
     <style>
-        /* --- COOKIE BANNER STYLES --- */
-.cookie-banner {
-  position: fixed;
-  bottom: 20px;
-  left: 20px;
-  right: 20px;
-  z-index: 20000; /* Por encima de todo */
-  display: flex;
-  justify-content: center;
-  pointer-events: none; /* Permite clicks a través del contenedor vacío */
-}
-
-.cookie-content {
-  pointer-events: auto;
-  background: var(--white);
-  border: 4px solid var(--black);
-  box-shadow: 8px 8px 0 var(--black);
-  padding: 10px;
-  max-width: 500px;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.cookie-content h3 {
-  margin: 0;
-  text-transform: uppercase;
-  font-size: 1.1rem;
-}
-
-.cookie-content p {
-  margin: 0;
-  font-size: 0.9rem;
-  line-height: 1.4;
-}
-
-.cookie-buttons {
-  display: flex;
-  gap: 12px;
-  justify-content: flex-end;
-}
-
-.cookie-btn {
-  padding: 8px 16px;
-  font-weight: 800;
-  text-transform: uppercase;
-  border: 3px solid var(--black);
-  cursor: pointer;
-  font-size: 0.8rem;
-  box-shadow: 4px 4px 0 var(--black);
-  transition: transform 0.1s, box-shadow 0.1s;
-}
-
-.cookie-btn:active {
-  transform: translate(2px, 2px);
-  box-shadow: 2px 2px 0 var(--black);
-}
-
-.cookie-btn.accept {
-  background: var(--lime);
-  color: var(--black);
-}
-
-.cookie-btn.reject {
-  background: #ff5e5e; /* Un rojo suave para rechazar */
-  color: var(--black);
-}
-
-@media (max-width: 600px) {
-  .cookie-banner {
-    left: 10px;
-    right: 10px;
-    bottom: 10px;
-  }
-  .cookie-content {
-    padding: 16px;
-  }
-  .cookie-buttons {
-    justify-content: stretch;
-  }
-  .cookie-btn {
-    flex: 1;
-    text-align: center;
-  }
-}
-
-/* --- NAME MODAL STYLES --- */
-.name-modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(5, 5, 5, 0.6);
-  z-index: 30000;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 20px;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.2s ease;
-}
-
-.name-modal-overlay.visible {
-  opacity: 1;
-  pointer-events: auto;
-}
-
-.name-modal {
-  background: var(--white);
-  border: 4px solid var(--black);
-  box-shadow: 12px 12px 0 var(--black);
-  padding: 24px;
-  max-width: 400px;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  transform: scale(0.9);
-  transition: transform 0.2s ease;
-}
-
-.name-modal-overlay.visible .name-modal {
-  transform: scale(1);
-}
-
-.name-modal h3 {
-  margin: 0;
-  text-transform: uppercase;
-  font-size: 1.2rem;
-  font-weight: 800;
-  letter-spacing: 0.06em;
-}
-
-.name-modal input {
-  padding: 12px 16px;
-  border: 3px solid var(--black);
-  background: var(--white);
-  font-size: 1rem;
-  font-weight: 600;
-  font-family: inherit;
-  color: var(--black);
-  box-shadow: 4px 4px 0 var(--black);
-  transition: transform 0.1s, box-shadow 0.1s;
-  letter-spacing: 0.05em;
-}
-
-.name-modal input:focus {
-  outline: none;
-  transform: translate(2px, 2px);
-  box-shadow: 2px 2px 0 var(--black);
-  background: var(--lime-soft);
-}
-
-.name-modal-buttons {
-  display: flex;
-  gap: 12px;
-  justify-content: flex-end;
-  margin-top: 8px;
-}
-
-.name-modal-btn {
-  padding: 10px 20px;
-  font-weight: 800;
-  text-transform: uppercase;
-  border: 3px solid var(--black);
-  cursor: pointer;
-  font-size: 0.85rem;
-  box-shadow: 4px 4px 0 var(--black);
-  transition: transform 0.1s, box-shadow 0.1s;
-  font-family: inherit;
-}
-
-.name-modal-btn:active {
-  transform: translate(2px, 2px);
-  box-shadow: 2px 2px 0 var(--black);
-}
-
-.name-modal-btn.cancel {
-  background: #e0e0e0;
-  color: var(--black);
-}
-
-.name-modal-btn.save {
-  background: var(--lime);
-  color: var(--black);
-}
-
-@media (max-width: 600px) {
-  .name-modal {
-    padding: 20px;
-    max-width: 90%;
-  }
-  .name-modal-buttons {
-    flex-direction: column;
-  }
-  .name-modal-btn {
-    width: 100%;
-  }
-}
       :root {
         --lime: #c6ff33;
         --lime-soft: #e8ff9f;
@@ -239,6 +41,11 @@
         font-family: system-ui, -apple-system, BlinkMacSystemFont, 'SF Pro Text',
           sans-serif;
         color: var(--black);
+      }
+
+      /* --- UTILITIES --- */
+      .hidden {
+        display: none !important;
       }
 
       /* --- FX CONTAINERS --- */
@@ -282,7 +89,7 @@
         100% { transform: translateY(100px) rotate(20deg); opacity: 0; }
       }
 
-      /* HAPPY PARTICLES (NUEVO) */
+      /* HAPPY PARTICLES */
       .happy-particle {
         position: absolute;
         user-select: none;
@@ -298,8 +105,8 @@
         50% { transform: translateY(-80px) scale(1.2); opacity: 1; }
         100% { transform: translateY(-150px) scale(1); opacity: 0; }
       }
-      /* -------------------------- */
 
+      /* --- APP CONTAINER --- */
       .app {
         width: min(960px, 100%);
         background: var(--white);
@@ -312,6 +119,100 @@
         z-index: 1;
       }
 
+      /* --- MENU STYLES --- */
+      .menu-content {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        align-items: center;
+        width: 100%;
+        max-width: 400px;
+        margin: 0 auto;
+      }
+
+      .menu-btn {
+        width: 100%;
+        padding: 16px;
+        font-weight: 800;
+        text-transform: uppercase;
+        border: 4px solid var(--black);
+        background: var(--lime); 
+        color: var(--black);
+        cursor: pointer;
+        font-size: 1.1rem;
+        box-shadow: 6px 6px 0 var(--black);
+        transition: transform 0.1s, box-shadow 0.1s;
+        letter-spacing: 0.08em;
+        text-align: center;
+        font-family: inherit;
+      }
+
+      .menu-btn:active {
+        transform: translate(3px, 3px);
+        box-shadow: 3px 3px 0 var(--black);
+      }
+
+      .menu-btn.secondary {
+        background: var(--white);
+      }
+      
+      .menu-btn.join-btn {
+        background: var(--black);
+        color: var(--lime);
+        border-color: var(--black);
+      }
+
+      .menu-input {
+        width: 100%;
+        padding: 16px;
+        border: 4px solid var(--black);
+        background: var(--white);
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--black);
+        box-shadow: 4px 4px 0 var(--black);
+        text-transform: uppercase;
+        text-align: center;
+        letter-spacing: 0.1em;
+        font-family: inherit;
+        transition: transform 0.1s, box-shadow 0.1s;
+      }
+      
+      .menu-input:focus {
+        outline: none;
+        transform: translate(2px, 2px);
+        box-shadow: 2px 2px 0 var(--black);
+        background: var(--lime-soft);
+      }
+
+      .menu-input::placeholder {
+        color: var(--gray);
+        text-transform: none;
+        letter-spacing: 0;
+        font-weight: 500;
+      }
+
+      .menu-separator {
+        width: 100%;
+        height: 4px;
+        background: var(--black);
+        margin: 10px 0;
+        opacity: 0.1;
+      }
+      
+      .menu-row {
+        display: flex; 
+        gap: 12px; 
+        width: 100%;
+      }
+      
+      @media (max-width: 600px) {
+        .menu-row {
+            flex-direction: column;
+        }
+      }
+
+      /* --- HEADER & GAME --- */
       .header {
         border-bottom: 4px solid var(--black);
         background: var(--lime-soft);
@@ -637,12 +538,12 @@
         font-size: 0.8rem;
         line-height: 1;
         display: inline-block;
-        opacity: 0; /* Oculto por defecto */
+        opacity: 0;
         transition: opacity 200ms ease;
       }
       
       .trend-icon.visible {
-        opacity: 1; /* Se muestra cuando cambia */
+        opacity: 1;
       }
 
       .trend-up { color: var(--green-trend); }
@@ -722,227 +623,193 @@
         box-shadow: 1px 1px 0 var(--black);
       }
 
-      /* ========== DEBUG TOOL STYLES - boton debug ========== */
-      /* Estos estilos solo se usan si window.__DEBUG_ENABLED es true */
-      /* Puedes comentar todo este bloque si quieres, pero no es necesario */
-      /* ========== DEBUG TOOL STYLES ========== */
-      .debug-toggle {
+      /* --- COOKIE BANNER --- */
+      .cookie-banner {
         position: fixed;
         bottom: 20px;
+        left: 20px;
         right: 20px;
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-        border: 3px solid var(--black);
-        background: #ff5e5e;
-        color: var(--black);
-        font-weight: 800;
-        font-size: 1.2rem;
-        cursor: pointer;
-        box-shadow: 4px 4px 0 var(--black);
-        z-index: 25000;
+        z-index: 20000;
         display: flex;
-        align-items: center;
         justify-content: center;
-        transition: transform 0.1s, box-shadow 0.1s;
-        user-select: none;
+        pointer-events: none;
       }
 
-      .debug-toggle:active {
-        transform: translate(2px, 2px);
-        box-shadow: 2px 2px 0 var(--black);
-      }
-
-      .debug-panel {
-        position: fixed;
-        bottom: 80px;
-        right: 20px;
-        width: 300px;
+      .cookie-content {
+        pointer-events: auto;
         background: var(--white);
         border: 4px solid var(--black);
         box-shadow: 8px 8px 0 var(--black);
-        padding: 16px;
-        z-index: 25000;
-        display: none;
-        flex-direction: column;
-        gap: 12px;
-        max-height: 80vh;
-        overflow-y: auto;
-      }
-
-      .debug-panel.visible {
-        display: flex;
-      }
-
-      .debug-panel.minimized {
-        width: 60px;
-        height: 60px;
-        padding: 8px;
-        overflow: hidden;
-      }
-
-      .debug-panel.minimized .debug-content {
-        display: none;
-      }
-
-      .debug-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 8px;
-        border-bottom: 2px solid var(--black);
-        padding-bottom: 8px;
-      }
-
-      .debug-header h3 {
-        margin: 0;
-        font-size: 1rem;
-        text-transform: uppercase;
-        font-weight: 800;
-        letter-spacing: 0.05em;
-      }
-
-      .debug-close,
-      .debug-minimize {
-        width: 24px;
-        height: 24px;
-        border: 2px solid var(--black);
-        background: var(--white);
-        cursor: pointer;
-        font-weight: 800;
-        font-size: 0.9rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        box-shadow: 2px 2px 0 var(--black);
-        transition: transform 0.1s, box-shadow 0.1s;
-      }
-
-      .debug-close:active,
-      .debug-minimize:active {
-        transform: translate(1px, 1px);
-        box-shadow: 1px 1px 0 var(--black);
-      }
-
-      .debug-content {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-      }
-
-      .debug-section {
+        padding: 10px;
+        max-width: 500px;
+        width: 100%;
         display: flex;
         flex-direction: column;
         gap: 8px;
       }
 
-      .debug-section-title {
-        font-size: 0.75rem;
+      .cookie-content h3 {
+        margin: 0;
         text-transform: uppercase;
-        font-weight: 700;
-        letter-spacing: 0.05em;
-        color: var(--gray);
+        font-size: 1.1rem;
       }
 
-      .debug-btn {
-        padding: 8px 12px;
-        border: 3px solid var(--black);
-        background: var(--lime);
-        color: var(--black);
+      .cookie-content p {
+        margin: 0;
+        font-size: 0.9rem;
+        line-height: 1.4;
+      }
+
+      .cookie-buttons {
+        display: flex;
+        gap: 12px;
+        justify-content: flex-end;
+      }
+
+      .cookie-btn {
+        padding: 8px 16px;
         font-weight: 800;
         text-transform: uppercase;
-        font-size: 0.75rem;
+        border: 3px solid var(--black);
         cursor: pointer;
+        font-size: 0.8rem;
+        box-shadow: 4px 4px 0 var(--black);
+        transition: transform 0.1s, box-shadow 0.1s;
+      }
+
+      .cookie-btn:active {
+        transform: translate(2px, 2px);
+        box-shadow: 2px 2px 0 var(--black);
+      }
+
+      .cookie-btn.accept {
+        background: var(--lime);
+        color: var(--black);
+      }
+
+      .cookie-btn.reject {
+        background: #ff5e5e;
+        color: var(--black);
+      }
+
+      @media (max-width: 600px) {
+        .cookie-banner {
+            left: 10px; right: 10px; bottom: 10px;
+        }
+        .cookie-content {
+            padding: 16px;
+        }
+        .cookie-buttons {
+            justify-content: stretch;
+        }
+        .cookie-btn {
+            flex: 1;
+            text-align: center;
+        }
+      }
+
+      /* --- NAME MODAL --- */
+      .name-modal-overlay {
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(5, 5, 5, 0.6);
+        z-index: 30000;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.2s ease;
+      }
+
+      .name-modal-overlay.visible {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      .name-modal {
+        background: var(--white);
+        border: 4px solid var(--black);
+        box-shadow: 12px 12px 0 var(--black);
+        padding: 24px;
+        max-width: 400px;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        transform: scale(0.9);
+        transition: transform 0.2s ease;
+      }
+
+      .name-modal-overlay.visible .name-modal {
+        transform: scale(1);
+      }
+
+      .name-modal h3 {
+        margin: 0;
+        text-transform: uppercase;
+        font-size: 1.2rem;
+        font-weight: 800;
+        letter-spacing: 0.06em;
+      }
+
+      .name-modal input {
+        padding: 12px 16px;
+        border: 3px solid var(--black);
+        background: var(--white);
+        font-size: 1rem;
+        font-weight: 600;
+        font-family: inherit;
+        color: var(--black);
         box-shadow: 4px 4px 0 var(--black);
         transition: transform 0.1s, box-shadow 0.1s;
         letter-spacing: 0.05em;
       }
 
-      .debug-btn:active {
+      .name-modal input:focus {
+        outline: none;
+        transform: translate(2px, 2px);
+        box-shadow: 2px 2px 0 var(--black);
+        background: var(--lime-soft);
+      }
+
+      .name-modal-buttons {
+        display: flex;
+        gap: 12px;
+        justify-content: flex-end;
+        margin-top: 8px;
+      }
+
+      .name-modal-btn {
+        padding: 10px 20px;
+        font-weight: 800;
+        text-transform: uppercase;
+        border: 3px solid var(--black);
+        cursor: pointer;
+        font-size: 0.85rem;
+        box-shadow: 4px 4px 0 var(--black);
+        transition: transform 0.1s, box-shadow 0.1s;
+        font-family: inherit;
+      }
+
+      .name-modal-btn:active {
         transform: translate(2px, 2px);
         box-shadow: 2px 2px 0 var(--black);
       }
 
-      .debug-btn.danger {
-        background: #ff5e5e;
+      .name-modal-btn.cancel {
+        background: #e0e0e0;
+        color: var(--black);
       }
 
-      .debug-input-group {
-        display: flex;
-        gap: 8px;
-        align-items: center;
+      .name-modal-btn.save {
+        background: var(--lime);
+        color: var(--black);
       }
-
-      .debug-input {
-        flex: 1;
-        padding: 6px 10px;
-        border: 2px solid var(--black);
-        background: var(--white);
-        font-size: 0.8rem;
-        font-weight: 600;
-        font-family: inherit;
-        box-shadow: 2px 2px 0 var(--black);
-      }
-
-      .debug-input:focus {
-        outline: none;
-        transform: translate(1px, 1px);
-        box-shadow: 1px 1px 0 var(--black);
-      }
-
-      .debug-slider-group {
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-      }
-
-      .debug-slider {
-        width: 100%;
-        height: 6px;
-        border-radius: 3px;
-        background: var(--white);
-        border: 2px solid var(--black);
-        outline: none;
-        -webkit-appearance: none;
-      }
-
-      .debug-slider::-webkit-slider-thumb {
-        -webkit-appearance: none;
-        appearance: none;
-        width: 18px;
-        height: 18px;
-        border-radius: 50%;
-        background: var(--black);
-        cursor: pointer;
-        border: 2px solid var(--white);
-        box-shadow: 2px 2px 0 var(--black);
-      }
-
-      .debug-slider::-moz-range-thumb {
-        width: 18px;
-        height: 18px;
-        border-radius: 50%;
-        background: var(--black);
-        cursor: pointer;
-        border: 2px solid var(--white);
-        box-shadow: 2px 2px 0 var(--black);
-      }
-
-      .debug-slider-value {
-        font-size: 0.7rem;
-        font-weight: 600;
-        text-align: center;
-      }
-      /* ========== END DEBUG TOOL STYLES ========== */
     </style>
   </head>
   <body>
-    <!-- ========== boton debug - Cambia este valor a false para desactivar completamente el debug tool ========== -->
-    <script>
-      window.__DEBUG_ENABLED = false; // <-- CAMBIAR A false PARA DESACTIVAR
-    </script>
-    <!-- ========== END boton debug ========== -->
-    
     <!-- Google Tag Manager (noscript) -->
     <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-N77K3KBS"
     height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
@@ -951,10 +818,32 @@
     <!-- Containers for the effects -->
     <div id="fireContainer" class="fx-container"></div>
     <div id="sadContainer" class="fx-container"></div>
-    <!-- Nuevo contenedor para la animación de Happy -->
     <div id="happyContainer" class="fx-container"></div>
 
-    <div class="app">
+    <!-- MAIN MENU -->
+    <div id="mainMenu" class="app">
+        <header class="header">
+          <h1 style="font-size: 2.2rem; text-transform: uppercase; margin: 0; letter-spacing: 0.1em; text-align: center;">Coinfliip</h1>
+          <div class="header-author" style="font-size: 0.8rem; margin-top: 8px;">Multiplayer Update</div>
+        </header>
+        <main class="main">
+          <div class="menu-content">
+            <button id="btnStoryMode" class="menu-btn">Modo Historia</button>
+            
+            <div class="menu-separator"></div>
+            
+            <button id="btnCreateRoom" class="menu-btn secondary">Crear Sala</button>
+            
+            <div class="menu-row">
+                <input type="text" id="roomCodeInput" class="menu-input" placeholder="CÓDIGO" maxlength="5">
+                <button id="btnJoinRoom" class="menu-btn join-btn">Unirse</button>
+            </div>
+          </div>
+        </main>
+    </div>
+
+    <!-- GAME APP (OCULTO POR DEFECTO) -->
+    <div id="gameApp" class="app hidden">
       <header class="header">
         <div class="header-title">
           <div>
@@ -1016,20 +905,54 @@
 
     <script>
       (function () {
-        // Google Analytics / Google Tag Manager
-        window.dataLayer = window.dataLayer || [];
+        // --- 1. FIREBASE CONFIGURATION ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyDBqaofgjviMoq_YSaFuXMVmSm-47KzvOM",
+            authDomain: "coinfliip-multiplayer.firebaseapp.com",
+            databaseURL: "https://coinfliip-multiplayer-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "coinfliip-multiplayer",
+            storageBucket: "coinfliip-multiplayer.firebasestorage.app",
+            messagingSenderId: "634679701084",
+            appId: "1:634679701084:web:1c036b210224f2a41cc099"
+        };
 
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        // Generate or retrieve a persistent User ID for this session
+        let userId = localStorage.getItem('coinfliip_userId');
+        if (!userId) {
+            userId = 'user_' + Math.random().toString(36).substr(2, 9);
+            localStorage.setItem('coinfliip_userId', userId);
+        }
+
+        // --- GAME VARIABLES ---
+        window.dataLayer = window.dataLayer || [];
         function sendAnalyticsEvent(eventName, params = {}) {
-          window.dataLayer.push({
-            event: eventName,
-            ...params,
-          });
+          window.dataLayer.push({ event: eventName, ...params, });
         }
 
         let totalFlips = 0;
         let headsCount = 0;
         let tailsCount = 0;
         let edgesCount = 0;
+        let currentPoints = 0; 
+        let bestCombo = 0; 
+        let bestClaimedCombo = 0; 
+        let ctaTimeoutId = null; 
+        let currentGameMode = null; // 'story' or 'multiplayer'
+        let currentRoomId = null;
+        let roomSubscription = null;
+
+        // --- DOM ELEMENTS ---
+        const mainMenu = document.getElementById('mainMenu');
+        const gameApp = document.getElementById('gameApp');
+        const btnStoryMode = document.getElementById('btnStoryMode');
+        const btnCreateRoom = document.getElementById('btnCreateRoom');
+        const btnJoinRoom = document.getElementById('btnJoinRoom');
+        const roomCodeInput = document.getElementById('roomCodeInput');
+        const headerAuthor = document.getElementById('headerAuthor');
 
         const coinButton = document.getElementById('coinButton');
         const coinFace = document.getElementById('coinFace');
@@ -1037,208 +960,358 @@
         const speechBubble = document.getElementById('speechBubble');
         const claimButton = document.getElementById('claimButton');
         const leaderboardEl = document.getElementById('leaderboard');
-        
         const resultPill = document.getElementById('resultPill');
         const bestClaimedPill = document.getElementById('bestClaimedPill');
-        
         const resultPillValue = document.getElementById('bestStreakValue');
         const bestClaimedValue = document.getElementById('bestClaimedValue');
-        
         const toast = document.getElementById('toast');
         const fireContainer = document.getElementById('fireContainer');
         const sadContainer = document.getElementById('sadContainer');
         const happyContainer = document.getElementById('happyContainer');
 
-        const isSpanish = (navigator.language || navigator.userLanguage || '')
-          .toLowerCase()
-          .startsWith('es');
-
+        // --- LANGUAGE & LOCALIZATION ---
+        const isSpanish = (navigator.language || navigator.userLanguage || '').toLowerCase().startsWith('es');
+        
         if (isSpanish) {
-          document.documentElement.lang = 'es';
-          const headerBadge = document.querySelector('.header-badge');
-          if (headerBadge) headerBadge.textContent = 'CARA 49.999% / CRUZ 49.999% / CANTO 0.002%';
-          coinButton.setAttribute('aria-label', 'Lanzar moneda');
-          coinFaceLabel.innerHTML = '<strong>Toca para lanzar</strong>';
-          const rulesParagraph = document.querySelector('.coin-info p');
-          if (rulesParagraph) {
-            rulesParagraph.innerHTML =
-              'Cada <strong>CARA</strong> 😊 consecutiva dobla tu marcador.<br />' +
-              '<strong>CRUZ</strong> ❌ reinicia tu racha.<br />' +
-              '<strong>CANTO</strong> ⭐ te da 50000 puntos.<br />' +
-              '<strong>COBRAR</strong> guarda tus puntos pero reinicia la racha.';
-          }
-          const bestStreakLabel = document.getElementById('bestStreakLabel');
-          if (bestStreakLabel) bestStreakLabel.textContent = 'MEJOR RACHA:';
-          const bestClaimedLabel = document.getElementById('bestClaimedLabel');
-          if (bestClaimedLabel) bestClaimedLabel.textContent = 'MEJOR RACHA COBRADA:';
-          const leaderboardTitle = document.querySelector('.leaderboard-header h1');
-          if (leaderboardTitle) leaderboardTitle.textContent = 'Clasificación';
-          toast.textContent = '¿CANTO IMPOSIBLE?';
-          claimButton.textContent = 'COBRAR';
-          const headerAuthor = document.getElementById('headerAuthor');
-          if (headerAuthor) headerAuthor.textContent = 'por antonio10bc';
-          
-          // Translate cookie banner buttons
-          const btnAccept = document.getElementById('btnAccept');
-          const btnReject = document.getElementById('btnReject');
-          if (btnAccept) btnAccept.textContent = 'Aceptar';
-          if (btnReject) btnReject.textContent = 'Denegar';
+            document.documentElement.lang = 'es';
+            // Translate Menu
+            btnStoryMode.textContent = 'Modo Historia';
+            btnCreateRoom.textContent = 'Crear Sala';
+            btnJoinRoom.textContent = 'Unirse';
+            roomCodeInput.placeholder = 'CÓDIGO';
+            
+            // Translate Game
+            const headerBadge = document.querySelector('.header-badge');
+            if (headerBadge) headerBadge.textContent = 'CARA 49.999% / CRUZ 49.999% / CANTO 0.002%';
+            coinButton.setAttribute('aria-label', 'Lanzar moneda');
+            coinFaceLabel.innerHTML = '<strong>Toca para lanzar</strong>';
+            const rulesParagraph = document.querySelector('.coin-info p');
+            if (rulesParagraph) {
+              rulesParagraph.innerHTML =
+                'Cada <strong>CARA</strong> 😊 consecutiva dobla tu marcador.<br />' +
+                '<strong>CRUZ</strong> ❌ reinicia tu racha.<br />' +
+                '<strong>CANTO</strong> ⭐ te da 50000 puntos.<br />' +
+                '<strong>COBRAR</strong> guarda tus puntos pero reinicia la racha.';
+            }
+            const bestStreakLabel = document.getElementById('bestStreakLabel');
+            if (bestStreakLabel) bestStreakLabel.textContent = 'MEJOR RACHA:';
+            const bestClaimedLabel = document.getElementById('bestClaimedLabel');
+            if (bestClaimedLabel) bestClaimedLabel.textContent = 'MEJOR RACHA COBRADA:';
+            const leaderboardTitle = document.querySelector('.leaderboard-header h1');
+            if (leaderboardTitle) leaderboardTitle.textContent = 'Clasificación';
+            toast.textContent = '¿CANTO IMPOSIBLE?';
+            claimButton.textContent = 'COBRAR';
+            if (headerAuthor) headerAuthor.textContent = 'por antonio10bc';
+            
+            const btnAccept = document.getElementById('btnAccept');
+            const btnReject = document.getElementById('btnReject');
+            if (btnAccept) btnAccept.textContent = 'Aceptar';
+            if (btnReject) btnReject.textContent = 'Denegar';
         } else {
-          document.documentElement.lang = 'en';
-          coinButton.setAttribute('aria-label', 'Flip coin');
-          
-          // Translate cookie banner buttons to English
-          const btnAccept = document.getElementById('btnAccept');
-          const btnReject = document.getElementById('btnReject');
-          if (btnAccept) btnAccept.textContent = 'Accept';
-          if (btnReject) btnReject.textContent = 'Reject';
+            // Translate Menu
+            btnStoryMode.textContent = 'Story Mode';
+            btnCreateRoom.textContent = 'Create Room';
+            btnJoinRoom.textContent = 'Join Room';
+            roomCodeInput.placeholder = 'CODE';
+
+            document.documentElement.lang = 'en';
+            coinButton.setAttribute('aria-label', 'Flip coin');
+            const btnAccept = document.getElementById('btnAccept');
+            const btnReject = document.getElementById('btnReject');
+            if (btnAccept) btnAccept.textContent = 'Accept';
+            if (btnReject) btnReject.textContent = 'Reject';
         }
 
         const SOCIAL_LINKS_MARGIN_TOP = 24;
         document.documentElement.style.setProperty('--social-links-margin-top', SOCIAL_LINKS_MARGIN_TOP + 'px');
 
+        // --- CONSTANTS ---
         const P_HEADS = 49.999;
         const P_TAILS = 49.999;
         const P_EDGE = 0.002;
         const P_TOTAL = P_HEADS + P_TAILS + P_EDGE; 
 
-        let currentPoints = 0; 
-        let bestCombo = 0; 
-        let bestClaimedCombo = 0; 
-        let ctaTimeoutId = null; 
+        // --- HISTORICAL DATA ---
+        const historicalNamesEn = ["Antonio Bastos de Córdoba","Malala Yousafzai","Tim Berners-Lee","Rigoberta Menchú","Valentina Tereshkova","Gabriel Garcia Marquez","Nelson Mandela","Rosa Parks","The Beatles","Deng Xiaoping","Simone de Beauvoir","Charlie Chaplin","Mao Zedong","Pablo Picasso","Kwame Nkrumah","Martin Luther King Jr.","Walt Disney","Winston Churchill","Eleanor Roosevelt","Rosalind Franklin","Albert Einstein","Alexander Fleming","Alan Turing","Frida Kahlo","Mahatma Gandhi","The Wright Brothers","Franklin D. Roosevelt","Nikola Tesla","George Washington Carver","Sigmund Freud","Mustafa Kemal Ataturk","Marie Curie","Fritz Haber","Emmeline Pankhurst","Lenin","Harriet Tubman","Florence Nightingale","Queen Victoria","Louis Pasteur","Karl Marx","Charles Darwin","Abraham Lincoln","Ada Lovelace","José de San Martín","Simón Bolívar","Ludwig van Beethoven","Napoleon Bonaparte","James Watt","Immanuel Kant","George Washington","Catherine the Great","Wolfgang Amadeus Mozart","Jean-Jacques Rousseau","Voltaire","Isaac Newton","René Descartes","Galileo Galilei","William Shakespeare","Miguel de Cervantes","Suleiman the Magnificent","Michelangelo","Martin Luther","Nicolaus Copernicus","Guru Nanak","Vasco da Gama","Leonardo da Vinci","Christopher Columbus","Isabella I of Castile","Johannes Gutenberg","Mansa Musa","Dante Alighieri","Thomas Aquinas","Genghis Khan","Saladin","Avicenna","Murasaki Shikibu","Al-Khwarizmi","Charlemagne","Wu Zetian","Muhammad","Cai Lun","Jesus of Nazareth","Augustus","Cleopatra","Julius Caesar","Qin Shi Huang","Ashoka","Alexander the Great","Aristotle","Plato","Socrates","Confucius","Buddha","Cyrus the Great","Laozi","Homer","Zoroaster","Moses","Hatshepsut"];
+        const historicalNamesEs = ["Antonio Bastos de Córdoba","Malala Yousafzai","Tim Berners-Lee","Rigoberta Menchú","Valentina Tereshkova","Gabriel García Márquez","Nelson Mandela","Rosa Parks","The Beatles","Deng Xiaoping","Simone de Beauvoir","Charlie Chaplin","Mao Zedong","Pablo Picasso","Kwame Nkrumah","Martin Luther King Jr.","Walt Disney","Winston Churchill","Eleanor Roosevelt","Rosalind Franklin","Albert Einstein","Alexander Fleming","Alan Turing","Frida Kahlo","Mahatma Gandhi","Los Hermanos Wright","Franklin D. Roosevelt","Nikola Tesla","George Washington Carver","Sigmund Freud","Mustafa Kemal Ataturk","Marie Curie","Fritz Haber","Emmeline Pankhurst","Lenin","Harriet Tubman","Florence Nightingale","Reina Victoria","Louis Pasteur","Karl Marx","Charles Darwin","Abraham Lincoln","Ada Lovelace","José de San Martín","Simón Bolívar","Ludwig van Beethoven","Napoleón Bonaparte","James Watt","Immanuel Kant","George Washington","Catalina la Grande","Wolfgang Amadeus Mozart","Jean-Jacques Rousseau","Voltaire","Isaac Newton","René Descartes","Galileo Galilei","William Shakespeare","Miguel de Cervantes","Solimán el Magnífico","Miguel Ángel","Martín Lutero","Nicolás Copérnico","Guru Nanak","Vasco de Gama","Leonardo da Vinci","Cristóbal Colón","Isabel I de Castilla","Johannes Gutenberg","Mansa Musa","Dante Alighieri","Tomás de Aquino","Gengis Kan","Saladino","Avicena","Murasaki Shikibu","Al-Juarismi","Carlomagno","Wu Zetian","Mahoma","Cai Lun","Jesús de Nazaret","Augusto","Cleopatra","Julio César","Qin Shi Huang","Ashoka","Alejandro Magno","Aristóteles","Platón","Sócrates","Confucio","Buda","Ciro el Grande","Laozi","Homero","Zoroastro","Moisés","Hatshepsut"];
+        const historicalNames = isSpanish ? historicalNamesEs : historicalNamesEn;
 
-        // --- OPTIMIZED FIRE EFFECT (WITH NEW MARGINS) ---
+        // --- PLAYERS DATA ---
+        let players = [];
+        let currentPlayerName = isSpanish ? 'Tú' : 'You';
+        
+        // --- GAME LOGIC FUNCTIONS ---
+
+        function initPlayers(mode) {
+          players = [];
+          
+          if (mode === 'story') {
+             // User
+            players.push({ id: 'user', name: currentPlayerName, score: 0, isUser: true, lastRank: 0 });
+            // Add historical bots
+            for (let i = 0; i < historicalNames.length; i++) {
+                const score = Math.floor(999 - (i * (999 / (historicalNames.length - 1))));
+                players.push({
+                  id: 'historical' + i,
+                  name: historicalNames[i],
+                  score: score,
+                  isUser: false,
+                  lastRank: 0 
+                });
+            }
+            // Sort initially
+            const initialSorted = players.slice().sort((a, b) => b.score - a.score);
+            initialSorted.forEach((p, i) => p.lastRank = i + 1);
+            
+            // Try to load saved data for story mode
+            loadGameData();
+            
+            // Re-sync current player name after load
+            const user = players.find(p => p.isUser);
+            if (user) currentPlayerName = user.name;
+          } 
+          // For multiplayer, players array is populated via subscription
+        }
+
+        // --- 3. ROOM LOGIC & START GAME ---
+        function startGame(mode) {
+            currentGameMode = mode;
+            
+            if (mode === 'story') {
+                initPlayers('story');
+                updateLeaderboard();
+                mainMenu.classList.add('hidden');
+                gameApp.classList.remove('hidden');
+                updateSpeechBubble();
+                updateBestCombo();
+                updateBestClaimedCombo();
+                scheduleIdleCta();
+                sendAnalyticsEvent('start_game', { mode: 'story' });
+                if(headerAuthor) headerAuthor.textContent = isSpanish ? 'por antonio10bc' : 'by antonio10bc';
+                
+            } else if (mode === 'multiplayer_create') {
+                // a. Generate 5-char code
+                const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // No O, 0, I, 1 to avoid confusion
+                let code = '';
+                for (let i = 0; i < 5; i++) code += chars.charAt(Math.floor(Math.random() * chars.length));
+                currentRoomId = code;
+
+                // b. Set initial data for this user in the new room
+                // We use localStorage name if available from previous sessions (loaded in story mode part, or default)
+                // Let's check if we have a saved name from story mode to use it here too
+                try {
+                    const savedData = JSON.parse(localStorage.getItem('coinfliip_gameData') || '{}');
+                    if (savedData.playersScores) {
+                         const u = savedData.playersScores.find(p => p.id === 'user');
+                         if (u && u.name) currentPlayerName = u.name;
+                    }
+                } catch(e){}
+
+                db.ref('rooms/' + currentRoomId + '/players/' + userId).set({
+                    name: currentPlayerName,
+                    score: 0
+                }).then(() => {
+                    // c. Subscribe
+                    subscribeToRoom(currentRoomId);
+                    
+                    // d. Show code
+                    headerAuthor.textContent = (isSpanish ? 'CÓDIGO SALA: ' : 'ROOM CODE: ') + currentRoomId;
+                    headerAuthor.style.fontWeight = '800';
+                    headerAuthor.style.color = 'var(--black)';
+                    
+                    // e. Show game
+                    mainMenu.classList.add('hidden');
+                    gameApp.classList.remove('hidden');
+                    
+                    // Reset visual scores for new game
+                    currentPoints = 0;
+                    bestCombo = 0;
+                    bestClaimedCombo = 0;
+                    updateSpeechBubble();
+                    updateBestCombo();
+                    updateBestClaimedCombo();
+                    scheduleIdleCta();
+                });
+
+            } else if (mode === 'multiplayer_join') {
+                // a. Read input
+                const code = roomCodeInput.value.trim().toUpperCase();
+                if (!code) return;
+
+                // b. Check if exists
+                db.ref('rooms/' + code).get().then((snapshot) => {
+                    if (snapshot.exists()) {
+                        currentRoomId = code;
+                        
+                        // Get name preference
+                         try {
+                            const savedData = JSON.parse(localStorage.getItem('coinfliip_gameData') || '{}');
+                            if (savedData.playersScores) {
+                                 const u = savedData.playersScores.find(p => p.id === 'user');
+                                 if (u && u.name) currentPlayerName = u.name;
+                            }
+                        } catch(e){}
+
+                        // c. Join room
+                        db.ref('rooms/' + currentRoomId + '/players/' + userId).set({
+                            name: currentPlayerName,
+                            score: 0
+                        }).then(() => {
+                            subscribeToRoom(currentRoomId);
+                             headerAuthor.textContent = (isSpanish ? 'CÓDIGO SALA: ' : 'ROOM CODE: ') + currentRoomId;
+                             headerAuthor.style.fontWeight = '800';
+
+                             mainMenu.classList.add('hidden');
+                             gameApp.classList.remove('hidden');
+
+                            currentPoints = 0;
+                            bestCombo = 0;
+                            bestClaimedCombo = 0;
+                            updateSpeechBubble();
+                            updateBestCombo();
+                            updateBestClaimedCombo();
+                            scheduleIdleCta();
+                        });
+                    } else {
+                        // d. Error
+                        showToast(isSpanish ? "SALA NO ENCONTRADA" : "ROOM NOT FOUND");
+                    }
+                }).catch((error) => {
+                    console.error(error);
+                    showToast("ERROR");
+                });
+            }
+        }
+
+        // --- 4. REALTIME SYNC ---
+        function subscribeToRoom(roomId) {
+            if (roomSubscription) {
+                // Detach previous listener if any
+                db.ref('rooms/' + roomId + '/players').off();
+            }
+
+            roomSubscription = db.ref('rooms/' + roomId + '/players').on('value', (snapshot) => {
+                const data = snapshot.val();
+                if (!data) {
+                    players = [];
+                    updateLeaderboard();
+                    return;
+                }
+
+                // Rebuild players array
+                // We preserve previous ranks to allow the animation logic to work
+                const oldPlayers = [...players];
+                players = [];
+
+                Object.keys(data).forEach(key => {
+                    const pData = data[key];
+                    // Try to find this player in old array to keep 'lastRank' if possible, though logic might reset
+                    const oldP = oldPlayers.find(op => op.id === key);
+                    
+                    players.push({
+                        id: key,
+                        name: pData.name || 'Unknown',
+                        score: pData.score || 0,
+                        isUser: (key === userId),
+                        lastRank: oldP ? oldP.lastRank : 0
+                    });
+                });
+                
+                // If the user name changed in another device or via modal, update local variable
+                const me = players.find(p => p.isUser);
+                if (me) currentPlayerName = me.name;
+
+                updateLeaderboard();
+            });
+        }
+
+        // --- EFFECTS ---
         function updateFireEffect(score) {
           fireContainer.innerHTML = ''; 
-          
           if (score < 2) return;
-
           const streakLevel = Math.log2(score);
           const count = Math.floor(streakLevel * 12); 
-          
           const fragment = document.createDocumentFragment();
 
           for (let i = 0; i < count; i++) {
             const el = document.createElement('div');
             el.textContent = '🔥';
             el.className = 'fire-particle';
-            
             const size = 1.5 + Math.random() * 2.0;
             el.style.fontSize = size + 'rem';
-
-            // Changed: Offset is now 10% to 90% to avoid being too close to the edge
-            // Changed: Depth is positive to place it visible on top of border
             const side = Math.floor(Math.random() * 4); 
             const offset = 10 + Math.random() * 80; 
-            const depth = (Math.random() * 10 - 5) + 'px'; // -5 to 5px wiggle
+            const depth = (Math.random() * 10 - 5) + 'px';
 
             switch(side) {
-                case 0: // Top
-                    el.style.top = depth;
-                    el.style.left = offset + '%';
-                    break;
-                case 1: // Right
-                    el.style.right = depth;
-                    el.style.top = offset + '%';
-                    break;
-                case 2: // Bottom
-                    el.style.bottom = depth;
-                    el.style.left = offset + '%';
-                    break;
-                case 3: // Left
-                    el.style.left = depth;
-                    el.style.top = offset + '%';
-                    break;
+                case 0: el.style.top = depth; el.style.left = offset + '%'; break;
+                case 1: el.style.right = depth; el.style.top = offset + '%'; break;
+                case 2: el.style.bottom = depth; el.style.left = offset + '%'; break;
+                case 3: el.style.left = depth; el.style.top = offset + '%'; break;
             }
-            
             el.style.animationDelay = (Math.random() * 1) + 's';
             fragment.appendChild(el);
           }
           fireContainer.appendChild(fragment);
         }
         
-        // --- SAD FACE EFFECT ---
         function triggerSadness() {
           sadContainer.innerHTML = ''; 
-          
           const fragment = document.createDocumentFragment();
-          const count = 15; 
-
-          for (let i = 0; i < count; i++) {
+          for (let i = 0; i < 15; i++) {
             const el = document.createElement('div');
             el.textContent = '😢';
             el.className = 'sad-particle';
-            
             el.style.left = (Math.random() * 100) + 'vw';
             el.style.top = (Math.random() * 80) + 'vh'; 
-            
             el.style.animationDuration = (0.6 + Math.random() * 0.3) + 's';
-            
             fragment.appendChild(el);
           }
-          
           sadContainer.appendChild(fragment);
-
-          setTimeout(() => {
-            sadContainer.innerHTML = '';
-          }, 850);
+          setTimeout(() => { sadContainer.innerHTML = ''; }, 850);
         }
 
-        // --- NEW HAPPY FACE EFFECT ---
         function triggerHappiness() {
           happyContainer.innerHTML = '';
-          
           const fragment = document.createDocumentFragment();
-          const count = 20;
           const happyEmojis = ['🤩', '😄'];
-
-          for (let i = 0; i < count; i++) {
+          for (let i = 0; i < 20; i++) {
             const el = document.createElement('div');
             el.textContent = happyEmojis[Math.floor(Math.random() * happyEmojis.length)];
             el.className = 'happy-particle';
-            
-            // Start from bottom area mostly
             el.style.left = (Math.random() * 100) + 'vw';
             el.style.top = (50 + Math.random() * 40) + 'vh';
-            
             el.style.animationDuration = (0.8 + Math.random() * 0.4) + 's';
-            
             fragment.appendChild(el);
           }
-          
           happyContainer.appendChild(fragment);
-
-          setTimeout(() => {
-            happyContainer.innerHTML = '';
-          }, 1300);
+          setTimeout(() => { happyContainer.innerHTML = ''; }, 1300);
         }
 
         function triggerHighlight(element) {
           if (!element) return;
           element.classList.add('highlight');
-          setTimeout(() => {
-            element.classList.remove('highlight');
-          }, 1000);
+          setTimeout(() => { element.classList.remove('highlight'); }, 1000);
         }
 
+        // --- DATA PERSISTENCE ---
         function saveGameData() {
+          if (currentGameMode !== 'story') return; // Only save locally in story mode
+          
           const user = players.find(p => p.isUser);
           const gameData = {
             userScore: user ? user.score : 0,
             bestCombo: bestCombo,
             bestClaimedCombo: bestClaimedCombo,
-            // Save all players' scores for leaderboard persistence
             playersScores: players.map(p => ({
               id: p.id,
               score: p.score,
-              name: p.isUser ? p.name : undefined // Only save user's custom name
+              name: p.isUser ? p.name : undefined 
             }))
           };
           try {
             localStorage.setItem('coinfliip_gameData', JSON.stringify(gameData));
-          } catch (e) {
-            console.warn('Could not save game data:', e);
-          }
+          } catch (e) { console.warn('Could not save game data:', e); }
         }
 
         function loadGameData() {
@@ -1249,7 +1322,6 @@
               const user = players.find(p => p.isUser);
               if (user) {
                 user.score = gameData.userScore || 0;
-                // Restore custom name if saved
                 if (gameData.playersScores) {
                   const savedUser = gameData.playersScores.find(p => p.id === 'user');
                   if (savedUser && savedUser.name) {
@@ -1260,7 +1332,6 @@
               bestCombo = gameData.bestCombo || 0;
               bestClaimedCombo = gameData.bestClaimedCombo || 0;
               
-              // Restore all players' scores if available
               if (gameData.playersScores) {
                 gameData.playersScores.forEach(savedPlayer => {
                   const player = players.find(p => p.id === savedPlayer.id);
@@ -1269,42 +1340,13 @@
                   }
                 });
               }
-              
               return true;
             }
-          } catch (e) {
-            console.warn('Could not load game data:', e);
-          }
+          } catch (e) { console.warn('Could not load game data:', e); }
           return false;
         }
 
-        const historicalNamesEn = [
-          "Antonio Bastos de Córdoba","Malala Yousafzai","Tim Berners-Lee","Rigoberta Menchú","Valentina Tereshkova","Gabriel Garcia Marquez","Nelson Mandela","Rosa Parks","The Beatles","Deng Xiaoping","Simone de Beauvoir","Charlie Chaplin","Mao Zedong","Pablo Picasso","Kwame Nkrumah","Martin Luther King Jr.","Walt Disney","Winston Churchill","Eleanor Roosevelt","Rosalind Franklin","Albert Einstein","Alexander Fleming","Alan Turing","Frida Kahlo","Mahatma Gandhi","The Wright Brothers","Franklin D. Roosevelt","Nikola Tesla","George Washington Carver","Sigmund Freud","Mustafa Kemal Ataturk","Marie Curie","Fritz Haber","Emmeline Pankhurst","Lenin","Harriet Tubman","Florence Nightingale","Queen Victoria","Louis Pasteur","Karl Marx","Charles Darwin","Abraham Lincoln","Ada Lovelace","José de San Martín","Simón Bolívar","Ludwig van Beethoven","Napoleon Bonaparte","James Watt","Immanuel Kant","George Washington","Catherine the Great","Wolfgang Amadeus Mozart","Jean-Jacques Rousseau","Voltaire","Isaac Newton","René Descartes","Galileo Galilei","William Shakespeare","Miguel de Cervantes","Suleiman the Magnificent","Michelangelo","Martin Luther","Nicolaus Copernicus","Guru Nanak","Vasco da Gama","Leonardo da Vinci","Christopher Columbus","Isabella I of Castile","Johannes Gutenberg","Mansa Musa","Dante Alighieri","Thomas Aquinas","Genghis Khan","Saladin","Avicenna","Murasaki Shikibu","Al-Khwarizmi","Charlemagne","Wu Zetian","Muhammad","Cai Lun","Jesus of Nazareth","Augustus","Cleopatra","Julius Caesar","Qin Shi Huang","Ashoka","Alexander the Great","Aristotle","Plato","Socrates","Confucius","Buddha","Cyrus the Great","Laozi","Homer","Zoroaster","Moses","Hatshepsut"
-        ];
-
-        const historicalNamesEs = [
-          "Antonio Bastos de Córdoba","Malala Yousafzai","Tim Berners-Lee","Rigoberta Menchú","Valentina Tereshkova","Gabriel García Márquez","Nelson Mandela","Rosa Parks","The Beatles","Deng Xiaoping","Simone de Beauvoir","Charlie Chaplin","Mao Zedong","Pablo Picasso","Kwame Nkrumah","Martin Luther King Jr.","Walt Disney","Winston Churchill","Eleanor Roosevelt","Rosalind Franklin","Albert Einstein","Alexander Fleming","Alan Turing","Frida Kahlo","Mahatma Gandhi","Los Hermanos Wright","Franklin D. Roosevelt","Nikola Tesla","George Washington Carver","Sigmund Freud","Mustafa Kemal Ataturk","Marie Curie","Fritz Haber","Emmeline Pankhurst","Lenin","Harriet Tubman","Florence Nightingale","Reina Victoria","Louis Pasteur","Karl Marx","Charles Darwin","Abraham Lincoln","Ada Lovelace","José de San Martín","Simón Bolívar","Ludwig van Beethoven","Napoleón Bonaparte","James Watt","Immanuel Kant","George Washington","Catalina la Grande","Wolfgang Amadeus Mozart","Jean-Jacques Rousseau","Voltaire","Isaac Newton","René Descartes","Galileo Galilei","William Shakespeare","Miguel de Cervantes","Solimán el Magnífico","Miguel Ángel","Martín Lutero","Nicolás Copérnico","Guru Nanak","Vasco de Gama","Leonardo da Vinci","Cristóbal Colón","Isabel I de Castilla","Johannes Gutenberg","Mansa Musa","Dante Alighieri","Tomás de Aquino","Gengis Kan","Saladino","Avicena","Murasaki Shikibu","Al-Juarismi","Carlomagno","Wu Zetian","Mahoma","Cai Lun","Jesús de Nazaret","Augusto","Cleopatra","Julio César","Qin Shi Huang","Ashoka","Alejandro Magno","Aristóteles","Platón","Sócrates","Confucio","Buda","Ciro el Grande","Laozi","Homero","Zoroastro","Moisés","Hatshepsut"
-        ];
-
-        const historicalNames = isSpanish ? historicalNamesEs : historicalNamesEn;
-
-        const players = [];
-        players.push({ id: 'user', name: isSpanish ? 'Tú' : 'You', score: 0, isUser: true, lastRank: 0 });
-        
-        for (let i = 0; i < historicalNames.length; i++) {
-          const score = Math.floor(999 - (i * (999 / (historicalNames.length - 1))));
-          players.push({
-            id: 'historical' + i,
-            name: historicalNames[i],
-            score: score,
-            isUser: false,
-            lastRank: 0 
-          });
-        }
-        
-        const initialSorted = players.slice().sort((a, b) => b.score - a.score);
-        initialSorted.forEach((p, i) => p.lastRank = i + 1);
-
+        // --- GAMEPLAY ---
         function rollOutcome() {
           const r = Math.random() * P_TOTAL;
           if (r < P_HEADS) return 'cara';
@@ -1315,9 +1357,7 @@
         function showToast(message) {
           toast.textContent = message;
           toast.classList.add('visible');
-          setTimeout(function () {
-            toast.classList.remove('visible');
-          }, 1300);
+          setTimeout(function () { toast.classList.remove('visible'); }, 1300);
         }
 
         function updateSpeechBubble() {
@@ -1329,13 +1369,8 @@
           }
         }
 
-        function updateBestCombo() {
-          resultPillValue.textContent = String(bestCombo);
-        }
-
-        function updateBestClaimedCombo() {
-          bestClaimedValue.textContent = String(bestClaimedCombo);
-        }
+        function updateBestCombo() { resultPillValue.textContent = String(bestCombo); }
+        function updateBestClaimedCombo() { bestClaimedValue.textContent = String(bestClaimedCombo); }
 
         function resetStreak() {
           currentPoints = 0;
@@ -1344,13 +1379,10 @@
           claimButton.disabled = true;
         }
 
-        function formatScore(score) {
-          return score.toLocaleString('es-ES');
-        }
+        function formatScore(score) { return score.toLocaleString('es-ES'); }
 
-        // --- NAME MODAL FUNCTIONS ---
+        // --- NAME MODAL ---
         let nameModalHandlers = null;
-        
         function showNameModal(player) {
           const overlay = document.getElementById('nameModalOverlay');
           const input = document.getElementById('nameModalInput');
@@ -1358,9 +1390,8 @@
           const cancelBtn = document.getElementById('nameModalCancel');
           const saveBtn = document.getElementById('nameModalSave');
           
-          if (!overlay || !input || !title || !cancelBtn || !saveBtn) return;
+          if (!overlay) return;
           
-          // Remove old handlers if they exist
           if (nameModalHandlers) {
             saveBtn.removeEventListener('click', nameModalHandlers.save);
             cancelBtn.removeEventListener('click', nameModalHandlers.cancel);
@@ -1368,11 +1399,9 @@
             overlay.removeEventListener('click', nameModalHandlers.overlay);
           }
           
-          // Set current name
           input.value = player.name;
           input.maxLength = 10;
           
-          // Translate
           if (isSpanish) {
             title.textContent = 'Cambiar nombre';
             cancelBtn.textContent = 'Cancelar';
@@ -1385,72 +1414,60 @@
             input.placeholder = 'Max. 10 characters';
           }
           
-          // Create handlers
           const handleSave = function() {
             const trimmedName = input.value.trim().substring(0, 10);
             if (trimmedName.length > 0) {
               player.name = trimmedName;
-              saveGameData();
-              updateLeaderboard();
+              currentPlayerName = trimmedName; // Update local global var
+              
+              if (currentGameMode === 'story') {
+                 saveGameData();
+                 updateLeaderboard();
+              } else if (currentGameMode.startsWith('multiplayer')) {
+                 // Update name in firebase
+                 db.ref('rooms/' + currentRoomId + '/players/' + userId).update({
+                     name: trimmedName
+                 });
+                 // Leaderboard updates via subscription
+              }
             }
             hideNameModal();
           };
           
-          const handleCancel = function() {
-            hideNameModal();
-          };
+          const handleCancel = function() { hideNameModal(); };
           
           const handleKeyPress = function(e) {
-            if (e.key === 'Enter') {
-              e.preventDefault();
-              handleSave();
-            } else if (e.key === 'Escape') {
-              e.preventDefault();
-              handleCancel();
-            }
+            if (e.key === 'Enter') { e.preventDefault(); handleSave(); } 
+            else if (e.key === 'Escape') { e.preventDefault(); handleCancel(); }
           };
           
-          const handleOverlayClick = function(e) {
-            if (e.target === overlay) {
-              handleCancel();
-            }
-          };
+          const handleOverlayClick = function(e) { if (e.target === overlay) handleCancel(); };
           
-          // Store handlers for cleanup
-          nameModalHandlers = {
-            save: handleSave,
-            cancel: handleCancel,
-            keydown: handleKeyPress,
-            overlay: handleOverlayClick
-          };
+          nameModalHandlers = { save: handleSave, cancel: handleCancel, keydown: handleKeyPress, overlay: handleOverlayClick };
           
-          // Add event listeners
           saveBtn.addEventListener('click', handleSave);
           cancelBtn.addEventListener('click', handleCancel);
           input.addEventListener('keydown', handleKeyPress);
           overlay.addEventListener('click', handleOverlayClick);
           
-          // Show modal
           overlay.classList.add('visible');
-          // Small delay to ensure transition works
-          setTimeout(() => {
-            input.focus();
-            input.select();
-          }, 50);
+          setTimeout(() => { input.focus(); input.select(); }, 50);
         }
         
         function hideNameModal() {
           const overlay = document.getElementById('nameModalOverlay');
-          if (overlay) {
-            overlay.classList.remove('visible');
-          }
+          if (overlay) overlay.classList.remove('visible');
         }
 
-        // --- UPDATED LEADERBOARD WITH TIMED TRENDS ---
+        // --- LEADERBOARD ---
         function updateLeaderboard() {
+          if (!players || players.length === 0) {
+              leaderboardEl.innerHTML = '';
+              return;
+          }
+            
           const sorted = players.slice().sort((a, b) => b.score - a.score);
           leaderboardEl.innerHTML = '';
-
           let userPosition = null;
 
           for (let i = 0; i < sorted.length; i++) {
@@ -1461,84 +1478,58 @@
             const row = document.createElement('div');
             row.className = 'leaderboard-row' + (player.isUser ? ' is-user' : '');
 
-            // Rank
             const pos = document.createElement('div');
             pos.className = 'leaderboard-pos';
             pos.textContent = currentRank + '.';
 
-            // Name + Tags + Trend
             const name = document.createElement('div');
             name.className = 'leaderboard-name';
             name.textContent = player.name;
             
-            // Make user row clickable to edit name
             if (player.isUser) {
               userPosition = currentRank;
               name.style.cursor = 'pointer';
               name.title = isSpanish ? 'Toca para cambiar tu nombre' : 'Click to change your name';
-              name.addEventListener('click', function() {
-                showNameModal(player);
-              });
+              name.addEventListener('click', function() { showNameModal(player); });
               const tag = document.createElement('span');
               tag.className = 'leaderboard-tag';
               tag.textContent = isSpanish ? 'Tú' : 'You';
               name.appendChild(tag);
             }
 
-            // Trend Indicator Logic
             let trendIcon = document.createElement('span');
             trendIcon.className = 'trend-icon';
             let hasChanged = false;
             
             if (previousRank !== 0 && currentRank !== previousRank) {
-                // Determine direction
                 if (currentRank < previousRank) {
-                    trendIcon.textContent = '▲';
-                    trendIcon.classList.add('trend-up');
+                    trendIcon.textContent = '▲'; trendIcon.classList.add('trend-up');
                 } else {
-                    trendIcon.textContent = '▼';
-                    trendIcon.classList.add('trend-down');
+                    trendIcon.textContent = '▼'; trendIcon.classList.add('trend-down');
                 }
                 hasChanged = true;
-            } else {
-               // No change or first run: text content empty or equal, but opacity 0 handled by CSS
-               trendIcon.textContent = ''; 
-            }
+            } else { trendIcon.textContent = ''; }
             
-            // Update the stored rank
             player.lastRank = currentRank;
-
-            // Append icon
             name.appendChild(trendIcon);
 
-            // Trigger Visibility for 60s if changed
             if (hasChanged) {
-                // We must delay the adding of the class slightly or do it immediately.
-                // Since element is fresh, we can just add the class, then remove it with setTimeout.
                 trendIcon.classList.add('visible');
-                setTimeout(() => {
-                    if (trendIcon) trendIcon.classList.remove('visible');
-                    //Tiempo de 60 segundos para que se vea el cambio de posición
-                }, 60000);
+                setTimeout(() => { if (trendIcon) trendIcon.classList.remove('visible'); }, 60000);
             }
 
-            // Score
             const score = document.createElement('div');
             score.className = 'leaderboard-score';
             score.textContent = formatScore(player.score);
 
-            row.appendChild(pos);
-            row.appendChild(name);
-            row.appendChild(score);
-
+            row.appendChild(pos); row.appendChild(name); row.appendChild(score);
             leaderboardEl.appendChild(row);
           }
-
           return userPosition;
         }
 
         function randomBotProgress(claimValue) {
-          if (claimValue <= 0) return;
+          if (claimValue <= 0 || currentGameMode !== 'story') return;
           for (let i = 0; i < players.length; i++) {
             const p = players[i];
             if (p.isUser) continue;
@@ -1548,13 +1539,9 @@
         }
 
         function scheduleIdleCta() {
-          if (ctaTimeoutId !== null) {
-            clearTimeout(ctaTimeoutId);
-          }
+          if (ctaTimeoutId !== null) clearTimeout(ctaTimeoutId);
           coinFaceLabel.classList.remove('cta');
-          ctaTimeoutId = setTimeout(function () {
-            coinFaceLabel.classList.add('cta');
-          }, 5000);
+          ctaTimeoutId = setTimeout(function () { coinFaceLabel.classList.add('cta'); }, 5000);
         }
 
         function handleCoinClick() {
@@ -1571,11 +1558,10 @@
               headsCount++;
               coinFace.innerHTML = '<strong>😊</strong>';
               coinFaceLabel.textContent = isSpanish ? 'Cara' : 'Heads';
-
               currentPoints = currentPoints === 0 ? 1 : currentPoints * 2;
               if (currentPoints > bestCombo) {
                 bestCombo = currentPoints;
-                saveGameData();
+                if (currentGameMode === 'story') saveGameData();
                 triggerHighlight(resultPill);
               }
               claimButton.disabled = false;
@@ -1586,10 +1572,7 @@
               tailsCount++;
               coinFace.innerHTML = '<strong>❌</strong>';
               coinFaceLabel.textContent = isSpanish ? 'Cruz (reinicio)' : 'Tails (reset)';
-              
-              if (currentPoints >= 2) {
-                triggerSadness();
-              }
+              if (currentPoints >= 2) triggerSadness();
               resetStreak();
 
             } else {
@@ -1597,11 +1580,10 @@
               edgesCount++;
               coinFace.innerHTML = '<strong>⭐</strong>';
               coinFaceLabel.textContent = isSpanish ? 'Canto (raro)' : 'Edge (rare)';
-
               currentPoints += 50000;
               if (currentPoints > bestCombo) {
                 bestCombo = currentPoints;
-                saveGameData();
+                if (currentGameMode === 'story') saveGameData();
                 triggerHighlight(resultPill);
               }
               claimButton.disabled = false;
@@ -1610,13 +1592,11 @@
             }
 
             totalFlips++;
-
             const user = players.find(p => p.isUser);
             sendAnalyticsEvent('coin_flip', {
               flip_result: flipResult,
               current_streak: currentPoints,
               best_streak: bestCombo,
-              best_claimed_streak: bestClaimedCombo,
               score: user ? user.score : 0
             });
 
@@ -1626,46 +1606,48 @@
           }, 110);
         }
 
+        // --- 5. UPDATED CLAIM CLICK ---
         function handleClaimClick() {
           if (currentPoints <= 0) return;
           const user = players.find(p => p.isUser);
-          if (!user) return;
+          if (!user && currentGameMode === 'story') return; 
+          // In multiplayer user object is in players array too
 
-          sendAnalyticsEvent('claim_click', {
-            current_streak: currentPoints,
-            current_score: user.score
-          });
+          sendAnalyticsEvent('claim_click', { current_streak: currentPoints });
 
           if (currentPoints > bestClaimedCombo) {
             bestClaimedCombo = currentPoints;
             triggerHighlight(bestClaimedPill);
           }
-
-          user.score += currentPoints;
           
-          // Trigger Happiness Animation
+          // Update score
+          let newScore = 0;
+          if (user) {
+              user.score += currentPoints;
+              newScore = user.score;
+          }
+
           triggerHappiness();
-
-          randomBotProgress(currentPoints);
           
-          const leaderboardPosition = updateLeaderboard();
-          
-          saveGameData(); // Save includes leaderboard state now (all players' scores)
+          if (currentGameMode === 'story') {
+              randomBotProgress(currentPoints);
+              const leaderboardPosition = updateLeaderboard();
+              saveGameData();
+              
+          } else if (currentGameMode.startsWith('multiplayer')) {
+              // Firebase Update
+              db.ref('rooms/' + currentRoomId + '/players/' + userId).update({
+                  score: newScore
+              });
+              // No manual leaderboard update needed, on('value') handles it
+          }
 
           sendAnalyticsEvent('run_stats', {
             best_streak: bestCombo,
             best_claimed_streak: bestClaimedCombo,
-            leaderboard_position: leaderboardPosition,
-            total_flips: totalFlips,
-            heads_count: headsCount,
-            tails_count: tailsCount,
-            edges_count: edgesCount
+            // leaderboard_position: leaderboardPosition, // Hard to calc async
+            total_flips: totalFlips
           });
-
-          totalFlips = 0;
-          headsCount = 0;
-          tailsCount = 0;
-          edgesCount = 0;
 
           const pointsText = isSpanish
             ? (currentPoints === 1 ? ' punto' : ' puntos')
@@ -1679,91 +1661,27 @@
           updateBestClaimedCombo();
         }
 
-        (function selfTest() {
-          console.assert(typeof rollOutcome === 'function', 'rollOutcome should exist');
-          const testOutcome = rollOutcome();
-          console.assert(
-            testOutcome === 'cara' || testOutcome === 'cruz' || testOutcome === 'canto',
-            'rollOutcome should return cara, cruz or canto'
-          );
-          console.assert(players.length === 101, 'There should be 1 user + 100 historical names');
-          console.assert(players[0].isUser === true, 'First player should be user');
-        })();
-
-        loadGameData();
-
+        // --- EVENT LISTENERS ---
         coinButton.addEventListener('click', handleCoinClick);
         claimButton.addEventListener('click', handleClaimClick);
+        
+        // Menu Listeners
+        btnStoryMode.addEventListener('click', () => startGame('story'));
+        btnCreateRoom.addEventListener('click', () => startGame('multiplayer_create'));
+        btnJoinRoom.addEventListener('click', () => startGame('multiplayer_join'));
 
         const instagramLink = document.querySelector('.social-link[href*="instagram"]');
         const donateLink = document.querySelector('.social-link[href*="paypal"]');
 
-        if (instagramLink) {
-          instagramLink.addEventListener('click', function() {
-            sendAnalyticsEvent('social_click', { social_platform: 'instagram' });
-          });
-        }
+        if (instagramLink) instagramLink.addEventListener('click', function() { sendAnalyticsEvent('social_click', { social_platform: 'instagram' }); });
+        if (donateLink) donateLink.addEventListener('click', function() { sendAnalyticsEvent('social_click', { social_platform: 'donate' }); });
 
-        if (donateLink) {
-          donateLink.addEventListener('click', function() {
-            sendAnalyticsEvent('social_click', { social_platform: 'donate' });
-          });
-        }
-
-        updateLeaderboard();
-        updateSpeechBubble();
-        updateBestCombo();
-        updateBestClaimedCombo();
-        scheduleIdleCta();
-
-        // ========== DEBUG TOOL EXPOSURE - boton debug ==========
-        // Solo expone funciones si el debug está habilitado
-        if (window.__DEBUG_ENABLED === true) {
-          window.__DEBUG_COINFLIIP = {
-            resetGame: function() {
-              localStorage.removeItem('coinfliip_gameData');
-              location.reload();
-            },
-            resetStreaks: function() {
-              bestCombo = 0;
-              bestClaimedCombo = 0;
-              currentPoints = 0;
-              updateBestCombo();
-              updateBestClaimedCombo();
-              updateSpeechBubble();
-              updateFireEffect(0);
-              saveGameData();
-            },
-            resetLeaderboard: function() {
-              const user = players.find(p => p.isUser);
-              if (user) {
-                user.score = 0;
-                updateLeaderboard();
-                saveGameData();
-              }
-            },
-            addPoints: function(points) {
-              const user = players.find(p => p.isUser);
-              if (user) {
-                user.score += points;
-                updateLeaderboard();
-                saveGameData();
-              }
-            },
-            getCoinElement: function() {
-              return coinButton;
-            }
-          };
-        }
-        // ========== END DEBUG TOOL EXPOSURE - boton debug ==========
       })();
     </script>
     <div id="cookieBanner" class="cookie-banner" style="display: none;">
         <div class="cookie-content">
           <h3>🍪 Cookies & Privacy</h3>
-          <p>
-            We use cookies to improve your experience.
-          </p>
+          <p>We use cookies to improve your experience.</p>
           <div class="cookie-buttons">
             <button id="btnReject" class="cookie-btn reject">Denegar</button>
             <button id="btnAccept" class="cookie-btn accept">Aceptar</button>
@@ -1787,13 +1705,9 @@
           const cookieBanner = document.getElementById('cookieBanner');
           const btnAccept = document.getElementById('btnAccept');
           const btnReject = document.getElementById('btnReject');
-          
-          // Tu ID de Google Tag Manager
           const GTM_ID = 'GTM-N77K3KBS'; 
       
-          // Función para cargar GTM (Solo se llama si hay consentimiento)
           function loadGTM() {
-            console.log('Cargando GTM/Analytics...');
             (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
             new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
             j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
@@ -1801,199 +1715,22 @@
             })(window,document,'script','dataLayer', GTM_ID);
           }
       
-          // Comprobar preferencia guardada
           const consent = localStorage.getItem('cookieConsent');
+          if (consent === 'true') { loadGTM(); } 
+          else if (consent === 'false') { } 
+          else { cookieBanner.style.display = 'flex'; }
       
-          if (consent === 'true') {
-            // El usuario ya aceptó anteriormente -> Cargar GTM
-            loadGTM();
-          } else if (consent === 'false') {
-            // El usuario rechazó -> No hacer nada (respetar decisión)
-          } else {
-            // No hay decisión -> Mostrar Banner
-            cookieBanner.style.display = 'flex';
-          }
-      
-          // Evento ACEPTAR
           btnAccept.addEventListener('click', function() {
             localStorage.setItem('cookieConsent', 'true');
             cookieBanner.style.display = 'none';
-            loadGTM(); // Carga los scripts en ese momento
+            loadGTM();
           });
       
-          // Evento RECHAZAR
           btnReject.addEventListener('click', function() {
             localStorage.setItem('cookieConsent', 'false');
             cookieBanner.style.display = 'none';
-            // No cargamos loadGTM()
           });
         })();
       </script>
-
-    <!-- ========== DEBUG TOOL ========== -->
-    <button class="debug-toggle" id="debugToggle" title="Debug Tool" style="display: none;">🐛</button>
-    <div class="debug-panel" id="debugPanel" style="display: none;">
-      <div class="debug-header">
-        <h3>Debug Tool</h3>
-        <div style="display: flex; gap: 4px;">
-          <button class="debug-minimize" id="debugMinimize" title="Minimize">−</button>
-          <button class="debug-close" id="debugClose" title="Close">×</button>
-        </div>
-      </div>
-      <div class="debug-content">
-        <div class="debug-section">
-          <div class="debug-section-title">Game Reset</div>
-          <button class="debug-btn danger" id="debugResetGame">Reset Game</button>
-        </div>
-        <div class="debug-section">
-          <div class="debug-section-title">Streaks</div>
-          <button class="debug-btn danger" id="debugResetStreaks">Reset Streaks</button>
-        </div>
-        <div class="debug-section">
-          <div class="debug-section-title">Leaderboard</div>
-          <button class="debug-btn danger" id="debugResetLeaderboard">Reset Leaderboard Score</button>
-        </div>
-        <div class="debug-section">
-          <div class="debug-section-title">Points</div>
-          <div class="debug-input-group">
-            <input type="number" class="debug-input" id="debugPointsInput" placeholder="Points" value="1000">
-            <button class="debug-btn" id="debugAddPoints">Add</button>
-          </div>
-        </div>
-        <div class="debug-section">
-          <div class="debug-section-title">Coin Size</div>
-          <div class="debug-slider-group">
-            <input type="range" class="debug-slider" id="debugCoinSize" min="80" max="200" value="200">
-            <div class="debug-slider-value" id="debugCoinSizeValue">200px</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <script>
-      // ========== DEBUG TOOL SCRIPT - boton debug ==========
-      // Solo se ejecuta si window.__DEBUG_ENABLED es true
-      if (window.__DEBUG_ENABLED === true) {
-        (function() {
-          const debugToggle = document.getElementById('debugToggle');
-          const debugPanel = document.getElementById('debugPanel');
-          
-          // Mostrar elementos de debug
-          if (debugToggle) {
-            debugToggle.removeAttribute('style'); // Eliminar estilo inline del HTML
-            debugToggle.style.display = 'flex'; // Mostrar el botón
-          }
-          // Eliminar estilo inline del panel para que las clases CSS funcionen
-          if (debugPanel) {
-            debugPanel.removeAttribute('style'); // Eliminar el style="display: none;" inline del HTML
-            // El panel estará oculto por defecto (clase CSS), se mostrará con la clase 'visible'
-          }
-        const debugClose = document.getElementById('debugClose');
-        const debugMinimize = document.getElementById('debugMinimize');
-        const debugResetGame = document.getElementById('debugResetGame');
-        const debugResetStreaks = document.getElementById('debugResetStreaks');
-        const debugResetLeaderboard = document.getElementById('debugResetLeaderboard');
-        const debugAddPoints = document.getElementById('debugAddPoints');
-        const debugPointsInput = document.getElementById('debugPointsInput');
-        const debugCoinSize = document.getElementById('debugCoinSize');
-        const debugCoinSizeValue = document.getElementById('debugCoinSizeValue');
-        const coinButton = document.getElementById('coinButton');
-
-        let isMinimized = false;
-
-        // Toggle panel
-        debugToggle.addEventListener('click', function() {
-          if (debugPanel.classList.contains('visible')) {
-            debugPanel.classList.remove('visible');
-            debugPanel.style.display = 'none'; // Asegurar que se oculte
-          } else {
-            debugPanel.style.display = ''; // Eliminar estilo inline para que funcione la clase
-            debugPanel.classList.add('visible');
-            debugPanel.classList.remove('minimized');
-            isMinimized = false;
-          }
-        });
-
-        // Close panel
-        debugClose.addEventListener('click', function(e) {
-          e.stopPropagation();
-          debugPanel.classList.remove('visible');
-          debugPanel.style.display = 'none'; // Asegurar que se oculte
-        });
-
-        // Minimize panel
-        debugMinimize.addEventListener('click', function(e) {
-          e.stopPropagation();
-          isMinimized = !isMinimized;
-          if (isMinimized) {
-            debugPanel.classList.add('minimized');
-          } else {
-            debugPanel.classList.remove('minimized');
-          }
-        });
-
-        // Reset Game
-        debugResetGame.addEventListener('click', function() {
-          if (confirm('¿Resetear completamente el juego? Esto borrará todo.')) {
-            if (window.__DEBUG_COINFLIIP && window.__DEBUG_COINFLIIP.resetGame) {
-              window.__DEBUG_COINFLIIP.resetGame();
-            }
-          }
-        });
-
-        // Reset Streaks
-        debugResetStreaks.addEventListener('click', function() {
-          if (window.__DEBUG_COINFLIIP && window.__DEBUG_COINFLIIP.resetStreaks) {
-            window.__DEBUG_COINFLIIP.resetStreaks();
-            alert('Rachas reseteadas');
-          }
-        });
-
-        // Reset Leaderboard Score
-        debugResetLeaderboard.addEventListener('click', function() {
-          if (window.__DEBUG_COINFLIIP && window.__DEBUG_COINFLIIP.resetLeaderboard) {
-            window.__DEBUG_COINFLIIP.resetLeaderboard();
-            alert('Puntuación del leaderboard resetada');
-          }
-        });
-
-        // Add Points
-        debugAddPoints.addEventListener('click', function() {
-          const points = parseInt(debugPointsInput.value) || 0;
-          if (points > 0 && window.__DEBUG_COINFLIIP && window.__DEBUG_COINFLIIP.addPoints) {
-            window.__DEBUG_COINFLIIP.addPoints(points);
-            alert(`Añadidos ${points} puntos`);
-          }
-        });
-
-        // Coin Size Slider
-        debugCoinSize.addEventListener('input', function() {
-          const size = this.value;
-          debugCoinSizeValue.textContent = size + 'px';
-          const coinEl = window.__DEBUG_COINFLIIP && window.__DEBUG_COINFLIIP.getCoinElement ? window.__DEBUG_COINFLIIP.getCoinElement() : coinButton;
-          if (coinEl) {
-            coinEl.style.width = size + 'px';
-            coinEl.style.height = size + 'px';
-          }
-        });
-
-        // Initialize coin size display (wait for game to load)
-        function initCoinSize() {
-          const coinEl = window.__DEBUG_COINFLIIP && window.__DEBUG_COINFLIIP.getCoinElement ? window.__DEBUG_COINFLIIP.getCoinElement() : coinButton;
-          if (coinEl) {
-            const currentSize = parseInt(window.getComputedStyle(coinEl).width) || 200;
-            debugCoinSize.value = currentSize;
-            debugCoinSizeValue.textContent = currentSize + 'px';
-          } else if (window.__DEBUG_COINFLIIP) {
-            // Retry after a short delay if coin element not ready yet
-            setTimeout(initCoinSize, 100);
-          }
-        }
-        initCoinSize();
-        })();
-      } // Cierre del if (window.__DEBUG_ENABLED === true)
-      // ========== END DEBUG TOOL SCRIPT - boton debug ==========
-    </script>
-    <!-- ========== END DEBUG TOOL ========== -->
   </body>
 </html>
