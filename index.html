@@ -47,10 +47,9 @@
       }
 
       /* --- MULTIPLAYER THEME OVERRIDES --- */
-      /* Al redefinir las variables aquí, todo lo que use var(--lime) cambiará automáticamente */
       body.multiplayer-theme {
-        --lime: #ff8e8e;       /* Ahora Lime es Salmon */
-        --lime-soft: #ffc4c4;  /* Ahora LimeSoft es SalmonSoft */
+        --lime: #ff8e8e;       
+        --lime-soft: #ffc4c4;  
         background: var(--lime);
       }
 
@@ -71,7 +70,7 @@
         overflow: hidden;
       }
 
-      /* PARTICLES (Fire, Sad, Happy) */
+      /* PARTICLES */
       .fire-particle {
         position: absolute;
         user-select: none;
@@ -123,6 +122,12 @@
         z-index: 1;
       }
 
+      /* New class for compact menus */
+      .app.menu-layout {
+        width: min(480px, 100%);
+        align-self: center; /* Center vertically if flex container allows */
+      }
+
       /* --- MENU STYLES --- */
       .menu-content {
         display: flex;
@@ -156,7 +161,6 @@
         box-shadow: 3px 3px 0 var(--black);
       }
 
-      /* Specific classes only needed if not overridden by theme */
       .menu-btn.salmon {
         background: var(--salmon);
       }
@@ -167,12 +171,25 @@
       
       .menu-btn.join-btn {
         background: var(--black);
-        color: var(--lime); /* Will be overridden by theme var in multiplayer context if needed, but here it's menu */
+        color: var(--lime);
         border-color: var(--black);
       }
-      /* Special case for menu join btn inside multiplayer theme */
+      
       body.multiplayer-theme .menu-btn.join-btn {
           color: var(--salmon);
+      }
+
+      .back-btn-container {
+        width: 100%;
+        display: flex;
+        justify-content: flex-start;
+      }
+      
+      .menu-btn.back-btn {
+        width: auto;
+        padding: 8px 16px;
+        font-size: 0.8rem;
+        margin-bottom: 4px;
       }
 
       .menu-input {
@@ -245,6 +262,7 @@
         align-items: center;
         gap: 8px;
         flex: 1;
+        overflow: hidden; /* Prevent spillover */
       }
       .room-item-code {
         font-family: monospace;
@@ -253,6 +271,7 @@
         padding: 2px 6px;
         font-size: 0.8rem;
         border-radius: 4px;
+        flex-shrink: 0;
       }
       .edit-icon-btn {
         display: inline-flex;
@@ -265,7 +284,8 @@
         cursor: pointer;
         opacity: 0.4;
         transition: opacity 0.2s, background 0.2s;
-        z-index: 2; /* Ensure it's on top */
+        z-index: 2;
+        flex-shrink: 0;
       }
       .edit-icon-btn:hover { 
           opacity: 1; 
@@ -310,7 +330,6 @@
         background: var(--white);
       }
 
-      /* Updated Exit Button Styles (Inline) */
       .exit-btn-inline {
         background: var(--black);
         color: var(--white);
@@ -337,7 +356,7 @@
       @media (max-width: 720px) {
         .header { padding-top: 48px; gap: 40px; }
         .header-title { flex-direction: column; align-items: flex-start; gap: 12px; }
-        .header-left-col { width: 100%; align-items: center; text-align: center; } /* Center text on mobile */
+        .header-left-col { width: 100%; align-items: center; text-align: center; } 
         .coin-panel { grid-template-columns: 1fr; margin-top: 24px; }
         .header-badge { font-size: 0.6rem; padding: 3px 6px; letter-spacing: 0.03em; }
         .coin-wrapper { margin-top: 32px; }
@@ -508,8 +527,12 @@
       .leaderboard-row.is-user { background: var(--lime-soft); }
 
       .leaderboard-pos { font-weight: 800; }
-      .leaderboard-name { font-weight: 600; display: flex; flex-direction: column; justify-content: center; gap: 2px; }
-      .leaderboard-name-text { display: flex; align-items: center; gap: 6px; }
+      .leaderboard-name { font-weight: 600; display: flex; flex-direction: column; justify-content: center; gap: 2px; overflow: hidden; }
+      .leaderboard-name-text { 
+          display: flex; align-items: center; gap: 6px; 
+          white-space: nowrap; overflow: hidden; text-overflow: ellipsis; 
+          max-width: 100%;
+      }
       .leaderboard-stats-tags { display: flex; gap: 4px; font-size: 0.65rem; opacity: 0.8; }
       .stat-tag { background: rgba(0,0,0,0.1); padding: 1px 4px; border-radius: 4px; display: flex; align-items: center; gap: 2px; }
 
@@ -527,6 +550,14 @@
       .trend-icon.visible { opacity: 1; }
       .trend-up { color: var(--green-trend); }
       .trend-down { color: var(--black); }
+
+      /* Mobile Leaderboard Tweaks */
+      @media (max-width: 600px) {
+          .leaderboard-header h1 { font-size: 1.1rem; }
+          .room-code-display { font-size: 0.8rem; padding: 2px 8px; }
+          .leaderboard-row { font-size: 0.8rem; }
+          .leaderboard-name-text { font-size: 0.85rem; }
+      }
 
       .toast {
         position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%);
@@ -591,7 +622,7 @@
     <div id="happyContainer" class="fx-container"></div>
 
     <!-- MAIN MENU -->
-    <div id="mainMenu" class="app">
+    <div id="mainMenu" class="app menu-layout">
         <header class="header">
           <h1 style="font-size: 2.2rem; text-transform: uppercase; margin: 0; letter-spacing: 0.1em; text-align: center;">Coinfliip</h1>
         </header>
@@ -604,16 +635,18 @@
     </div>
 
     <!-- MULTIPLAYER SUB-MENU -->
-    <div id="multiplayerMenu" class="app hidden">
+    <div id="multiplayerMenu" class="app menu-layout hidden">
         <header class="header" style="background: var(--salmon-soft);">
-            <div style="width: 100%; display: flex; justify-content: space-between; align-items: center;">
-                <button id="btnBackToMain" class="menu-btn secondary" style="width: auto; padding: 6px 12px; font-size: 0.8rem;">← BACK</button>
+            <div style="width: 100%; display: flex; justify-content: center; align-items: center;">
                 <h2 id="multiplayerTitle" style="margin: 0; text-transform: uppercase; font-size: 1.2rem;">Multiplayer</h2>
-                <div style="width: 60px;"></div> <!-- Spacer -->
             </div>
         </header>
         <main class="main">
             <div class="menu-content">
+                <div class="back-btn-container">
+                    <button id="btnBackToMain" class="menu-btn secondary back-btn">← BACK</button>
+                </div>
+                
                 <button id="btnCreateRoom" class="menu-btn salmon">Crear Sala</button>
                 
                 <div class="menu-row">
@@ -639,7 +672,6 @@
           <div class="header-left-col">
             Coinfliip
             <div class="header-author" id="headerAuthor">by antonio10bc</div>
-            <!-- MENU BUTTON RELOCATED HERE -->
             <button id="btnGameExit" class="exit-btn-inline">MENU</button>
           </div>
           <div class="header-badge">HEAD 49.999% / TAILS 49.999% / EDGE 0.002%</div>
@@ -681,7 +713,7 @@
         <section class="leaderboard-section">
           <div class="leaderboard-header">
             <h1>Leaderboard</h1>
-            <div id="roomCodeDisplay" class="room-code-display" title="Copy Code">CODE: -----</div>
+            <div id="roomCodeDisplay" class="room-code-display" title="Copy Code">-----</div>
           </div>
           
           <div class="leaderboard" id="leaderboard"></div>
@@ -1082,7 +1114,8 @@
             }).then(() => {
                 subscribeToRoom(currentRoomId);
                 
-                roomCodeDisplay.textContent = 'CODE: ' + currentRoomId;
+                // --- NEW: Remove "CODE:" prefix ---
+                roomCodeDisplay.textContent = currentRoomId; 
                 roomCodeDisplay.style.display = 'block';
                 
                 saveRoomToHistory(currentRoomId);
