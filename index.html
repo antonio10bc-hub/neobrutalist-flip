@@ -20,6 +20,8 @@
       :root {
         --lime: #c6ff33;
         --lime-soft: #e8ff9f;
+        --salmon: #ff8e8e;
+        --salmon-soft: #ffc4c4;
         --black: #050505;
         --white: #f7f7f7;
         --gray: #a0a0a0;
@@ -41,6 +43,15 @@
         font-family: system-ui, -apple-system, BlinkMacSystemFont, 'SF Pro Text',
           sans-serif;
         color: var(--black);
+        transition: background 0.3s ease;
+      }
+
+      /* --- MULTIPLAYER THEME OVERRIDES --- */
+      /* Al redefinir las variables aquí, todo lo que use var(--lime) cambiará automáticamente */
+      body.multiplayer-theme {
+        --lime: #ff8e8e;       /* Ahora Lime es Salmon */
+        --lime-soft: #ffc4c4;  /* Ahora LimeSoft es SalmonSoft */
+        background: var(--lime);
       }
 
       /* --- UTILITIES --- */
@@ -60,7 +71,7 @@
         overflow: hidden;
       }
 
-      /* FIRE PARTICLES */
+      /* PARTICLES (Fire, Sad, Happy) */
       .fire-particle {
         position: absolute;
         user-select: none;
@@ -68,13 +79,10 @@
         animation: firePulse 0.8s infinite alternate ease-in-out;
         line-height: 1;
       }
-
       @keyframes firePulse {
         0% { transform: scale(1) rotate(-5deg); }
         100% { transform: scale(1.2) rotate(5deg); }
       }
-
-      /* SAD PARTICLES */
       .sad-particle {
         position: absolute;
         user-select: none;
@@ -83,13 +91,10 @@
         animation: sadFall 0.75s forwards ease-in;
         opacity: 1;
       }
-
       @keyframes sadFall {
         0% { transform: translateY(0) rotate(0deg); opacity: 1; }
         100% { transform: translateY(100px) rotate(20deg); opacity: 0; }
       }
-
-      /* HAPPY PARTICLES */
       .happy-particle {
         position: absolute;
         user-select: none;
@@ -99,7 +104,6 @@
         opacity: 1;
         z-index: 10000;
       }
-
       @keyframes happyRise {
         0% { transform: translateY(0) scale(0.5); opacity: 1; }
         50% { transform: translateY(-80px) scale(1.2); opacity: 1; }
@@ -152,14 +156,23 @@
         box-shadow: 3px 3px 0 var(--black);
       }
 
+      /* Specific classes only needed if not overridden by theme */
+      .menu-btn.salmon {
+        background: var(--salmon);
+      }
+
       .menu-btn.secondary {
         background: var(--white);
       }
       
       .menu-btn.join-btn {
         background: var(--black);
-        color: var(--lime);
+        color: var(--lime); /* Will be overridden by theme var in multiplayer context if needed, but here it's menu */
         border-color: var(--black);
+      }
+      /* Special case for menu join btn inside multiplayer theme */
+      body.multiplayer-theme .menu-btn.join-btn {
+          color: var(--salmon);
       }
 
       .menu-input {
@@ -185,13 +198,6 @@
         background: var(--lime-soft);
       }
 
-      .menu-input::placeholder {
-        color: var(--gray);
-        text-transform: none;
-        letter-spacing: 0;
-        font-weight: 500;
-      }
-
       .menu-separator {
         width: 100%;
         height: 4px;
@@ -205,11 +211,65 @@
         gap: 12px; 
         width: 100%;
       }
-      
-      @media (max-width: 600px) {
-        .menu-row {
-            flex-direction: column;
-        }
+
+      /* Room History List */
+      .room-list {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin-top: 20px;
+        max-height: 200px;
+        overflow-y: auto;
+      }
+      .room-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 14px;
+        border: 2px solid var(--black);
+        background: var(--white);
+        box-shadow: 3px 3px 0 var(--black);
+        cursor: pointer;
+        transition: transform 0.1s;
+      }
+      .room-item:active {
+        transform: translate(2px, 2px);
+        box-shadow: 1px 1px 0 var(--black);
+      }
+      .room-item-name {
+        font-weight: 700;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex: 1;
+      }
+      .room-item-code {
+        font-family: monospace;
+        background: var(--black);
+        color: var(--white);
+        padding: 2px 6px;
+        font-size: 0.8rem;
+        border-radius: 4px;
+      }
+      .edit-icon-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        cursor: pointer;
+        opacity: 0.4;
+        transition: opacity 0.2s, background 0.2s;
+        z-index: 2; /* Ensure it's on top */
+      }
+      .edit-icon-btn:hover { 
+          opacity: 1; 
+          background: rgba(0,0,0,0.1);
       }
 
       /* --- HEADER & GAME --- */
@@ -221,6 +281,8 @@
         flex-direction: column;
         align-items: center;
         gap: 16px;
+        position: relative;
+        transition: background 0.3s ease;
       }
 
       .header-title {
@@ -233,6 +295,13 @@
         letter-spacing: 0.06em;
         font-size: 0.9rem;
       }
+      
+      .header-left-col {
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 4px;
+      }
 
       .header-badge {
         padding: 4px 10px;
@@ -240,6 +309,22 @@
         border: 2px solid var(--black);
         background: var(--white);
       }
+
+      /* Updated Exit Button Styles (Inline) */
+      .exit-btn-inline {
+        background: var(--black);
+        color: var(--white);
+        border: none;
+        padding: 4px 10px;
+        font-weight: 800;
+        font-size: 0.7rem;
+        cursor: pointer;
+        box-shadow: 2px 2px 0 rgba(0,0,0,0.2);
+        margin-top: 6px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+      .exit-btn-inline:active { transform: translate(1px, 1px); box-shadow: 1px 1px 0 rgba(0,0,0,0.2); }
 
       .coin-panel {
         display: grid;
@@ -250,39 +335,12 @@
       }
 
       @media (max-width: 720px) {
-        .header {
-          padding-top: 48px;
-          gap: 40px;
-        }
-
-        .header-title {
-          flex-direction: column;
-          align-items: flex-start;
-          gap: 12px;
-        }
-
-        .coin-panel {
-          grid-template-columns: 1fr;
-          margin-top: 24px;
-        }
-
-        .header-badge {
-          font-size: 0.6rem;
-          padding: 3px 6px;
-          letter-spacing: 0.03em;
-        }
-
-        .coin-wrapper {
-          margin-top: 32px;
-        }
-
-        .toast {
-          font-size: 0.7rem;
-          padding: 6px 12px;
-          max-width: 90%;
-          width: auto;
-          white-space: nowrap;
-        }
+        .header { padding-top: 48px; gap: 40px; }
+        .header-title { flex-direction: column; align-items: flex-start; gap: 12px; }
+        .header-left-col { width: 100%; align-items: center; text-align: center; } /* Center text on mobile */
+        .coin-panel { grid-template-columns: 1fr; margin-top: 24px; }
+        .header-badge { font-size: 0.6rem; padding: 3px 6px; letter-spacing: 0.03em; }
+        .coin-wrapper { margin-top: 32px; }
       }
 
       .coin-wrapper {
@@ -308,10 +366,7 @@
         color: var(--black);
         cursor: pointer;
         outline: none;
-        transition:
-          transform 120ms ease-out,
-          box-shadow 120ms ease-out,
-          background 120ms ease-out;
+        transition: transform 120ms ease-out, box-shadow 120ms ease-out, background 120ms ease-out;
       }
 
       .coin:active {
@@ -326,21 +381,10 @@
         letter-spacing: 0.08em;
         margin-top: 4px;
       }
-
-      .coin-face-label.cta {
-        animation: ctaPulse 1s ease-in-out infinite;
-      }
-
+      .coin-face-label.cta { animation: ctaPulse 1s ease-in-out infinite; }
       @keyframes ctaPulse {
-        0%,
-        100% {
-          opacity: 0.5;
-          transform: translateY(0);
-        }
-        50% {
-          opacity: 1;
-          transform: translateY(-2px);
-        }
+        0%, 100% { opacity: 0.5; transform: translateY(0); }
+        50% { opacity: 1; transform: translateY(-2px); }
       }
 
       .speech-bubble {
@@ -370,22 +414,9 @@
         border-color: var(--black) transparent transparent transparent;
       }
 
-      .coin-info {
-        font-size: 0.9rem;
-        line-height: 1.4;
-      }
-
-      .coin-info p {
-        margin: 4px 0;
-      }
-
-      .coin-info strong {
-        text-transform: uppercase;
-      }
-
-      .claim-wrapper {
-        margin-top: 12px;
-      }
+      .coin-info { font-size: 0.9rem; line-height: 1.4; }
+      .coin-info p { margin: 4px 0; }
+      .coin-info strong { text-transform: uppercase; }
 
       .claim-button {
         margin-top: 12px;
@@ -400,25 +431,11 @@
         font-size: 0.8rem;
         cursor: pointer;
         box-shadow: 6px 6px 0 var(--black);
-        transition:
-          transform 120ms ease-out,
-          box-shadow 120ms ease-out,
-          background 120ms ease-out,
-          opacity 120ms ease-out;
+        transition: transform 120ms ease-out, box-shadow 120ms ease-out, background 120ms ease-out, opacity 120ms ease-out;
       }
 
-      .claim-button:disabled {
-        opacity: 0.4;
-        cursor: default;
-        box-shadow: 0 0 0 var(--black);
-        transform: none;
-      }
-
-      .claim-button:not(:disabled):active {
-        transform: translate(3px, 3px);
-        box-shadow: 2px 2px 0 var(--black);
-        background: var(--white);
-      }
+      .claim-button:disabled { opacity: 0.4; cursor: default; box-shadow: 0 0 0 var(--black); transform: none; }
+      .claim-button:not(:disabled):active { transform: translate(3px, 3px); box-shadow: 2px 2px 0 var(--black); background: var(--white); }
 
       .result-pill {
         display: inline-flex;
@@ -434,7 +451,6 @@
         letter-spacing: 0.08em;
         transition: background-color 200ms ease, color 200ms ease, transform 200ms ease, box-shadow 200ms ease;
       }
-
       .result-pill.highlight {
         background-color: var(--lime) !important;
         color: var(--white) !important;
@@ -443,15 +459,9 @@
         text-shadow: 1px 1px 0 var(--black), -1px -1px 0 var(--black), 1px -1px 0 var(--black), -1px 1px 0 var(--black);
         border-color: var(--black);
       }
+      .result-pill span { font-weight: 700; }
 
-      .result-pill span {
-        font-weight: 700;
-      }
-
-      .main {
-        padding: 24px 20px 28px;
-        background: var(--white);
-      }
+      .main { padding: 24px 20px 28px; background: var(--white); }
 
       .leaderboard-section {
         border-radius: 18px 18px 0 0;
@@ -464,24 +474,26 @@
       .leaderboard-header {
         display: flex;
         justify-content: space-between;
-        align-items: baseline;
+        align-items: center;
         gap: 12px;
         margin-bottom: 16px;
       }
-
-      .leaderboard-header h1 {
-        margin: 0;
-        font-size: 1.4rem;
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
-      }
-
-      .leaderboard {
-        border-radius: 12px;
-        overflow: hidden;
+      .leaderboard-header h1 { margin: 0; font-size: 1.4rem; text-transform: uppercase; letter-spacing: 0.08em; }
+      
+      .room-code-display {
+        font-size: 0.9rem;
+        font-weight: 800;
+        background: var(--black);
+        color: var(--white);
+        padding: 4px 12px;
+        cursor: pointer;
+        display: none; /* Hidden in Story Mode */
         border: 2px solid var(--black);
+        transition: transform 0.1s;
       }
+      .room-code-display:active { transform: scale(0.95); }
 
+      .leaderboard { border-radius: 12px; overflow: hidden; border: 2px solid var(--black); }
       .leaderboard-row {
         display: grid;
         grid-template-columns: 56px minmax(0, 1.4fr) minmax(0, 1fr);
@@ -491,321 +503,79 @@
         font-size: 0.9rem;
         background: var(--white);
       }
+      .leaderboard-row:last-child { border-bottom: none; }
+      .leaderboard-row:nth-child(odd) { background: #f1f1f1; }
+      .leaderboard-row.is-user { background: var(--lime-soft); }
 
-      .leaderboard-row:last-child {
-        border-bottom: none;
-      }
-
-      .leaderboard-row:nth-child(odd) {
-        background: #f1f1f1;
-      }
-
-      .leaderboard-row.is-user {
-        background: var(--lime-soft);
-      }
-
-      .leaderboard-pos {
-        font-weight: 800;
-      }
-
-      .leaderboard-name {
-        font-weight: 600;
-        display: flex;
-        align-items: center;
-        gap: 6px;
-      }
+      .leaderboard-pos { font-weight: 800; }
+      .leaderboard-name { font-weight: 600; display: flex; flex-direction: column; justify-content: center; gap: 2px; }
+      .leaderboard-name-text { display: flex; align-items: center; gap: 6px; }
+      .leaderboard-stats-tags { display: flex; gap: 4px; font-size: 0.65rem; opacity: 0.8; }
+      .stat-tag { background: rgba(0,0,0,0.1); padding: 1px 4px; border-radius: 4px; display: flex; align-items: center; gap: 2px; }
 
       .leaderboard-score {
         text-align: right;
-        font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo,
-          Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+        font-family: 'JetBrains Mono', monospace;
       }
 
       .leaderboard-tag {
-        display: inline-block;
-        padding: 1px 6px;
-        border-radius: 999px;
-        border: 1px solid var(--black);
-        font-size: 0.65rem;
-        text-transform: uppercase;
-        letter-spacing: 0.06em;
-        white-space: nowrap;
+        display: inline-block; padding: 1px 6px; border-radius: 999px; border: 1px solid var(--black);
+        font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.06em; white-space: nowrap;
       }
 
-      /* Trend indicators */
-      .trend-icon {
-        font-weight: 800;
-        font-size: 0.8rem;
-        line-height: 1;
-        display: inline-block;
-        opacity: 0;
-        transition: opacity 200ms ease;
-      }
-      
-      .trend-icon.visible {
-        opacity: 1;
-      }
-
+      .trend-icon { font-weight: 800; font-size: 0.8rem; line-height: 1; display: inline-block; opacity: 0; transition: opacity 200ms ease; }
+      .trend-icon.visible { opacity: 1; }
       .trend-up { color: var(--green-trend); }
       .trend-down { color: var(--black); }
-      .trend-equal { color: var(--gray); }
 
       .toast {
-        position: fixed;
-        left: 50%;
-        bottom: 24px;
-        transform: translateX(-50%);
-        padding: 8px 14px;
-        background: var(--black);
-        color: var(--lime);
-        border-radius: 999px;
-        border: 2px solid var(--white);
-        font-size: 0.85rem;
-        font-weight: 600;
-        letter-spacing: 0.06em;
-        text-transform: uppercase;
-        box-shadow: 4px 4px 0 var(--black);
-        opacity: 0;
-        pointer-events: none;
-        transition: opacity 160ms ease-out, transform 160ms ease-out;
+        position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%);
+        padding: 8px 14px; background: var(--black); color: var(--lime);
+        border-radius: 999px; border: 2px solid var(--white);
+        font-size: 0.85rem; font-weight: 600; letter-spacing: 0.06em;
+        text-transform: uppercase; box-shadow: 4px 4px 0 var(--black);
+        opacity: 0; pointer-events: none; transition: opacity 160ms ease-out, transform 160ms ease-out;
         z-index: 10000;
       }
+      .toast.visible { opacity: 1; transform: translate(-50%, -4px); }
 
-      .toast.visible {
-        opacity: 1;
-        transform: translate(-50%, -4px);
-      }
+      .header-author { font-size: 0.65rem; font-weight: 400; text-transform: none; letter-spacing: 0; margin-top: 4px; color: var(--black); }
 
-      .header-author {
-        font-size: 0.65rem;
-        font-weight: 400;
-        text-transform: none;
-        letter-spacing: 0;
-        margin-top: 4px;
-        color: var(--black);
-      }
-
-      .social-links {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 12px;
-        margin-top: var(--social-links-margin-top, 24px);
-      }
-
+      .social-links { display: flex; justify-content: center; align-items: center; gap: 12px; margin-top: 24px; }
       .social-link {
-        display: inline-block;
-        padding: 8px 16px;
-        border-radius: 999px;
-        border: 2px solid var(--black);
-        background: #e0e0e0;
-        color: var(--black);
-        text-decoration: none;
-        font-size: 0.65rem;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.06em;
-        box-shadow: 4px 4px 0 var(--black);
-        transition:
-          transform 120ms ease-out,
-          box-shadow 120ms ease-out,
-          background 120ms ease-out;
+        display: inline-block; padding: 8px 16px; border-radius: 999px; border: 2px solid var(--black);
+        background: #e0e0e0; color: var(--black); text-decoration: none;
+        font-size: 0.65rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em;
+        box-shadow: 4px 4px 0 var(--black); transition: transform 120ms ease-out, box-shadow 120ms ease-out, background 120ms ease-out;
       }
+      .social-link:hover { transform: translate(2px, 2px); box-shadow: 2px 2px 0 var(--black); background: #d0d0d0; }
+      .social-link:active { transform: translate(3px, 3px); box-shadow: 1px 1px 0 var(--black); }
 
-      .social-link:hover {
-        transform: translate(2px, 2px);
-        box-shadow: 2px 2px 0 var(--black);
-        background: #d0d0d0;
-      }
+      /* --- COOKIE & MODAL --- */
+      .cookie-banner { position: fixed; bottom: 20px; left: 20px; right: 20px; z-index: 20000; display: flex; justify-content: center; pointer-events: none; }
+      .cookie-content { pointer-events: auto; background: var(--white); border: 4px solid var(--black); box-shadow: 8px 8px 0 var(--black); padding: 10px; max-width: 500px; width: 100%; display: flex; flex-direction: column; gap: 8px; }
+      .cookie-buttons { display: flex; gap: 12px; justify-content: flex-end; }
+      .cookie-btn { padding: 8px 16px; font-weight: 800; text-transform: uppercase; border: 3px solid var(--black); cursor: pointer; font-size: 0.8rem; box-shadow: 4px 4px 0 var(--black); transition: transform 0.1s, box-shadow 0.1s; }
+      .cookie-btn:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0 var(--black); }
+      .cookie-btn.accept { background: var(--lime); color: var(--black); }
+      .cookie-btn.reject { background: #ff5e5e; color: var(--black); }
 
-      .social-link:active {
-        transform: translate(3px, 3px);
-        box-shadow: 1px 1px 0 var(--black);
-      }
-
-      /* --- COOKIE BANNER --- */
-      .cookie-banner {
-        position: fixed;
-        bottom: 20px;
-        left: 20px;
-        right: 20px;
-        z-index: 20000;
-        display: flex;
-        justify-content: center;
-        pointer-events: none;
-      }
-
-      .cookie-content {
-        pointer-events: auto;
-        background: var(--white);
-        border: 4px solid var(--black);
-        box-shadow: 8px 8px 0 var(--black);
-        padding: 10px;
-        max-width: 500px;
-        width: 100%;
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-      }
-
-      .cookie-content h3 {
-        margin: 0;
-        text-transform: uppercase;
-        font-size: 1.1rem;
-      }
-
-      .cookie-content p {
-        margin: 0;
-        font-size: 0.9rem;
-        line-height: 1.4;
-      }
-
-      .cookie-buttons {
-        display: flex;
-        gap: 12px;
-        justify-content: flex-end;
-      }
-
-      .cookie-btn {
-        padding: 8px 16px;
-        font-weight: 800;
-        text-transform: uppercase;
-        border: 3px solid var(--black);
-        cursor: pointer;
-        font-size: 0.8rem;
-        box-shadow: 4px 4px 0 var(--black);
-        transition: transform 0.1s, box-shadow 0.1s;
-      }
-
-      .cookie-btn:active {
-        transform: translate(2px, 2px);
-        box-shadow: 2px 2px 0 var(--black);
-      }
-
-      .cookie-btn.accept {
-        background: var(--lime);
-        color: var(--black);
-      }
-
-      .cookie-btn.reject {
-        background: #ff5e5e;
-        color: var(--black);
-      }
+      .name-modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(5, 5, 5, 0.6); z-index: 30000; display: flex; justify-content: center; align-items: center; padding: 20px; opacity: 0; pointer-events: none; transition: opacity 0.2s ease; }
+      .name-modal-overlay.visible { opacity: 1; pointer-events: auto; }
+      .name-modal { background: var(--white); border: 4px solid var(--black); box-shadow: 12px 12px 0 var(--black); padding: 24px; max-width: 400px; width: 100%; display: flex; flex-direction: column; gap: 16px; transform: scale(0.9); transition: transform 0.2s ease; }
+      .name-modal-overlay.visible .name-modal { transform: scale(1); }
+      .name-modal h3 { margin: 0; text-transform: uppercase; font-size: 1.2rem; font-weight: 800; letter-spacing: 0.06em; }
+      .name-modal input { padding: 12px 16px; border: 3px solid var(--black); background: var(--white); font-size: 1rem; font-weight: 600; font-family: inherit; color: var(--black); box-shadow: 4px 4px 0 var(--black); transition: transform 0.1s, box-shadow 0.1s; letter-spacing: 0.05em; }
+      .name-modal input:focus { outline: none; transform: translate(2px, 2px); box-shadow: 2px 2px 0 var(--black); background: var(--lime-soft); }
+      .name-modal-buttons { display: flex; gap: 12px; justify-content: flex-end; margin-top: 8px; }
+      .name-modal-btn { padding: 10px 20px; font-weight: 800; text-transform: uppercase; border: 3px solid var(--black); cursor: pointer; font-size: 0.85rem; box-shadow: 4px 4px 0 var(--black); transition: transform 0.1s, box-shadow 0.1s; font-family: inherit; }
+      .name-modal-btn:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0 var(--black); }
+      .name-modal-btn.cancel { background: #e0e0e0; color: var(--black); }
+      .name-modal-btn.save { background: var(--lime); color: var(--black); }
 
       @media (max-width: 600px) {
-        .cookie-banner {
-            left: 10px; right: 10px; bottom: 10px;
-        }
-        .cookie-content {
-            padding: 16px;
-        }
-        .cookie-buttons {
-            justify-content: stretch;
-        }
-        .cookie-btn {
-            flex: 1;
-            text-align: center;
-        }
-      }
-
-      /* --- NAME MODAL --- */
-      .name-modal-overlay {
-        position: fixed;
-        top: 0; left: 0; right: 0; bottom: 0;
-        background: rgba(5, 5, 5, 0.6);
-        z-index: 30000;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        padding: 20px;
-        opacity: 0;
-        pointer-events: none;
-        transition: opacity 0.2s ease;
-      }
-
-      .name-modal-overlay.visible {
-        opacity: 1;
-        pointer-events: auto;
-      }
-
-      .name-modal {
-        background: var(--white);
-        border: 4px solid var(--black);
-        box-shadow: 12px 12px 0 var(--black);
-        padding: 24px;
-        max-width: 400px;
-        width: 100%;
-        display: flex;
-        flex-direction: column;
-        gap: 16px;
-        transform: scale(0.9);
-        transition: transform 0.2s ease;
-      }
-
-      .name-modal-overlay.visible .name-modal {
-        transform: scale(1);
-      }
-
-      .name-modal h3 {
-        margin: 0;
-        text-transform: uppercase;
-        font-size: 1.2rem;
-        font-weight: 800;
-        letter-spacing: 0.06em;
-      }
-
-      .name-modal input {
-        padding: 12px 16px;
-        border: 3px solid var(--black);
-        background: var(--white);
-        font-size: 1rem;
-        font-weight: 600;
-        font-family: inherit;
-        color: var(--black);
-        box-shadow: 4px 4px 0 var(--black);
-        transition: transform 0.1s, box-shadow 0.1s;
-        letter-spacing: 0.05em;
-      }
-
-      .name-modal input:focus {
-        outline: none;
-        transform: translate(2px, 2px);
-        box-shadow: 2px 2px 0 var(--black);
-        background: var(--lime-soft);
-      }
-
-      .name-modal-buttons {
-        display: flex;
-        gap: 12px;
-        justify-content: flex-end;
-        margin-top: 8px;
-      }
-
-      .name-modal-btn {
-        padding: 10px 20px;
-        font-weight: 800;
-        text-transform: uppercase;
-        border: 3px solid var(--black);
-        cursor: pointer;
-        font-size: 0.85rem;
-        box-shadow: 4px 4px 0 var(--black);
-        transition: transform 0.1s, box-shadow 0.1s;
-        font-family: inherit;
-      }
-
-      .name-modal-btn:active {
-        transform: translate(2px, 2px);
-        box-shadow: 2px 2px 0 var(--black);
-      }
-
-      .name-modal-btn.cancel {
-        background: #e0e0e0;
-        color: var(--black);
-      }
-
-      .name-modal-btn.save {
-        background: var(--lime);
-        color: var(--black);
+        .cookie-banner { left: 10px; right: 10px; bottom: 10px; }
+        .menu-row { flex-direction: column; }
       }
     </style>
   </head>
@@ -824,31 +594,53 @@
     <div id="mainMenu" class="app">
         <header class="header">
           <h1 style="font-size: 2.2rem; text-transform: uppercase; margin: 0; letter-spacing: 0.1em; text-align: center;">Coinfliip</h1>
-          <div class="header-author" style="font-size: 0.8rem; margin-top: 8px;">Multiplayer Update</div>
         </header>
         <main class="main">
           <div class="menu-content">
             <button id="btnStoryMode" class="menu-btn">Modo Historia</button>
-            
-            <div class="menu-separator"></div>
-            
-            <button id="btnCreateRoom" class="menu-btn secondary">Crear Sala</button>
-            
-            <div class="menu-row">
-                <input type="text" id="roomCodeInput" class="menu-input" placeholder="CÓDIGO" maxlength="5">
-                <button id="btnJoinRoom" class="menu-btn join-btn">Unirse</button>
-            </div>
+            <button id="btnMultiplayerMenu" class="menu-btn salmon">Modo Multijugador</button>
           </div>
         </main>
     </div>
 
-    <!-- GAME APP (OCULTO POR DEFECTO) -->
+    <!-- MULTIPLAYER SUB-MENU -->
+    <div id="multiplayerMenu" class="app hidden">
+        <header class="header" style="background: var(--salmon-soft);">
+            <div style="width: 100%; display: flex; justify-content: space-between; align-items: center;">
+                <button id="btnBackToMain" class="menu-btn secondary" style="width: auto; padding: 6px 12px; font-size: 0.8rem;">← BACK</button>
+                <h2 id="multiplayerTitle" style="margin: 0; text-transform: uppercase; font-size: 1.2rem;">Multiplayer</h2>
+                <div style="width: 60px;"></div> <!-- Spacer -->
+            </div>
+        </header>
+        <main class="main">
+            <div class="menu-content">
+                <button id="btnCreateRoom" class="menu-btn salmon">Crear Sala</button>
+                
+                <div class="menu-row">
+                    <input type="text" id="roomCodeInput" class="menu-input" placeholder="CÓDIGO" maxlength="5">
+                    <button id="btnJoinRoom" class="menu-btn join-btn">Unirse</button>
+                </div>
+
+                <div class="menu-separator"></div>
+                <div style="width: 100%; text-align: left; font-weight: 800; font-size: 0.8rem; text-transform: uppercase;">
+                    <span id="savedRoomsLabel">Tus Salas Guardadas</span>
+                </div>
+                <div id="roomHistoryList" class="room-list">
+                    <!-- History items injected here -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- GAME APP -->
     <div id="gameApp" class="app hidden">
       <header class="header">
         <div class="header-title">
-          <div>
+          <div class="header-left-col">
             Coinfliip
             <div class="header-author" id="headerAuthor">by antonio10bc</div>
+            <!-- MENU BUTTON RELOCATED HERE -->
+            <button id="btnGameExit" class="exit-btn-inline">MENU</button>
           </div>
           <div class="header-badge">HEAD 49.999% / TAILS 49.999% / EDGE 0.002%</div>
         </div>
@@ -889,6 +681,7 @@
         <section class="leaderboard-section">
           <div class="leaderboard-header">
             <h1>Leaderboard</h1>
+            <div id="roomCodeDisplay" class="room-code-display" title="Copy Code">CODE: -----</div>
           </div>
           
           <div class="leaderboard" id="leaderboard"></div>
@@ -920,7 +713,6 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        // Generate or retrieve a persistent User ID for this session
         let userId = localStorage.getItem('coinfliip_userId');
         if (!userId) {
             userId = 'user_' + Math.random().toString(36).substr(2, 9);
@@ -947,12 +739,21 @@
 
         // --- DOM ELEMENTS ---
         const mainMenu = document.getElementById('mainMenu');
+        const multiplayerMenu = document.getElementById('multiplayerMenu');
         const gameApp = document.getElementById('gameApp');
+        
+        // Buttons
         const btnStoryMode = document.getElementById('btnStoryMode');
+        const btnMultiplayerMenu = document.getElementById('btnMultiplayerMenu');
+        const btnBackToMain = document.getElementById('btnBackToMain');
         const btnCreateRoom = document.getElementById('btnCreateRoom');
         const btnJoinRoom = document.getElementById('btnJoinRoom');
+        const btnGameExit = document.getElementById('btnGameExit');
+
         const roomCodeInput = document.getElementById('roomCodeInput');
         const headerAuthor = document.getElementById('headerAuthor');
+        const roomCodeDisplay = document.getElementById('roomCodeDisplay');
+        const roomHistoryList = document.getElementById('roomHistoryList');
 
         const coinButton = document.getElementById('coinButton');
         const coinFace = document.getElementById('coinFace');
@@ -968,6 +769,8 @@
         const fireContainer = document.getElementById('fireContainer');
         const sadContainer = document.getElementById('sadContainer');
         const happyContainer = document.getElementById('happyContainer');
+        const savedRoomsLabel = document.getElementById('savedRoomsLabel');
+        const multiplayerTitle = document.getElementById('multiplayerTitle');
 
         // --- LANGUAGE & LOCALIZATION ---
         const isSpanish = (navigator.language || navigator.userLanguage || '').toLowerCase().startsWith('es');
@@ -976,15 +779,19 @@
             document.documentElement.lang = 'es';
             // Translate Menu
             btnStoryMode.textContent = 'Modo Historia';
+            btnMultiplayerMenu.textContent = 'Modo Multijugador';
             btnCreateRoom.textContent = 'Crear Sala';
             btnJoinRoom.textContent = 'Unirse';
-            roomCodeInput.placeholder = 'CÓDIGO';
+            btnBackToMain.textContent = '← VOLVER';
+            if (savedRoomsLabel) savedRoomsLabel.textContent = 'Tus Salas Guardadas';
+            if (multiplayerTitle) multiplayerTitle.textContent = 'Multijugador';
             
             // Translate Game
             const headerBadge = document.querySelector('.header-badge');
             if (headerBadge) headerBadge.textContent = 'CARA 49.999% / CRUZ 49.999% / CANTO 0.002%';
             coinButton.setAttribute('aria-label', 'Lanzar moneda');
             coinFaceLabel.innerHTML = '<strong>Toca para lanzar</strong>';
+            roomCodeInput.placeholder = 'CÓDIGO';
             const rulesParagraph = document.querySelector('.coin-info p');
             if (rulesParagraph) {
               rulesParagraph.innerHTML =
@@ -1003,23 +810,22 @@
             claimButton.textContent = 'COBRAR';
             if (headerAuthor) headerAuthor.textContent = 'por antonio10bc';
             
-            const btnAccept = document.getElementById('btnAccept');
-            const btnReject = document.getElementById('btnReject');
-            if (btnAccept) btnAccept.textContent = 'Aceptar';
-            if (btnReject) btnReject.textContent = 'Denegar';
+            // Always MENU
+            btnGameExit.textContent = 'MENU'; 
         } else {
             // Translate Menu
             btnStoryMode.textContent = 'Story Mode';
+            btnMultiplayerMenu.textContent = 'Multiplayer Mode';
             btnCreateRoom.textContent = 'Create Room';
             btnJoinRoom.textContent = 'Join Room';
+            btnBackToMain.textContent = '← BACK';
             roomCodeInput.placeholder = 'CODE';
+            if (savedRoomsLabel) savedRoomsLabel.textContent = 'Your Saved Rooms';
+            if (multiplayerTitle) multiplayerTitle.textContent = 'Multiplayer';
 
             document.documentElement.lang = 'en';
             coinButton.setAttribute('aria-label', 'Flip coin');
-            const btnAccept = document.getElementById('btnAccept');
-            const btnReject = document.getElementById('btnReject');
-            if (btnAccept) btnAccept.textContent = 'Accept';
-            if (btnReject) btnReject.textContent = 'Reject';
+            btnGameExit.textContent = 'MENU';
         }
 
         const SOCIAL_LINKS_MARGIN_TOP = 24;
@@ -1040,15 +846,156 @@
         let players = [];
         let currentPlayerName = isSpanish ? 'Tú' : 'You';
         
-        // --- GAME LOGIC FUNCTIONS ---
+        // --- LOGIC: ROOM HISTORY ---
+        function getRoomHistory() {
+            try {
+                return JSON.parse(localStorage.getItem('coinfliip_rooms') || '[]');
+            } catch(e) { return []; }
+        }
 
+        function saveRoomToHistory(code, customName = null) {
+            let history = getRoomHistory();
+            const existingIndex = history.findIndex(r => r.code === code);
+            if (existingIndex >= 0) {
+                const room = history.splice(existingIndex, 1)[0];
+                if (customName) room.name = customName; 
+                history.unshift(room);
+            } else {
+                history.unshift({ 
+                    code: code, 
+                    name: customName || (isSpanish ? 'Sala ' : 'Room ') + code 
+                });
+            }
+            if (history.length > 10) history = history.slice(0, 10);
+            localStorage.setItem('coinfliip_rooms', JSON.stringify(history));
+            renderRoomHistory();
+        }
+
+        function renderRoomHistory() {
+            roomHistoryList.innerHTML = '';
+            const history = getRoomHistory();
+            if (history.length === 0) {
+                const emptyMsg = document.createElement('div');
+                emptyMsg.textContent = isSpanish ? 'No hay salas recientes.' : 'No recent rooms.';
+                emptyMsg.style.textAlign = 'center';
+                emptyMsg.style.opacity = '0.5';
+                emptyMsg.style.fontSize = '0.8rem';
+                roomHistoryList.appendChild(emptyMsg);
+                return;
+            }
+
+            history.forEach(room => {
+                const el = document.createElement('div');
+                el.className = 'room-item';
+                
+                const nameSpan = document.createElement('span');
+                nameSpan.className = 'room-item-name';
+                
+                const nameText = document.createTextNode(room.name + ' ');
+                nameSpan.appendChild(nameText);
+
+                // Edit Icon as separate element for easier clicking
+                const editIcon = document.createElement('span');
+                editIcon.className = 'edit-icon-btn';
+                editIcon.textContent = '✏️';
+                editIcon.title = isSpanish ? 'Renombrar' : 'Rename';
+                
+                // Stop propagation on the button
+                editIcon.onclick = (e) => {
+                    e.stopPropagation();
+                    // Open the custom modal instead of prompt
+                    showRoomNameModal(room.code, room.name);
+                };
+                nameSpan.appendChild(editIcon);
+
+                const codeSpan = document.createElement('span');
+                codeSpan.className = 'room-item-code';
+                codeSpan.textContent = room.code;
+
+                el.appendChild(nameSpan);
+                el.appendChild(codeSpan);
+                
+                // Clicking the row joins the room
+                el.onclick = () => { joinRoom(room.code); };
+                
+                roomHistoryList.appendChild(el);
+            });
+        }
+
+        // --- ROOM NAME MODAL ---
+        let roomNameModalHandlers = null;
+        function showRoomNameModal(roomCode, currentName) {
+          const overlay = document.getElementById('roomNameModalOverlay');
+          const input = document.getElementById('roomNameModalInput');
+          const title = document.getElementById('roomNameModalTitle');
+          const cancelBtn = document.getElementById('roomNameModalCancel');
+          const saveBtn = document.getElementById('roomNameModalSave');
+          
+          if (!overlay) return;
+          
+          // Clear previous listeners
+          if (roomNameModalHandlers) {
+            saveBtn.removeEventListener('click', roomNameModalHandlers.save);
+            cancelBtn.removeEventListener('click', roomNameModalHandlers.cancel);
+            input.removeEventListener('keydown', roomNameModalHandlers.keydown);
+            overlay.removeEventListener('click', roomNameModalHandlers.overlay);
+          }
+          
+          input.value = currentName;
+          input.maxLength = 20; 
+          
+          // Translations
+          if (isSpanish) {
+            title.textContent = 'Nombre de Sala';
+            cancelBtn.textContent = 'Cancelar';
+            saveBtn.textContent = 'Guardar';
+            input.placeholder = 'Nombre...';
+          } else {
+            title.textContent = 'Room Name';
+            cancelBtn.textContent = 'Cancel';
+            saveBtn.textContent = 'Save';
+            input.placeholder = 'Name...';
+          }
+          
+          const handleSave = function() {
+            const trimmedName = input.value.trim().substring(0, 20);
+            if (trimmedName.length > 0) {
+              saveRoomToHistory(roomCode, trimmedName);
+            }
+            hideRoomNameModal();
+          };
+          
+          const handleCancel = function() { hideRoomNameModal(); };
+          
+          const handleKeyPress = function(e) {
+            if (e.key === 'Enter') { e.preventDefault(); handleSave(); } 
+            else if (e.key === 'Escape') { e.preventDefault(); handleCancel(); }
+          };
+          
+          const handleOverlayClick = function(e) { if (e.target === overlay) handleCancel(); };
+          
+          roomNameModalHandlers = { save: handleSave, cancel: handleCancel, keydown: handleKeyPress, overlay: handleOverlayClick };
+          
+          saveBtn.addEventListener('click', handleSave);
+          cancelBtn.addEventListener('click', handleCancel);
+          input.addEventListener('keydown', handleKeyPress);
+          overlay.addEventListener('click', handleOverlayClick);
+          
+          overlay.classList.add('visible');
+          setTimeout(() => { input.focus(); input.select(); }, 50);
+        }
+        
+        function hideRoomNameModal() {
+          const overlay = document.getElementById('roomNameModalOverlay');
+          if (overlay) overlay.classList.remove('visible');
+        }
+
+        // --- GAME LOGIC FUNCTIONS ---
         function initPlayers(mode) {
           players = [];
           
           if (mode === 'story') {
-             // User
             players.push({ id: 'user', name: currentPlayerName, score: 0, isUser: true, lastRank: 0 });
-            // Add historical bots
             for (let i = 0; i < historicalNames.length; i++) {
                 const score = Math.floor(999 - (i * (999 / (historicalNames.length - 1))));
                 players.push({
@@ -1059,21 +1006,31 @@
                   lastRank: 0 
                 });
             }
-            // Sort initially
             const initialSorted = players.slice().sort((a, b) => b.score - a.score);
             initialSorted.forEach((p, i) => p.lastRank = i + 1);
             
-            // Try to load saved data for story mode
             loadGameData();
             
-            // Re-sync current player name after load
             const user = players.find(p => p.isUser);
             if (user) currentPlayerName = user.name;
           } 
-          // For multiplayer, players array is populated via subscription
         }
 
-        // --- 3. ROOM LOGIC & START GAME ---
+        function showMainMenu() {
+            mainMenu.classList.remove('hidden');
+            multiplayerMenu.classList.add('hidden');
+            gameApp.classList.add('hidden');
+            document.body.classList.remove('multiplayer-theme');
+        }
+
+        function showMultiplayerMenu() {
+            mainMenu.classList.add('hidden');
+            multiplayerMenu.classList.remove('hidden');
+            gameApp.classList.add('hidden');
+            document.body.classList.add('multiplayer-theme');
+            renderRoomHistory();
+        }
+
         function startGame(mode) {
             currentGameMode = mode;
             
@@ -1082,111 +1039,68 @@
                 updateLeaderboard();
                 mainMenu.classList.add('hidden');
                 gameApp.classList.remove('hidden');
-                updateSpeechBubble();
-                updateBestCombo();
-                updateBestClaimedCombo();
-                scheduleIdleCta();
+                roomCodeDisplay.style.display = 'none'; // Hide code
+                document.body.classList.remove('multiplayer-theme');
+                
+                // Reset Visuals
+                currentPoints = 0; bestCombo = 0; bestClaimedCombo = 0;
+                updateSpeechBubble(); updateBestCombo(); updateBestClaimedCombo(); scheduleIdleCta();
+                
                 sendAnalyticsEvent('start_game', { mode: 'story' });
                 if(headerAuthor) headerAuthor.textContent = isSpanish ? 'por antonio10bc' : 'by antonio10bc';
-                
-            } else if (mode === 'multiplayer_create') {
-                // a. Generate 5-char code
-                const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // No O, 0, I, 1 to avoid confusion
-                let code = '';
-                for (let i = 0; i < 5; i++) code += chars.charAt(Math.floor(Math.random() * chars.length));
-                currentRoomId = code;
-
-                // b. Set initial data for this user in the new room
-                // We use localStorage name if available from previous sessions (loaded in story mode part, or default)
-                // Let's check if we have a saved name from story mode to use it here too
-                try {
-                    const savedData = JSON.parse(localStorage.getItem('coinfliip_gameData') || '{}');
-                    if (savedData.playersScores) {
-                         const u = savedData.playersScores.find(p => p.id === 'user');
-                         if (u && u.name) currentPlayerName = u.name;
-                    }
-                } catch(e){}
-
-                db.ref('rooms/' + currentRoomId + '/players/' + userId).set({
-                    name: currentPlayerName,
-                    score: 0
-                }).then(() => {
-                    // c. Subscribe
-                    subscribeToRoom(currentRoomId);
-                    
-                    // d. Show code
-                    headerAuthor.textContent = (isSpanish ? 'CÓDIGO SALA: ' : 'ROOM CODE: ') + currentRoomId;
-                    headerAuthor.style.fontWeight = '800';
-                    headerAuthor.style.color = 'var(--black)';
-                    
-                    // e. Show game
-                    mainMenu.classList.add('hidden');
-                    gameApp.classList.remove('hidden');
-                    
-                    // Reset visual scores for new game
-                    currentPoints = 0;
-                    bestCombo = 0;
-                    bestClaimedCombo = 0;
-                    updateSpeechBubble();
-                    updateBestCombo();
-                    updateBestClaimedCombo();
-                    scheduleIdleCta();
-                });
-
-            } else if (mode === 'multiplayer_join') {
-                // a. Read input
-                const code = roomCodeInput.value.trim().toUpperCase();
-                if (!code) return;
-
-                // b. Check if exists
-                db.ref('rooms/' + code).get().then((snapshot) => {
-                    if (snapshot.exists()) {
-                        currentRoomId = code;
-                        
-                        // Get name preference
-                         try {
-                            const savedData = JSON.parse(localStorage.getItem('coinfliip_gameData') || '{}');
-                            if (savedData.playersScores) {
-                                 const u = savedData.playersScores.find(p => p.id === 'user');
-                                 if (u && u.name) currentPlayerName = u.name;
-                            }
-                        } catch(e){}
-
-                        // c. Join room
-                        db.ref('rooms/' + currentRoomId + '/players/' + userId).set({
-                            name: currentPlayerName,
-                            score: 0
-                        }).then(() => {
-                            subscribeToRoom(currentRoomId);
-                             headerAuthor.textContent = (isSpanish ? 'CÓDIGO SALA: ' : 'ROOM CODE: ') + currentRoomId;
-                             headerAuthor.style.fontWeight = '800';
-
-                             mainMenu.classList.add('hidden');
-                             gameApp.classList.remove('hidden');
-
-                            currentPoints = 0;
-                            bestCombo = 0;
-                            bestClaimedCombo = 0;
-                            updateSpeechBubble();
-                            updateBestCombo();
-                            updateBestClaimedCombo();
-                            scheduleIdleCta();
-                        });
-                    } else {
-                        // d. Error
-                        showToast(isSpanish ? "SALA NO ENCONTRADA" : "ROOM NOT FOUND");
-                    }
-                }).catch((error) => {
-                    console.error(error);
-                    showToast("ERROR");
-                });
-            }
+            } 
         }
 
-        // --- 4. REALTIME SYNC ---
+        function joinRoom(code) {
+             currentRoomId = code;
+             currentGameMode = 'multiplayer';
+             
+             try {
+                const savedData = JSON.parse(localStorage.getItem('coinfliip_gameData') || '{}');
+                if (savedData.playersScores) {
+                     const u = savedData.playersScores.find(p => p.id === 'user');
+                     if (u && u.name) currentPlayerName = u.name;
+                }
+            } catch(e){}
+
+            // Use a transaction or explicit check to handle new vs existing players safely
+            const playerRef = db.ref('rooms/' + currentRoomId + '/players/' + userId);
+            
+            playerRef.get().then((snapshot) => {
+                if (snapshot.exists()) {
+                    // Update only name if player exists
+                    return playerRef.update({ name: currentPlayerName });
+                } else {
+                    // Set full initial data if player is new
+                    return playerRef.set({
+                        name: currentPlayerName,
+                        score: 0,
+                        bestStreak: 0,
+                        bestClaimed: 0
+                    });
+                }
+            }).then(() => {
+                subscribeToRoom(currentRoomId);
+                
+                roomCodeDisplay.textContent = 'CODE: ' + currentRoomId;
+                roomCodeDisplay.style.display = 'block';
+                
+                saveRoomToHistory(currentRoomId);
+
+                multiplayerMenu.classList.add('hidden');
+                gameApp.classList.remove('hidden');
+                document.body.classList.add('multiplayer-theme');
+
+                currentPoints = 0; bestCombo = 0; bestClaimedCombo = 0;
+                updateSpeechBubble(); updateBestCombo(); updateBestClaimedCombo(); scheduleIdleCta();
+            }).catch((error) => {
+                console.error("Firebase Error:", error);
+                showToast(isSpanish ? "ERROR DE CONEXIÓN" : "CONNECTION ERROR");
+            });
+        }
+
         function subscribeToRoom(roomId) {
             if (roomSubscription) {
-                // Detach previous listener if any
                 db.ref('rooms/' + roomId + '/players').off();
             }
 
@@ -1198,31 +1112,46 @@
                     return;
                 }
 
-                // Rebuild players array
-                // We preserve previous ranks to allow the animation logic to work
                 const oldPlayers = [...players];
                 players = [];
 
                 Object.keys(data).forEach(key => {
                     const pData = data[key];
-                    // Try to find this player in old array to keep 'lastRank' if possible, though logic might reset
                     const oldP = oldPlayers.find(op => op.id === key);
                     
                     players.push({
                         id: key,
                         name: pData.name || 'Unknown',
                         score: pData.score || 0,
+                        bestStreak: pData.bestStreak || 0,
+                        bestClaimed: pData.bestClaimed || 0,
                         isUser: (key === userId),
                         lastRank: oldP ? oldP.lastRank : 0
                     });
                 });
                 
-                // If the user name changed in another device or via modal, update local variable
                 const me = players.find(p => p.isUser);
-                if (me) currentPlayerName = me.name;
+                if (me) {
+                    currentPlayerName = me.name;
+                }
 
                 updateLeaderboard();
             });
+        }
+
+        function handleGameExit() {
+            if (currentGameMode === 'story') {
+                saveGameData();
+                showMainMenu();
+            } else {
+                // Exit Room logic
+                if (currentRoomId && roomSubscription) {
+                    db.ref('rooms/' + currentRoomId + '/players').off();
+                }
+                currentRoomId = null;
+                currentGameMode = null;
+                showMultiplayerMenu();
+            }
         }
 
         // --- EFFECTS ---
@@ -1428,7 +1357,6 @@
                  db.ref('rooms/' + currentRoomId + '/players/' + userId).update({
                      name: trimmedName
                  });
-                 // Leaderboard updates via subscription
               }
             }
             hideNameModal();
@@ -1484,7 +1412,11 @@
 
             const name = document.createElement('div');
             name.className = 'leaderboard-name';
-            name.textContent = player.name;
+            
+            // Name Line
+            const nameText = document.createElement('div');
+            nameText.className = 'leaderboard-name-text';
+            nameText.textContent = player.name;
             
             if (player.isUser) {
               userPosition = currentRank;
@@ -1494,9 +1426,10 @@
               const tag = document.createElement('span');
               tag.className = 'leaderboard-tag';
               tag.textContent = isSpanish ? 'Tú' : 'You';
-              name.appendChild(tag);
+              nameText.appendChild(tag);
             }
-
+            
+            // Trend Icon
             let trendIcon = document.createElement('span');
             trendIcon.className = 'trend-icon';
             let hasChanged = false;
@@ -1511,11 +1444,32 @@
             } else { trendIcon.textContent = ''; }
             
             player.lastRank = currentRank;
-            name.appendChild(trendIcon);
+            nameText.appendChild(trendIcon);
+            name.appendChild(nameText);
 
             if (hasChanged) {
                 trendIcon.classList.add('visible');
                 setTimeout(() => { if (trendIcon) trendIcon.classList.remove('visible'); }, 60000);
+            }
+
+            // Stats Tags (Only multiplayer)
+            if (currentGameMode === 'multiplayer' && (player.bestStreak > 0 || player.bestClaimed > 0)) {
+                const tagsDiv = document.createElement('div');
+                tagsDiv.className = 'leaderboard-stats-tags';
+                
+                if (player.bestStreak > 0) {
+                    const fireTag = document.createElement('span');
+                    fireTag.className = 'stat-tag';
+                    fireTag.innerHTML = `🔥 ${player.bestStreak}`;
+                    tagsDiv.appendChild(fireTag);
+                }
+                if (player.bestClaimed > 0) {
+                    const bankTag = document.createElement('span');
+                    bankTag.className = 'stat-tag';
+                    bankTag.innerHTML = `💰 ${player.bestClaimed}`;
+                    tagsDiv.appendChild(bankTag);
+                }
+                name.appendChild(tagsDiv);
             }
 
             const score = document.createElement('div');
@@ -1551,24 +1505,29 @@
 
           setTimeout(function () {
             const outcome = rollOutcome();
-            let flipResult = '';
             
             if (outcome === 'cara') {
-              flipResult = 'HEAD';
               headsCount++;
               coinFace.innerHTML = '<strong>😊</strong>';
               coinFaceLabel.textContent = isSpanish ? 'Cara' : 'Heads';
               currentPoints = currentPoints === 0 ? 1 : currentPoints * 2;
+              
               if (currentPoints > bestCombo) {
                 bestCombo = currentPoints;
                 if (currentGameMode === 'story') saveGameData();
                 triggerHighlight(resultPill);
+                
+                // Live update best streak in multiplayer
+                if (currentGameMode === 'multiplayer') {
+                     db.ref('rooms/' + currentRoomId + '/players/' + userId).update({
+                         bestStreak: bestCombo
+                     });
+                }
               }
               claimButton.disabled = false;
               updateFireEffect(currentPoints);
 
             } else if (outcome === 'cruz') {
-              flipResult = 'TAILS';
               tailsCount++;
               coinFace.innerHTML = '<strong>❌</strong>';
               coinFaceLabel.textContent = isSpanish ? 'Cruz (reinicio)' : 'Tails (reset)';
@@ -1576,15 +1535,21 @@
               resetStreak();
 
             } else {
-              flipResult = 'EDGE';
               edgesCount++;
               coinFace.innerHTML = '<strong>⭐</strong>';
               coinFaceLabel.textContent = isSpanish ? 'Canto (raro)' : 'Edge (rare)';
               currentPoints += 50000;
+              
               if (currentPoints > bestCombo) {
                 bestCombo = currentPoints;
                 if (currentGameMode === 'story') saveGameData();
                 triggerHighlight(resultPill);
+                
+                if (currentGameMode === 'multiplayer') {
+                     db.ref('rooms/' + currentRoomId + '/players/' + userId).update({
+                         bestStreak: bestCombo
+                     });
+                }
               }
               claimButton.disabled = false;
               showToast(isSpanish ? '⭐ ¡CANTO! +50000 puntos' : '⭐ EDGE! +50000 points');
@@ -1592,26 +1557,16 @@
             }
 
             totalFlips++;
-            const user = players.find(p => p.isUser);
-            sendAnalyticsEvent('coin_flip', {
-              flip_result: flipResult,
-              current_streak: currentPoints,
-              best_streak: bestCombo,
-              score: user ? user.score : 0
-            });
-
             updateSpeechBubble();
             updateBestCombo();
             scheduleIdleCta();
           }, 110);
         }
 
-        // --- 5. UPDATED CLAIM CLICK ---
         function handleClaimClick() {
           if (currentPoints <= 0) return;
           const user = players.find(p => p.isUser);
           if (!user && currentGameMode === 'story') return; 
-          // In multiplayer user object is in players array too
 
           sendAnalyticsEvent('claim_click', { current_streak: currentPoints });
 
@@ -1620,7 +1575,6 @@
             triggerHighlight(bestClaimedPill);
           }
           
-          // Update score
           let newScore = 0;
           if (user) {
               user.score += currentPoints;
@@ -1631,23 +1585,16 @@
           
           if (currentGameMode === 'story') {
               randomBotProgress(currentPoints);
-              const leaderboardPosition = updateLeaderboard();
+              updateLeaderboard();
               saveGameData();
               
-          } else if (currentGameMode.startsWith('multiplayer')) {
-              // Firebase Update
+          } else if (currentGameMode === 'multiplayer') {
+              // Firebase Update: Score + Best Claimed
               db.ref('rooms/' + currentRoomId + '/players/' + userId).update({
-                  score: newScore
+                  score: newScore,
+                  bestClaimed: bestClaimedCombo
               });
-              // No manual leaderboard update needed, on('value') handles it
           }
-
-          sendAnalyticsEvent('run_stats', {
-            best_streak: bestCombo,
-            best_claimed_streak: bestClaimedCombo,
-            // leaderboard_position: leaderboardPosition, // Hard to calc async
-            total_flips: totalFlips
-          });
 
           const pointsText = isSpanish
             ? (currentPoints === 1 ? ' punto' : ' puntos')
@@ -1660,15 +1607,59 @@
           scheduleIdleCta();
           updateBestClaimedCombo();
         }
+        
+        // Copy Code Logic
+        roomCodeDisplay.addEventListener('click', () => {
+             const textToCopy = currentRoomId;
+             
+             // Create temporary element
+             const textArea = document.createElement("textarea");
+             textArea.value = textToCopy;
+             textArea.style.position = "fixed"; // Avoid scrolling to bottom
+             textArea.style.opacity = "0";
+             document.body.appendChild(textArea);
+             textArea.select();
+             
+             try {
+                 const successful = document.execCommand('copy');
+                 if(successful) {
+                     const originalText = roomCodeDisplay.textContent;
+                     roomCodeDisplay.textContent = isSpanish ? 'COPIADO!' : 'COPIED!';
+                     setTimeout(() => {
+                         roomCodeDisplay.textContent = originalText;
+                     }, 1500);
+                 }
+             } catch (err) {
+                 console.error('Copy failed', err);
+             }
+             
+             document.body.removeChild(textArea);
+        });
 
         // --- EVENT LISTENERS ---
         coinButton.addEventListener('click', handleCoinClick);
         claimButton.addEventListener('click', handleClaimClick);
         
-        // Menu Listeners
+        // Navigation
         btnStoryMode.addEventListener('click', () => startGame('story'));
-        btnCreateRoom.addEventListener('click', () => startGame('multiplayer_create'));
-        btnJoinRoom.addEventListener('click', () => startGame('multiplayer_join'));
+        btnMultiplayerMenu.addEventListener('click', showMultiplayerMenu);
+        btnBackToMain.addEventListener('click', showMainMenu);
+        
+        // Multiplayer Actions
+        btnCreateRoom.addEventListener('click', () => {
+             const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; 
+             let code = '';
+             for (let i = 0; i < 5; i++) code += chars.charAt(Math.floor(Math.random() * chars.length));
+             joinRoom(code);
+        });
+        
+        btnJoinRoom.addEventListener('click', () => {
+            const code = roomCodeInput.value.trim().toUpperCase();
+            if (code) joinRoom(code);
+        });
+
+        // Exit button listener
+        btnGameExit.addEventListener('click', handleGameExit);
 
         const instagramLink = document.querySelector('.social-link[href*="instagram"]');
         const donateLink = document.querySelector('.social-link[href*="paypal"]');
@@ -1678,17 +1669,7 @@
 
       })();
     </script>
-    <div id="cookieBanner" class="cookie-banner" style="display: none;">
-        <div class="cookie-content">
-          <h3>🍪 Cookies & Privacy</h3>
-          <p>We use cookies to improve your experience.</p>
-          <div class="cookie-buttons">
-            <button id="btnReject" class="cookie-btn reject">Denegar</button>
-            <button id="btnAccept" class="cookie-btn accept">Aceptar</button>
-          </div>
-        </div>
-      </div>
-
+    
     <!-- Name Edit Modal -->
     <div id="nameModalOverlay" class="name-modal-overlay">
       <div class="name-modal">
@@ -1700,6 +1681,30 @@
         </div>
       </div>
     </div>
+
+    <!-- Room Name Edit Modal (NEW) -->
+    <div id="roomNameModalOverlay" class="name-modal-overlay">
+      <div class="name-modal">
+        <h3 id="roomNameModalTitle">Room Name</h3>
+        <input type="text" id="roomNameModalInput" maxlength="20" />
+        <div class="name-modal-buttons">
+          <button id="roomNameModalCancel" class="name-modal-btn cancel">Cancel</button>
+          <button id="roomNameModalSave" class="name-modal-btn save">Save</button>
+        </div>
+      </div>
+    </div>
+    
+    <div id="cookieBanner" class="cookie-banner" style="display: none;">
+        <div class="cookie-content">
+          <h3>🍪 Cookies & Privacy</h3>
+          <p>We use cookies to improve your experience.</p>
+          <div class="cookie-buttons">
+            <button id="btnReject" class="cookie-btn reject">Denegar</button>
+            <button id="btnAccept" class="cookie-btn accept">Aceptar</button>
+          </div>
+        </div>
+    </div>
+    
       <script>
         (function() {
           const cookieBanner = document.getElementById('cookieBanner');
