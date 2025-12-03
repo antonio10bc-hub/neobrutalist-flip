@@ -31,6 +31,7 @@
         --white: #f7f7f7;
         --gray: #a0a0a0;
         --green-trend: #2ecc71;
+        --neon-yellow: #FFFF00; /* Nuevo color para el hito */
       }
 
       * {
@@ -113,6 +114,76 @@
         50% { transform: translateY(-80px) scale(1.2); opacity: 1; }
         100% { transform: translateY(-150px) scale(1); opacity: 0; }
       }
+
+      /* STAR PARTICLES (NEW) */
+      .star-particle {
+        position: absolute;
+        user-select: none;
+        font-size: 2rem;
+        animation: starExplode 2s forwards ease-out;
+        z-index: 10002; /* Above toast */
+        text-shadow: 2px 2px 0 var(--black);
+      }
+      @keyframes starExplode {
+        0% { transform: translate(-50%, -50%) scale(0.5) rotate(0deg); opacity: 0; }
+        20% { opacity: 1; transform: translate(var(--tx), var(--ty)) scale(1.2) rotate(180deg); }
+        100% { opacity: 0; transform: translate(var(--tx-end), var(--ty-end)) scale(0.8) rotate(360deg); }
+      }
+
+      /* MILESTONE TOAST (NEW) */
+      .milestone-toast {
+        position: fixed;
+        top: 30%; /* Slightly above center to avoid covering coin */
+        left: 50%;
+        transform: translate(-50%, -50%) scale(0);
+        background: var(--neon-yellow);
+        color: var(--black);
+        padding: 24px 32px;
+        border-radius: 20px;
+        border: 4px solid var(--black);
+        font-weight: 900;
+        font-size: 1.2rem;
+        text-transform: uppercase;
+        box-shadow: 12px 12px 0 var(--black);
+        z-index: 10001;
+        text-align: center;
+        transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        pointer-events: none;
+        max-width: 90%;
+        line-height: 1.3;
+      }
+      .milestone-toast.visible {
+        transform: translate(-50%, -50%) scale(1);
+      }
+      .milestone-toast span {
+        display: block;
+        font-size: 2rem;
+        margin-top: 8px;
+        color: var(--black);
+      }
+      /* Speech bubble tail for milestone toast */
+      .milestone-toast::after {
+        content: '';
+        position: absolute;
+        bottom: -14px;
+        left: 50%;
+        transform: translateX(-50%);
+        border-width: 14px 14px 0 14px;
+        border-style: solid;
+        border-color: var(--black) transparent transparent transparent;
+      }
+      .milestone-toast::before {
+        content: '';
+        position: absolute;
+        bottom: -8px;
+        left: 50%;
+        transform: translateX(-50%);
+        border-width: 10px 10px 0 10px;
+        border-style: solid;
+        border-color: var(--neon-yellow) transparent transparent transparent;
+        z-index: 1;
+      }
+
 
       /* --- APP CONTAINER --- */
       .app {
@@ -285,7 +356,7 @@
         align-items: center;
         justify-content: center;
         width: 44px;
-        background: #ff8e8e;
+        background: #ff8e8e ;
         border: 2px solid var(--black);
         box-shadow: 3px 3px 0 var(--black);
         cursor: pointer;
@@ -870,6 +941,8 @@
     <div id="fireContainer" class="fx-container"></div>
     <div id="sadContainer" class="fx-container"></div>
     <div id="happyContainer" class="fx-container"></div>
+    <!-- NEW: Star Container for milestones -->
+    <div id="starContainer" class="fx-container"></div>
 
     <!-- MAIN MENU -->
     <div id="mainMenu" class="app menu-layout">
@@ -1041,7 +1114,11 @@
       </main>
     </div>
 
+    <!-- EXISTING TOAST -->
     <div class="toast" id="toast">EDGE IMPOSSIBLE (?)</div>
+    
+    <!-- NEW MILESTONE TOAST -->
+    <div id="milestoneToast" class="milestone-toast"></div>
 
     <script>
       (function () {
@@ -1116,6 +1193,8 @@
         const fireContainer = document.getElementById('fireContainer');
         const sadContainer = document.getElementById('sadContainer');
         const happyContainer = document.getElementById('happyContainer');
+        const starContainer = document.getElementById('starContainer'); // NEW
+        const milestoneToast = document.getElementById('milestoneToast'); // NEW
         const savedRoomsLabel = document.getElementById('savedRoomsLabel');
         const multiplayerTitle = document.getElementById('multiplayerTitle');
         const seoContentSection = document.getElementById('seoContentSection');
@@ -1721,6 +1800,86 @@
           setTimeout(() => { happyContainer.innerHTML = ''; }, 1300);
         }
 
+        // --- NEW: STAR CELEBRATION EFFECT ---
+        function triggerStars() {
+            if (!starContainer) return;
+            starContainer.innerHTML = '';
+            const fragment = document.createDocumentFragment();
+            const starTypes = ['⭐', '🌟', '✨', '💫', '✴️', '🤩'];
+            // Muchas particulas
+            for (let i = 0; i < 50; i++) { 
+                const el = document.createElement('div');
+                el.textContent = starTypes[Math.floor(Math.random() * starTypes.length)];
+                el.className = 'star-particle';
+                
+                // Random Start Positions (around center)
+                const startX = 50 + (Math.random() * 20 - 10);
+                const startY = 30 + (Math.random() * 20 - 10);
+                
+                // Calculate random trajectory for animation
+                const endX = (Math.random() * 100 - 50) + 'vw';
+                const endY = (Math.random() * 100 - 50) + 'vh';
+                
+                el.style.left = startX + 'vw';
+                el.style.top = startY + 'vh';
+                el.style.setProperty('--tx', (Math.random() * 40 - 20) + 'vw');
+                el.style.setProperty('--ty', (Math.random() * 40 - 20) + 'vh');
+                el.style.setProperty('--tx-end', endX);
+                el.style.setProperty('--ty-end', endY);
+                
+                el.style.animationDuration = (1.5 + Math.random() * 1.5) + 's';
+                fragment.appendChild(el);
+            }
+            starContainer.appendChild(fragment);
+            setTimeout(() => { if(starContainer) starContainer.innerHTML = ''; }, 3500);
+        }
+
+        function showMilestoneCelebration(points) {
+            if (!milestoneToast) return;
+            
+            const msg = isSpanish ? 
+                `¡ENHORABUENA!<br><span>${points} PUNTOS</span>` : 
+                `CONGRATULATIONS!<br><span>${points} POINTS</span>`;
+            
+            milestoneToast.innerHTML = msg;
+            milestoneToast.classList.add('visible');
+            triggerStars();
+
+            // Desaparecer después de 3 segundos
+            setTimeout(() => {
+                milestoneToast.classList.remove('visible');
+            }, 3000);
+        }
+        
+        // --- MILESTONE LOGIC ---
+        const MILESTONES = [10, 25, 50, 100, 200, 300, 400, 500, 600, 700, 800, 1000];
+        
+        function checkMilestones(oldScore, newScore) {
+             // Check explicit list
+             let highestPassed = -1;
+             
+             // Check standard list
+             for (let m of MILESTONES) {
+                 if (oldScore < m && newScore >= m) {
+                     highestPassed = Math.max(highestPassed, m);
+                 }
+             }
+             
+             // Check generic > 1000 (every 1000?) or as prompt said "etc" implies sequence continuation
+             // Assuming prompt meant hundreds -> 1000. Let's assume every 1000 after 1000.
+             if (newScore >= 1000) {
+                 const oldThousands = Math.floor(oldScore / 1000);
+                 const newThousands = Math.floor(newScore / 1000);
+                 if (newThousands > oldThousands && newThousands > 1) { // >1 because 1000 is in list
+                     highestPassed = Math.max(highestPassed, newThousands * 1000);
+                 }
+             }
+             
+             if (highestPassed > 0) {
+                 showMilestoneCelebration(highestPassed);
+             }
+        }
+
         function triggerHighlight(element) {
           if (!element) return;
           element.classList.add('highlight');
@@ -2083,11 +2242,17 @@
             triggerHighlight(bestClaimedPill);
           }
           
+          let oldScore = 0;
           let newScore = 0;
+          
           if (user) {
+              oldScore = user.score;
               user.score += currentPoints;
               newScore = user.score;
           }
+          
+          // --- CHECK MILESTONES ---
+          checkMilestones(oldScore, newScore);
 
           triggerHappiness();
           
