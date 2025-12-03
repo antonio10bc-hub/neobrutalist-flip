@@ -11,6 +11,8 @@
     <!-- FIREBASE SCRIPTS (COMPAT VERSION 9) -->
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+    <!-- SCRIPT DE AUTENTICACIÓN (Necesario para la seguridad) -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
 
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -850,12 +852,34 @@
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
+        const auth = firebase.auth(); // Init Auth
 
-        let userId = localStorage.getItem('coinfliip_userId');
-        if (!userId) {
-            userId = 'user_' + Math.random().toString(36).substr(2, 9);
-            localStorage.setItem('coinfliip_userId', userId);
-        }
+        // Variable global para el ID
+        let userId = null;
+        
+        // Iniciamos sesión anónima automáticamente
+        auth.signInAnonymously().catch((error) => {
+            console.error("Auth Error:", error);
+            // MANEJO DE ERROR ESPECÍFICO PARA DOMINIOS NO AUTORIZADOS
+            if (error.code === 'auth/requests-from-referer-blocked' || error.message.includes('auth/requests-from-referer')) {
+                const match = error.message.match(/https:\/\/([\w\.-]+)/);
+                const domain = match ? match[1] : window.location.hostname;
+                alert(`⚠️ ERROR DE SEGURIDAD DE FIREBASE ⚠️\n\nTu dominio actual no está autorizado en Firebase.\n\nVe a Firebase Console -> Authentication -> Configuración -> Dominios autorizados.\n\nAñade este dominio:\n${domain}`);
+            }
+            showToast("Error de conexión");
+        });
+
+        // Escuchamos el estado
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                userId = user.uid;
+                console.log("Conectado seguro como:", userId);
+                // Si teníamos nombre guardado localmente, intentamos preservarlo para la UI inicial
+                // Pero la lógica de persistencia real está en joinRoom
+            } else {
+                userId = null;
+            }
+        });
 
         // --- GAME VARIABLES ---
         window.dataLayer = window.dataLayer || [];
@@ -1289,27 +1313,30 @@
         }
 
         function joinRoom(code) {
+             // SEGURIDAD: Esperamos a tener ID de Auth
+             if (!userId) {
+                 showToast(isSpanish ? "Conectando al servidor..." : "Connecting to server...");
+                 // Un reintento simple si auth es lento
+                 setTimeout(() => { if(userId) joinRoom(code); }, 500);
+                 return;
+             }
+        
              currentRoomId = code;
              currentGameMode = 'multiplayer';
              
-             // NOTA IMPORTANTE: En multiplayer, no sobreescribimos el nombre con el de localStorage
-             // a menos que sea un jugador nuevo. La persistencia se maneja en el .then()
-             
+             // SEGURIDAD: Usamos el UID real de Firebase Auth, no uno inventado
              const playerRef = db.ref('rooms/' + currentRoomId + '/players/' + userId);
              
              playerRef.get().then((snapshot) => {
                  if (snapshot.exists()) {
-                     // CORRECCIÓN PERSISTENCIA:
-                     // Si el jugador existe en Firebase, usamos SU nombre guardado.
-                     // No sobreescribimos con "Tú" localmente.
+                     // Si el jugador existe, cargamos su nombre
                      const data = snapshot.val();
                      if (data.name) {
                          currentPlayerName = data.name;
                      }
-                     // No hacemos update. Solo leemos.
                      return; 
                  } else {
-                     // Si el jugador NO existe (es nuevo en la sala), creamos la entrada.
+                     // Si es nuevo, inicializamos sus datos
                      return playerRef.set({
                          name: currentPlayerName,
                          score: 0,
@@ -1335,7 +1362,11 @@
                  updateSpeechBubble(); updateBestCombo(); updateBestClaimedCombo(); scheduleIdleCta();
              }).catch((error) => {
                  console.error("Firebase Error:", error);
-                 showToast(isSpanish ? "ERROR DE CONEXIÓN" : "CONNECTION ERROR");
+                 if (error.code === 'PERMISSION_DENIED') {
+                     showToast(isSpanish ? "ERROR: Permiso denegado" : "ERROR: Permission denied");
+                 } else {
+                     showToast(isSpanish ? "ERROR DE CONEXIÓN" : "CONNECTION ERROR");
+                 }
              });
         }
 
@@ -1365,7 +1396,7 @@
                         score: pData.score || 0,
                         bestStreak: pData.bestStreak || 0,
                         bestClaimed: pData.bestClaimed || 0,
-                        isUser: (key === userId),
+                        isUser: (key === userId), // Comparación segura con Auth UID
                         lastRank: oldP ? oldP.lastRank : 0
                     });
                 });
@@ -1593,10 +1624,13 @@
               if (currentGameMode === 'story') {
                  saveGameData();
                  updateLeaderboard();
-              } else if (currentGameMode && currentGameMode.startsWith('multiplayer')) {
-                 // Update name in firebase IMMEDIATELY
+              } else if (currentGameMode && currentGameMode.startsWith('multiplayer') && userId) {
+                 // SEGURIDAD: Solo puedes actualizar TU nombre si tu auth.uid coincide con la ruta
                  db.ref('rooms/' + currentRoomId + '/players/' + userId).update({
                      name: trimmedName
+                 }).catch(err => {
+                     console.error("Error al guardar nombre:", err);
+                     showToast("No tienes permiso");
                  });
               }
             }
@@ -1762,7 +1796,7 @@
                 if (currentGameMode === 'story') saveGameData();
                 triggerHighlight(resultPill);
                 
-                if (currentGameMode === 'multiplayer') {
+                if (currentGameMode === 'multiplayer' && userId) {
                      db.ref('rooms/' + currentRoomId + '/players/' + userId).update({
                          bestStreak: bestCombo
                      });
@@ -1789,7 +1823,7 @@
                 if (currentGameMode === 'story') saveGameData();
                 triggerHighlight(resultPill);
                 
-                if (currentGameMode === 'multiplayer') {
+                if (currentGameMode === 'multiplayer' && userId) {
                      db.ref('rooms/' + currentRoomId + '/players/' + userId).update({
                          bestStreak: bestCombo
                      });
@@ -1832,8 +1866,9 @@
               updateLeaderboard();
               saveGameData();
               
-          } else if (currentGameMode === 'multiplayer') {
+          } else if (currentGameMode === 'multiplayer' && userId) {
               // Firebase Update: Score + Best Claimed
+              // Al tener reglas de seguridad, si intentas updatear a otro usuario fallará
               db.ref('rooms/' + currentRoomId + '/players/' + userId).update({
                   score: newScore,
                   bestClaimed: bestClaimedCombo
