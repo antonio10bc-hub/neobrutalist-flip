@@ -1324,6 +1324,10 @@
              currentRoomId = code;
              currentGameMode = 'multiplayer';
              
+             // LIMPIEZA: Aseguramos que no haya bots ni datos viejos
+             players = [];
+             leaderboardEl.innerHTML = '';
+
              // SEGURIDAD: Usamos el UID real de Firebase Auth, no uno inventado
              const playerRef = db.ref('rooms/' + currentRoomId + '/players/' + userId);
              
@@ -1423,6 +1427,10 @@
                 currentGameMode = null;
                 showMultiplayerMenu();
             }
+            
+            // LIMPIEZA GLOBAL AL SALIR
+            players = [];
+            leaderboardEl.innerHTML = '';
         }
 
         // --- EFFECTS ---
