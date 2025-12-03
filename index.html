@@ -717,6 +717,88 @@
             /* User asked for one line input+btn. Default flex does this. */
         }
       }
+
+      /* --- SEO ACCORDION STYLES (NEW) --- */
+      .seo-section {
+        margin-top: 32px;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        width: 100%;
+      }
+
+      .accordion-item {
+        border: 3px solid var(--black);
+        background: var(--white);
+        box-shadow: 6px 6px 0 var(--black);
+        transition: transform 0.1s;
+      }
+
+      .accordion-header {
+        width: 100%;
+        padding: 16px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        text-align: left;
+        color: var(--black);
+      }
+      
+      .accordion-header:hover {
+          background: rgba(0,0,0,0.03);
+      }
+
+      .accordion-title {
+        font-family: inherit;
+        font-weight: 800;
+        text-transform: uppercase;
+        font-size: 0.9rem;
+        letter-spacing: 0.05em;
+        margin: 0;
+      }
+
+      .accordion-icon {
+        font-weight: 800;
+        font-size: 1.2rem;
+        transition: transform 0.3s ease;
+      }
+
+      .accordion-content {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease-out;
+        border-top: 0px solid var(--black);
+      }
+
+      .accordion-content-inner {
+        padding: 0 16px 20px;
+        font-size: 0.9rem;
+        line-height: 1.6;
+        color: var(--black);
+        opacity: 0.9;
+      }
+      
+      .accordion-content-inner p, .accordion-content-inner ul {
+          margin: 10px 0 0 0;
+      }
+      .accordion-content-inner ul {
+          padding-left: 20px;
+      }
+      .accordion-content-inner li {
+          margin-bottom: 6px;
+      }
+
+      /* Active State */
+      .accordion-item.active .accordion-icon {
+        transform: rotate(180deg);
+      }
+      .accordion-item.active .accordion-content {
+        max-height: 500px; /* Suficiente para el contenido */
+        border-top: 3px solid var(--black);
+      }
     </style>
   </head>
   <body>
@@ -834,6 +916,69 @@
           <a href="https://www.instagram.com/antonio10bc/" target="_blank" rel="noopener noreferrer" class="social-link">Instagram</a>
           <a href="https://www.paypal.com/paypalme/antonio10bc" target="_blank" rel="noopener noreferrer" class="social-link">Donate</a>
         </div>
+
+        <!-- SEO CONTENT BLOCK (Visible only in Story Mode via JS) -->
+        <section id="seoContentSection" class="seo-section hidden">
+          
+          <!-- Block 1 -->
+          <article class="accordion-item">
+            <button class="accordion-header" aria-expanded="false">
+              <h2 class="accordion-title">Flip a Coin Online: The Fairest Game</h2>
+              <span class="accordion-icon">▼</span>
+            </button>
+            <div class="accordion-content">
+              <div class="accordion-content-inner">
+                <p>Welcome to <strong>Coinfliip</strong>, the ultimate online coin flipper. Whether you need to settle a bet, make a hard decision, or just test your luck, our virtual coin is ready. Unlike physical coins, our digital simulator ensures a mathematically perfect <strong>50/50 probability</strong> every single time.</p>
+              </div>
+            </div>
+          </article>
+
+          <!-- Block 2 -->
+          <article class="accordion-item">
+            <button class="accordion-header" aria-expanded="false">
+              <h3 class="accordion-title">Why use a Virtual Coin Flip?</h3>
+              <span class="accordion-icon">▼</span>
+            </button>
+            <div class="accordion-content">
+              <div class="accordion-content-inner">
+                <p>Carrying cash is becoming less common, but the need to make random decisions happens every day. <strong>Coinfliip</strong> allows you to:</p>
+                <ul>
+                    <li>Decide who pays for dinner.</li>
+                    <li>Settle disputes fairly (Heads or Tails).</li>
+                    <li>Randomize teams for sports or games.</li>
+                    <li>Teach probability and statistics to students.</li>
+                </ul>
+              </div>
+            </div>
+          </article>
+
+          <!-- Block 3 -->
+          <article class="accordion-item">
+            <button class="accordion-header" aria-expanded="false">
+              <h3 class="accordion-title">True Randomness & Security</h3>
+              <span class="accordion-icon">▼</span>
+            </button>
+            <div class="accordion-content">
+              <div class="accordion-content-inner">
+                <p>It is purely random. We use an advanced <strong>pseudo-random number generator (PRNG)</strong> to ensure that every flip is independent of the last. There are no patterns, no tricks, and no bias. The chance of getting Heads is exactly 49.999%, just like the chance of getting Tails.</p>
+              </div>
+            </div>
+          </article>
+
+          <!-- Block 4 -->
+          <article class="accordion-item">
+            <button class="accordion-header" aria-expanded="false">
+              <h3 class="accordion-title">The Streak Challenge</h3>
+              <span class="accordion-icon">▼</span>
+            </button>
+            <div class="accordion-content">
+              <div class="accordion-content-inner">
+                <p>Think you're lucky? Coinfliip isn't just a tool; it's a game. We track your <strong>winning streaks</strong>. Try to get as many consecutive Heads as possible and see if you can make it to our <strong>Global Leaderboard</strong>.</p>
+              </div>
+            </div>
+          </article>
+
+        </section>
       </main>
     </div>
 
@@ -914,6 +1059,7 @@
         const happyContainer = document.getElementById('happyContainer');
         const savedRoomsLabel = document.getElementById('savedRoomsLabel');
         const multiplayerTitle = document.getElementById('multiplayerTitle');
+        const seoContentSection = document.getElementById('seoContentSection');
 
         // --- LANGUAGE & LOCALIZATION ---
         // CORRECCIÓN: Detectar si es inglés. Si NO es inglés, asumimos español por defecto.
@@ -1282,6 +1428,10 @@
                 updateLeaderboard();
                 mainMenu.classList.add('hidden');
                 gameApp.classList.remove('hidden');
+
+                // --- NUEVO: MOSTRAR SEO SECTION SOLO EN STORY ---
+                if(seoContentSection) seoContentSection.classList.remove('hidden'); 
+                
                 if(roomCodeDisplay) roomCodeDisplay.style.display = 'none'; 
                 document.body.classList.remove('multiplayer-theme');
                 
@@ -1325,6 +1475,9 @@
              }).then(() => {
                  subscribeToRoom(currentRoomId);
                  
+                 // --- NUEVO: OCULTAR SEO SECTION EN MULTIPLAYER ---
+                 if(seoContentSection) seoContentSection.classList.add('hidden');
+
                  if(roomCodeDisplay) {
                      roomCodeDisplay.textContent = currentRoomId; 
                      roomCodeDisplay.style.display = 'block';
@@ -1909,6 +2062,22 @@
 
         if (instagramLink) instagramLink.addEventListener('click', function() { sendAnalyticsEvent('social_click', { social_platform: 'instagram' }); });
         if (donateLink) donateLink.addEventListener('click', function() { sendAnalyticsEvent('social_click', { social_platform: 'donate' }); });
+
+        // --- SEO ACCORDION LOGIC ---
+        document.querySelectorAll('.accordion-header').forEach(header => {
+            header.addEventListener('click', () => {
+                const item = header.parentElement;
+                const isActive = item.classList.contains('active');
+                
+                if (!isActive) {
+                    item.classList.add('active');
+                    header.setAttribute('aria-expanded', 'true');
+                } else {
+                    item.classList.remove('active');
+                    header.setAttribute('aria-expanded', 'false');
+                }
+            });
+        });
 
       })();
     </script>
