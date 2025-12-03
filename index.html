@@ -356,7 +356,7 @@
         align-items: center;
         justify-content: center;
         width: 44px;
-        background: #ff8e8e ;
+        background: #ff8e8e; /* Changed to #ff8e8e */
         border: 2px solid var(--black);
         box-shadow: 3px 3px 0 var(--black);
         cursor: pointer;
@@ -1641,15 +1641,25 @@
                  if (snapshot.exists()) {
                      // CORRECCIÓN PERSISTENCIA:
                      // Si el jugador existe en Firebase, usamos SU nombre guardado.
-                     // No sobreescribimos con "Tú" localmente.
                      const data = snapshot.val();
                      if (data.name) {
                          currentPlayerName = data.name;
                      }
-                     // No hacemos update. Solo leemos.
+                     // Recuperamos bestStreak y bestClaimed desde Firebase para el estado local
+                     if (data.bestStreak) bestCombo = data.bestStreak;
+                     if (data.bestClaimed) bestClaimedCombo = data.bestClaimed;
+                     
+                     // Actualizamos UI inmediatamente
+                     updateBestCombo();
+                     updateBestClaimedCombo();
+                     
                      return; 
                  } else {
                      // Si el jugador NO existe (es nuevo en la sala), creamos la entrada.
+                     // Reseteamos valores locales para nueva sala
+                     bestCombo = 0;
+                     bestClaimedCombo = 0;
+                     
                      return playerRef.set({
                          name: currentPlayerName,
                          score: 0,
@@ -1674,8 +1684,12 @@
                  gameApp.classList.remove('hidden');
                  document.body.classList.add('multiplayer-theme');
  
-                 currentPoints = 0; bestCombo = 0; bestClaimedCombo = 0;
-                 updateSpeechBubble(); updateBestCombo(); updateBestClaimedCombo(); scheduleIdleCta();
+                 currentPoints = 0; 
+                 // bestCombo y bestClaimedCombo ya se setearon arriba si existian
+                 updateSpeechBubble(); 
+                 updateBestCombo(); 
+                 updateBestClaimedCombo(); 
+                 scheduleIdleCta();
              }).catch((error) => {
                  console.error("Firebase Error:", error);
                  showToast(isSpanish ? "ERROR DE CONEXIÓN" : "CONNECTION ERROR");
