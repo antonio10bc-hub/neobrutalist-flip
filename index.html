@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
   <head>
     <!-- Google Tag Manager -->
     <script>
@@ -911,76 +911,89 @@
         const multiplayerTitle = document.getElementById('multiplayerTitle');
 
         // --- LANGUAGE & LOCALIZATION ---
-        const isSpanish = (navigator.language || navigator.userLanguage || '').toLowerCase().startsWith('es');
-        
-        if (isSpanish) {
-            document.documentElement.lang = 'es';
-            // Translate Menu
-            if(btnStoryMode) btnStoryMode.textContent = 'Modo Historia';
-            if(btnMultiplayerMenu) btnMultiplayerMenu.textContent = 'Modo Multijugador';
-            if(btnCreateRoom) btnCreateRoom.textContent = 'Crear Sala';
-            if(btnJoinRoom) btnJoinRoom.textContent = 'Unirse';
-            if(btnBackToMain) btnBackToMain.textContent = '← VOLVER';
-            if (savedRoomsLabel) savedRoomsLabel.textContent = 'Tus Salas Guardadas';
-            if (multiplayerTitle) multiplayerTitle.textContent = 'Multijugador';
-            
-            // Translate Game
-            const headerBadge = document.querySelector('.header-badge');
-            if (headerBadge) headerBadge.textContent = 'CARA 49.999% / CRUZ 49.999% / CANTO 0.002%';
-            if(coinButton) coinButton.setAttribute('aria-label', 'Lanzar moneda');
-            if(coinFaceLabel) coinFaceLabel.innerHTML = '<strong>Toca para lanzar</strong>';
-            if(roomCodeInput) roomCodeInput.placeholder = 'CÓDIGO';
-            const rulesParagraph = document.querySelector('.coin-info p');
-            if (rulesParagraph) {
-              rulesParagraph.innerHTML =
-                'Cada <strong>CARA</strong> 😊 consecutiva dobla tu marcador.<br />' +
-                '<strong>CRUZ</strong> ❌ reinicia tu racha.<br />' +
-                '<strong>CANTO</strong> ⭐ te da 50000 puntos.<br />' +
-                '<strong>COBRAR</strong> guarda tus puntos pero reinicia la racha.';
-            }
-            const bestStreakLabel = document.getElementById('bestStreakLabel');
-            if (bestStreakLabel) bestStreakLabel.textContent = 'MEJOR RACHA:';
-            const bestClaimedLabel = document.getElementById('bestClaimedLabel');
-            if (bestClaimedLabel) bestClaimedLabel.textContent = 'MEJOR RACHA COBRADA:';
-            const leaderboardTitle = document.querySelector('.leaderboard-header h1');
-            if (leaderboardTitle) leaderboardTitle.textContent = 'Clasificación';
-            if(toast) toast.textContent = '¿CANTO IMPOSIBLE?';
-            if(claimButton) claimButton.textContent = 'COBRAR';
-            if (headerAuthor) headerAuthor.textContent = 'por antonio10bc';
-            
-            // Always MENU
-            if(btnGameExit) btnGameExit.textContent = 'MENU'; 
-            
-            // Cookie
-            const cookieText = document.querySelector('.cookie-text');
-            if(cookieText) cookieText.textContent = 'Usamos cookies para mejorar tu experiencia.';
-            const btnAccept = document.getElementById('btnAccept');
-            if(btnAccept) btnAccept.textContent = 'Aceptar';
-            const btnReject = document.getElementById('btnReject');
-            if(btnReject) btnReject.textContent = 'Denegar';
-        } else {
-            // Translate Menu
-            if(btnStoryMode) btnStoryMode.textContent = 'Story Mode';
-            if(btnMultiplayerMenu) btnMultiplayerMenu.textContent = 'Multiplayer Mode';
-            if(btnCreateRoom) btnCreateRoom.textContent = 'Create Room';
-            if(btnJoinRoom) btnJoinRoom.textContent = 'Join Room';
-            if(btnBackToMain) btnBackToMain.textContent = '← BACK';
-            if(roomCodeInput) roomCodeInput.placeholder = 'CODE';
-            if (savedRoomsLabel) savedRoomsLabel.textContent = 'Your Saved Rooms';
-            if (multiplayerTitle) multiplayerTitle.textContent = 'Multiplayer';
+        // CORRECCIÓN: Detectar si es inglés. Si NO es inglés, asumimos español por defecto.
+        const userLang = (navigator.language || navigator.userLanguage || '').toLowerCase();
+        const isEnglish = userLang.startsWith('en');
+        const isSpanish = !isEnglish; // Español por defecto para cualquier otro idioma
 
-            document.documentElement.lang = 'en';
-            if(coinButton) coinButton.setAttribute('aria-label', 'Flip coin');
-            if(btnGameExit) btnGameExit.textContent = 'MENU';
-            
-            // Cookie
-            const cookieText = document.querySelector('.cookie-text');
-            if(cookieText) cookieText.textContent = 'We use cookies to improve your experience.';
-            const btnAccept = document.getElementById('btnAccept');
-            if(btnAccept) btnAccept.textContent = 'Accept';
-            const btnReject = document.getElementById('btnReject');
-            if(btnReject) btnReject.textContent = 'Reject';
+        let currentPlayerName = isSpanish ? 'Tú' : 'You';
+
+        function applyTranslations() {
+            if (isSpanish) {
+                document.documentElement.lang = 'es';
+                // Menú
+                if(btnStoryMode) btnStoryMode.textContent = 'Modo Historia';
+                if(btnMultiplayerMenu) btnMultiplayerMenu.textContent = 'Modo Multijugador';
+                if(btnCreateRoom) btnCreateRoom.textContent = 'Crear Sala';
+                if(btnJoinRoom) btnJoinRoom.textContent = 'Unirse';
+                if(btnBackToMain) btnBackToMain.textContent = '← VOLVER';
+                if(savedRoomsLabel) savedRoomsLabel.textContent = 'Tus Salas Guardadas';
+                if(multiplayerTitle) multiplayerTitle.textContent = 'Multijugador';
+                
+                // Juego
+                const headerBadge = document.querySelector('.header-badge');
+                if (headerBadge) headerBadge.textContent = 'CARA 49.999% / CRUZ 49.999% / CANTO 0.002%';
+                if(coinButton) coinButton.setAttribute('aria-label', 'Lanzar moneda');
+                if(coinFaceLabel) coinFaceLabel.innerHTML = '<strong>Toca para lanzar</strong>';
+                if(roomCodeInput) roomCodeInput.placeholder = 'CÓDIGO';
+                const rulesParagraph = document.querySelector('.coin-info p');
+                if (rulesParagraph) {
+                  rulesParagraph.innerHTML =
+                    'Cada <strong>CARA</strong> 😊 dobla tu marcador.<br />' +
+                    '<strong>CRUZ</strong> ❌ reinicia tu racha.<br />' +
+                    '<strong>CANTO</strong> ⭐ te da 50000 puntos.<br />' +
+                    '<strong>COBRAR</strong> guarda puntos y reinicia racha.';
+                }
+                const bestStreakLabel = document.getElementById('bestStreakLabel');
+                if (bestStreakLabel) bestStreakLabel.textContent = 'MEJOR RACHA:';
+                const bestClaimedLabel = document.getElementById('bestClaimedLabel');
+                if (bestClaimedLabel) bestClaimedLabel.textContent = 'MEJOR COBRADA:';
+                const leaderboardTitle = document.querySelector('.leaderboard-header h1');
+                if (leaderboardTitle) leaderboardTitle.textContent = 'Clasificación';
+                if(toast) toast.textContent = '¿CANTO IMPOSIBLE?';
+                if(claimButton) claimButton.textContent = 'COBRAR';
+                if (headerAuthor) headerAuthor.textContent = 'por antonio10bc';
+                if(roomCodeDisplay) roomCodeDisplay.title = 'Copiar Código';
+                
+                // Always MENU
+                if(btnGameExit) btnGameExit.textContent = 'MENU'; 
+                
+                // Cookie
+                const cookieText = document.querySelector('.cookie-text');
+                if(cookieText) cookieText.textContent = 'Usamos cookies para mejorar tu experiencia.';
+                const btnAccept = document.getElementById('btnAccept');
+                if(btnAccept) btnAccept.textContent = 'Aceptar';
+                const btnReject = document.getElementById('btnReject');
+                if(btnReject) btnReject.textContent = 'Denegar';
+
+            } else {
+                // ENGLISH
+                if(btnStoryMode) btnStoryMode.textContent = 'Story Mode';
+                if(btnMultiplayerMenu) btnMultiplayerMenu.textContent = 'Multiplayer Mode';
+                if(btnCreateRoom) btnCreateRoom.textContent = 'Create Room';
+                if(btnJoinRoom) btnJoinRoom.textContent = 'Join Room';
+                if(btnBackToMain) btnBackToMain.textContent = '← BACK';
+                if(roomCodeInput) roomCodeInput.placeholder = 'CODE';
+                if(savedRoomsLabel) savedRoomsLabel.textContent = 'Your Saved Rooms';
+                if(multiplayerTitle) multiplayerTitle.textContent = 'Multiplayer';
+
+                document.documentElement.lang = 'en';
+                if(coinButton) coinButton.setAttribute('aria-label', 'Flip coin');
+                if(btnGameExit) btnGameExit.textContent = 'MENU';
+                if(roomCodeDisplay) roomCodeDisplay.title = 'Copy Code';
+                
+                // Cookie
+                const cookieText = document.querySelector('.cookie-text');
+                if(cookieText) cookieText.textContent = 'We use cookies to improve your experience.';
+                const btnAccept = document.getElementById('btnAccept');
+                if(btnAccept) btnAccept.textContent = 'Accept';
+                const btnReject = document.getElementById('btnReject');
+                if(btnReject) btnReject.textContent = 'Reject';
+            }
         }
+        
+        // Ejecutar traducciones al inicio
+        applyTranslations();
 
         const SOCIAL_LINKS_MARGIN_TOP = 24;
         document.documentElement.style.setProperty('--social-links-margin-top', SOCIAL_LINKS_MARGIN_TOP + 'px');
@@ -998,7 +1011,6 @@
 
         // --- PLAYERS DATA ---
         let players = [];
-        let currentPlayerName = isSpanish ? 'Tú' : 'You';
         
         // --- LOGIC: ROOM HISTORY ---
         function getRoomHistory() {
@@ -1010,6 +1022,8 @@
         function saveRoomToHistory(code, customName = null) {
             let history = getRoomHistory();
             const existingIndex = history.findIndex(r => r.code === code);
+            const defaultName = isSpanish ? ('Sala ' + code) : ('Room ' + code);
+            
             if (existingIndex >= 0) {
                 const room = history.splice(existingIndex, 1)[0];
                 if (customName) room.name = customName; 
@@ -1017,7 +1031,7 @@
             } else {
                 history.unshift({ 
                     code: code, 
-                    name: customName || (isSpanish ? 'Sala ' : 'Room ') + code 
+                    name: customName || defaultName
                 });
             }
             if (history.length > 10) history = history.slice(0, 10);
@@ -1074,23 +1088,18 @@
                 el.appendChild(nameSpan);
                 el.appendChild(codeSpan);
                 
-                // Join on click
                 el.onclick = () => { joinRoom(room.code); };
                 
-                // Long Press Deletion Logic
                 let pressTimer;
                 const startPress = (e) => {
                     if (e.type === 'mousedown' && e.button !== 0) return;
                     pressTimer = setTimeout(() => {
                         showDeleteRoomModal(room.code, room.name);
-                    }, 800); // 800ms
+                    }, 800);
                 };
                 
-                const cancelPress = () => {
-                    if (pressTimer) clearTimeout(pressTimer);
-                };
+                const cancelPress = () => { if (pressTimer) clearTimeout(pressTimer); };
 
-                // Add both touch and mouse listeners
                 el.addEventListener('mousedown', startPress);
                 el.addEventListener('touchstart', startPress);
                 el.addEventListener('mouseup', cancelPress);
@@ -1268,10 +1277,9 @@
                 updateLeaderboard();
                 mainMenu.classList.add('hidden');
                 gameApp.classList.remove('hidden');
-                if(roomCodeDisplay) roomCodeDisplay.style.display = 'none'; // Hide code
+                if(roomCodeDisplay) roomCodeDisplay.style.display = 'none'; 
                 document.body.classList.remove('multiplayer-theme');
                 
-                // Reset Visuals
                 currentPoints = 0; bestCombo = 0; bestClaimedCombo = 0;
                 updateSpeechBubble(); updateBestCombo(); updateBestClaimedCombo(); scheduleIdleCta();
                 
@@ -1284,51 +1292,51 @@
              currentRoomId = code;
              currentGameMode = 'multiplayer';
              
-             try {
-                const savedData = JSON.parse(localStorage.getItem('coinfliip_gameData') || '{}');
-                if (savedData.playersScores) {
-                     const u = savedData.playersScores.find(p => p.id === 'user');
-                     if (u && u.name) currentPlayerName = u.name;
-                }
-            } catch(e){}
-
-            // Use a transaction or explicit check to handle new vs existing players safely
-            const playerRef = db.ref('rooms/' + currentRoomId + '/players/' + userId);
-            
-            playerRef.get().then((snapshot) => {
-                if (snapshot.exists()) {
-                    // Update only name if player exists
-                    return playerRef.update({ name: currentPlayerName });
-                } else {
-                    // Set full initial data if player is new
-                    return playerRef.set({
-                        name: currentPlayerName,
-                        score: 0,
-                        bestStreak: 0,
-                        bestClaimed: 0
-                    });
-                }
-            }).then(() => {
-                subscribeToRoom(currentRoomId);
-                
-                // --- NEW: Remove "CODE:" prefix ---
-                if(roomCodeDisplay) {
-                    roomCodeDisplay.textContent = currentRoomId; 
-                    roomCodeDisplay.style.display = 'block';
-                }
-                
-                saveRoomToHistory(currentRoomId);
-
-                multiplayerMenu.classList.add('hidden');
-                gameApp.classList.remove('hidden');
-                document.body.classList.add('multiplayer-theme');
-
-                currentPoints = 0; bestCombo = 0; bestClaimedCombo = 0;
-                updateSpeechBubble(); updateBestCombo(); updateBestClaimedCombo(); scheduleIdleCta();
-            }).catch((error) => {
-                console.error("Firebase Error:", error);
-                showToast(isSpanish ? "ERROR DE CONEXIÓN" : "CONNECTION ERROR");
-            });
+             // NOTA IMPORTANTE: En multiplayer, no sobreescribimos el nombre con el de localStorage
+             // a menos que sea un jugador nuevo. La persistencia se maneja en el .then()
+             
+             const playerRef = db.ref('rooms/' + currentRoomId + '/players/' + userId);
+             
+             playerRef.get().then((snapshot) => {
+                 if (snapshot.exists()) {
+                     // CORRECCIÓN PERSISTENCIA:
+                     // Si el jugador existe en Firebase, usamos SU nombre guardado.
+                     // No sobreescribimos con "Tú" localmente.
+                     const data = snapshot.val();
+                     if (data.name) {
+                         currentPlayerName = data.name;
+                     }
+                     // No hacemos update. Solo leemos.
+                     return; 
+                 } else {
+                     // Si el jugador NO existe (es nuevo en la sala), creamos la entrada.
+                     return playerRef.set({
+                         name: currentPlayerName,
+                         score: 0,
+                         bestStreak: 0,
+                         bestClaimed: 0
+                     });
+                 }
+             }).then(() => {
+                 subscribeToRoom(currentRoomId);
+                 
+                 if(roomCodeDisplay) {
+                     roomCodeDisplay.textContent = currentRoomId; 
+                     roomCodeDisplay.style.display = 'block';
+                 }
+                 
+                 saveRoomToHistory(currentRoomId);
+ 
+                 multiplayerMenu.classList.add('hidden');
+                 gameApp.classList.remove('hidden');
+                 document.body.classList.add('multiplayer-theme');
+ 
+                 currentPoints = 0; bestCombo = 0; bestClaimedCombo = 0;
+                 updateSpeechBubble(); updateBestCombo(); updateBestClaimedCombo(); scheduleIdleCta();
+             }).catch((error) => {
+                 console.error("Firebase Error:", error);
+                 showToast(isSpanish ? "ERROR DE CONEXIÓN" : "CONNECTION ERROR");
+             });
         }
 
         function subscribeToRoom(roomId) {
@@ -1362,6 +1370,7 @@
                     });
                 });
                 
+                // Aseguramos que la variable local coincida con la DB
                 const me = players.find(p => p.isUser);
                 if (me) {
                     currentPlayerName = me.name;
@@ -1376,7 +1385,6 @@
                 saveGameData();
                 showMainMenu();
             } else {
-                // Exit Room logic
                 if (currentRoomId && roomSubscription) {
                     db.ref('rooms/' + currentRoomId + '/players').off();
                 }
@@ -1457,7 +1465,7 @@
 
         // --- DATA PERSISTENCE ---
         function saveGameData() {
-          if (currentGameMode !== 'story') return; // Only save locally in story mode
+          if (currentGameMode !== 'story') return; 
           
           const user = players.find(p => p.isUser);
           const gameData = {
@@ -1487,6 +1495,7 @@
                   const savedUser = gameData.playersScores.find(p => p.id === 'user');
                   if (savedUser && savedUser.name) {
                     user.name = savedUser.name;
+                    currentPlayerName = savedUser.name;
                   }
                 }
               }
@@ -1579,13 +1588,13 @@
             const trimmedName = input.value.trim().substring(0, 10);
             if (trimmedName.length > 0) {
               player.name = trimmedName;
-              currentPlayerName = trimmedName; // Update local global var
+              currentPlayerName = trimmedName; 
               
               if (currentGameMode === 'story') {
                  saveGameData();
                  updateLeaderboard();
-              } else if (currentGameMode.startsWith('multiplayer')) {
-                 // Update name in firebase
+              } else if (currentGameMode && currentGameMode.startsWith('multiplayer')) {
+                 // Update name in firebase IMMEDIATELY
                  db.ref('rooms/' + currentRoomId + '/players/' + userId).update({
                      name: trimmedName
                  });
@@ -1644,8 +1653,6 @@
 
             const name = document.createElement('div');
             name.className = 'leaderboard-name';
-            
-            // Flatten structure: all items directly in leaderboard-name (flex row)
             
             // 1. Name Text
             const nameText = document.createElement('div');
@@ -1755,7 +1762,6 @@
                 if (currentGameMode === 'story') saveGameData();
                 triggerHighlight(resultPill);
                 
-                // Live update best streak in multiplayer
                 if (currentGameMode === 'multiplayer') {
                      db.ref('rooms/' + currentRoomId + '/players/' + userId).update({
                          bestStreak: bestCombo
@@ -1849,11 +1855,9 @@
         // Copy Code Logic
         roomCodeDisplay.addEventListener('click', () => {
              const textToCopy = currentRoomId;
-             
-             // Create temporary element
              const textArea = document.createElement("textarea");
              textArea.value = textToCopy;
-             textArea.style.position = "fixed"; // Avoid scrolling to bottom
+             textArea.style.position = "fixed"; 
              textArea.style.opacity = "0";
              document.body.appendChild(textArea);
              textArea.select();
@@ -1870,7 +1874,6 @@
              } catch (err) {
                  console.error('Copy failed', err);
              }
-             
              document.body.removeChild(textArea);
         });
 
@@ -1878,12 +1881,10 @@
         coinButton.addEventListener('click', handleCoinClick);
         claimButton.addEventListener('click', handleClaimClick);
         
-        // Navigation
         btnStoryMode.addEventListener('click', () => startGame('story'));
         btnMultiplayerMenu.addEventListener('click', showMultiplayerMenu);
         btnBackToMain.addEventListener('click', showMainMenu);
         
-        // Multiplayer Actions
         btnCreateRoom.addEventListener('click', () => {
              const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; 
              let code = '';
@@ -1896,7 +1897,6 @@
             if (code) joinRoom(code);
         });
 
-        // Exit button listener
         btnGameExit.addEventListener('click', handleGameExit);
 
         const instagramLink = document.querySelector('.social-link[href*="instagram"]');
@@ -1904,106 +1904,6 @@
 
         if (instagramLink) instagramLink.addEventListener('click', function() { sendAnalyticsEvent('social_click', { social_platform: 'instagram' }); });
         if (donateLink) donateLink.addEventListener('click', function() { sendAnalyticsEvent('social_click', { social_platform: 'donate' }); });
-
-        // ========== DEBUG TOOL LOGIC (NEW) ==========
-        // Only run if window.__DEBUG_ENABLED is true, for now we inject it always for you to test
-        const DEBUG_ENABLED = false; 
-
-        if (DEBUG_ENABLED) {
-          const debugToggle = document.getElementById('debugToggle');
-          const debugPanel = document.getElementById('debugPanel');
-          const debugControls = document.getElementById('debugControls');
-          const debugCopyPositions = document.getElementById('debugCopyPositions');
-
-          debugToggle.addEventListener('click', () => {
-            debugPanel.classList.toggle('visible');
-          });
-
-          // Elements to debug (Selectors)
-          const debugTargets = [
-            { label: 'Header Title Group', selector: '.header-title' },
-            { label: 'Percentages Badge', selector: '.header-badge' },
-            { label: 'Coin Wrapper (Coin+Bubble+Btn)', selector: '.coin-wrapper' },
-            { label: 'Info Text Area', selector: '.coin-info' },
-            { label: 'Streak Pills', selector: '.result-pill' }, // Affects all pills but targets class generally for X/Y
-            { label: 'Leaderboard Container', selector: '.leaderboard-section' }
-          ];
-
-          // Store current offsets
-          const offsets = {}; 
-
-          debugTargets.forEach((target, index) => {
-            offsets[index] = { x: 0, y: 0 };
-            
-            const group = document.createElement('div');
-            group.className = 'debug-group';
-            
-            const label = document.createElement('div');
-            label.className = 'debug-label';
-            label.textContent = target.label;
-            
-            const inputsDiv = document.createElement('div');
-            inputsDiv.className = 'debug-inputs';
-            
-            const inputX = document.createElement('input');
-            inputX.type = 'number';
-            inputX.placeholder = 'X';
-            inputX.value = 0;
-            
-            const inputY = document.createElement('input');
-            inputY.type = 'number';
-            inputY.placeholder = 'Y';
-            inputY.value = 0;
-
-            const updateTransform = () => {
-                const x = inputX.value;
-                const y = inputY.value;
-                offsets[index] = { x, y };
-                
-                // Select elements
-                const els = document.querySelectorAll(target.selector);
-                els.forEach(el => {
-                    el.style.transform = `translate(${x}px, ${y}px)`;
-                    // Ensure relative positioning if needed, though translate works regardless usually
-                    if (window.getComputedStyle(el).position === 'static') {
-                        el.style.position = 'relative';
-                    }
-                });
-            };
-
-            inputX.addEventListener('input', updateTransform);
-            inputY.addEventListener('input', updateTransform);
-
-            inputsDiv.appendChild(inputX);
-            inputsDiv.appendChild(inputY);
-            group.appendChild(label);
-            group.appendChild(inputsDiv);
-            debugControls.appendChild(group);
-          });
-
-          debugCopyPositions.addEventListener('click', () => {
-             let output = '/* DEBUG POSITIONS */\n';
-             debugTargets.forEach((target, index) => {
-                 const off = offsets[index];
-                 if (off.x != 0 || off.y != 0) {
-                     output += `${target.label} (${target.selector}): X=${off.x}px, Y=${off.y}px\n`;
-                 }
-             });
-             
-             // Copy to clipboard
-             const textArea = document.createElement("textarea");
-             textArea.value = output;
-             document.body.appendChild(textArea);
-             textArea.select();
-             document.execCommand('copy');
-             document.body.removeChild(textArea);
-             
-             const originalText = debugCopyPositions.textContent;
-             debugCopyPositions.textContent = 'COPIED!';
-             setTimeout(() => debugCopyPositions.textContent = originalText, 1500);
-          });
-        }
-        // ========== END DEBUG TOOL ==========
 
       })();
     </script>
