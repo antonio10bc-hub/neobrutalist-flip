@@ -241,16 +241,25 @@
         width: 100%;
       }
 
-      /* Room History List */
+      /* --- ROOM HISTORY LIST ADJUSTMENTS --- */
       .room-list {
         width: 100%;
         display: flex;
         flex-direction: column;
         gap: 8px;
         margin-top: 20px;
-        max-height: 200px;
-        overflow-y: auto;
+        /* SCROLL REMOVED as requested */
+        max-height: none; 
+        overflow-y: visible;
       }
+
+      .room-row-wrapper {
+        display: flex;
+        width: 100%;
+        gap: 8px;
+        align-items: stretch;
+      }
+
       .room-item {
         display: flex;
         justify-content: space-between;
@@ -262,11 +271,34 @@
         cursor: pointer;
         transition: transform 0.1s;
         user-select: none;
+        flex: 1; /* Takes up remaining space */
+        min-width: 0;
       }
       .room-item:active {
         transform: translate(2px, 2px);
         box-shadow: 1px 1px 0 var(--black);
       }
+
+      /* Side delete button styling */
+      .room-delete-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 44px;
+        background: #ff8e8e;
+        border: 2px solid var(--black);
+        box-shadow: 3px 3px 0 var(--black);
+        cursor: pointer;
+        font-weight: 800;
+        font-size: 1.1rem;
+        transition: transform 0.1s, box-shadow 0.1s;
+        color: var(--black);
+      }
+      .room-delete-btn:active {
+        transform: translate(2px, 2px);
+        box-shadow: 1px 1px 0 var(--black);
+      }
+
       .room-item-name {
         font-weight: 700;
         font-size: 0.9rem;
@@ -274,8 +306,19 @@
         align-items: center;
         gap: 8px;
         flex: 1;
-        overflow: hidden; 
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        margin-right: 8px;
       }
+
+      .room-item-right {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-shrink: 0;
+      }
+
       .room-item-code {
         font-family: monospace;
         background: var(--black);
@@ -283,8 +326,24 @@
         padding: 2px 6px;
         font-size: 0.8rem;
         border-radius: 4px;
-        flex-shrink: 0;
       }
+
+      /* FAVORITE STAR STYLING */
+      .star-icon {
+        font-size: 1.2rem;
+        line-height: 1;
+        cursor: pointer;
+        color: var(--gray);
+        transition: color 0.2s, transform 0.1s;
+      }
+      .star-icon:hover {
+        transform: scale(1.1);
+      }
+      .star-icon.active {
+        color: #ffcc00; /* Gold */
+        text-shadow: 1px 1px 0 var(--black);
+      }
+
       .edit-icon-btn {
         display: inline-flex;
         align-items: center;
@@ -1175,19 +1234,37 @@
             const existingIndex = history.findIndex(r => r.code === code);
             const defaultName = isSpanish ? ('Sala ' + code) : ('Room ' + code);
             
+            let isFav = false;
+            
             if (existingIndex >= 0) {
+                // Preserve existing favorite status
+                isFav = history[existingIndex].favorite || false;
                 const room = history.splice(existingIndex, 1)[0];
                 if (customName) room.name = customName; 
+                // re-add to beginning to show recency, but favorite sort will happen in render
+                room.favorite = isFav;
                 history.unshift(room);
             } else {
                 history.unshift({ 
                     code: code, 
-                    name: customName || defaultName
+                    name: customName || defaultName,
+                    favorite: false
                 });
             }
             if (history.length > 10) history = history.slice(0, 10);
             localStorage.setItem('coinfliip_rooms', JSON.stringify(history));
             renderRoomHistory();
+        }
+
+        function toggleRoomFavorite(code) {
+             let history = getRoomHistory();
+             const index = history.findIndex(r => r.code === code);
+             if (index >= 0) {
+                 // Toggle boolean
+                 history[index].favorite = !history[index].favorite;
+                 localStorage.setItem('coinfliip_rooms', JSON.stringify(history));
+                 renderRoomHistory();
+             }
         }
 
         function deleteRoomFromHistory(code) {
@@ -1199,7 +1276,8 @@
 
         function renderRoomHistory() {
             roomHistoryList.innerHTML = '';
-            const history = getRoomHistory();
+            let history = getRoomHistory();
+            
             if (history.length === 0) {
                 const emptyMsg = document.createElement('div');
                 emptyMsg.textContent = isSpanish ? 'No hay salas recientes.' : 'No recent rooms.';
@@ -1210,10 +1288,23 @@
                 return;
             }
 
+            // SORT: Favorites first
+            history.sort((a, b) => {
+                if (a.favorite === b.favorite) return 0; // Maintain recent order if both same state
+                return a.favorite ? -1 : 1; // True comes before False
+            });
+
             history.forEach(room => {
-                const el = document.createElement('div');
-                el.className = 'room-item';
-                
+                // Main Container (Flex Row)
+                const wrapper = document.createElement('div');
+                wrapper.className = 'room-row-wrapper';
+
+                // --- 1. The Room Button (Click to join) ---
+                const roomBtn = document.createElement('div');
+                roomBtn.className = 'room-item';
+                roomBtn.onclick = () => { joinRoom(room.code); };
+
+                // Left Side: Name + Edit
                 const nameSpan = document.createElement('span');
                 nameSpan.className = 'room-item-name';
                 
@@ -1225,40 +1316,55 @@
                 editIcon.className = 'edit-icon-btn';
                 editIcon.textContent = '✏️';
                 editIcon.title = isSpanish ? 'Renombrar' : 'Rename';
-                
                 editIcon.onclick = (e) => {
                     e.stopPropagation();
                     showRoomNameModal(room.code, room.name);
                 };
                 nameSpan.appendChild(editIcon);
 
+                // Right Side: Star + Code
+                const rightContainer = document.createElement('div');
+                rightContainer.className = 'room-item-right';
+
+                // Star Icon
+                const starIcon = document.createElement('span');
+                starIcon.className = 'star-icon';
+                if (room.favorite) {
+                    starIcon.textContent = '★'; // Marked
+                    starIcon.classList.add('active');
+                } else {
+                    starIcon.textContent = '☆'; // Unmarked
+                }
+                starIcon.onclick = (e) => {
+                    e.stopPropagation();
+                    toggleRoomFavorite(room.code);
+                };
+
+                // Code Pill
                 const codeSpan = document.createElement('span');
                 codeSpan.className = 'room-item-code';
                 codeSpan.textContent = room.code;
 
-                el.appendChild(nameSpan);
-                el.appendChild(codeSpan);
-                
-                el.onclick = () => { joinRoom(room.code); };
-                
-                let pressTimer;
-                const startPress = (e) => {
-                    if (e.type === 'mousedown' && e.button !== 0) return;
-                    pressTimer = setTimeout(() => {
-                        showDeleteRoomModal(room.code, room.name);
-                    }, 800);
-                };
-                
-                const cancelPress = () => { if (pressTimer) clearTimeout(pressTimer); };
+                rightContainer.appendChild(starIcon);
+                rightContainer.appendChild(codeSpan);
 
-                el.addEventListener('mousedown', startPress);
-                el.addEventListener('touchstart', startPress);
-                el.addEventListener('mouseup', cancelPress);
-                el.addEventListener('mouseleave', cancelPress);
-                el.addEventListener('touchend', cancelPress);
-                el.addEventListener('touchcancel', cancelPress);
+                roomBtn.appendChild(nameSpan);
+                roomBtn.appendChild(rightContainer);
+
+                // --- 2. The Delete Button (X) ---
+                const deleteBtn = document.createElement('button');
+                deleteBtn.className = 'room-delete-btn';
+                deleteBtn.textContent = 'X';
+                deleteBtn.title = isSpanish ? 'Eliminar' : 'Delete';
+                deleteBtn.onclick = () => {
+                     showDeleteRoomModal(room.code, room.name);
+                };
+
+                // Add to wrapper
+                wrapper.appendChild(roomBtn);
+                wrapper.appendChild(deleteBtn);
                 
-                roomHistoryList.appendChild(el);
+                roomHistoryList.appendChild(wrapper);
             });
         }
 
