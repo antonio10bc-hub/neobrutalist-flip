@@ -11,6 +11,8 @@
     <!-- FIREBASE SCRIPTS (COMPAT VERSION 9) -->
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+    <!-- AÑADIDO: Script de Autenticación -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
 
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -1136,12 +1138,35 @@
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
+        // AÑADIDO: Inicializar Auth
+        const auth = firebase.auth();
 
+        // AÑADIDO: Lógica de Identidad Híbrida (Segura + Respaldo Local)
+        // 1. Intentamos obtener un ID existente del almacenamiento local o creamos uno temporal
+        // Esto asegura que el juego funcione inmediatamente, incluso si Firebase Auth falla por dominio no autorizado.
         let userId = localStorage.getItem('coinfliip_userId');
         if (!userId) {
-            userId = 'user_' + Math.random().toString(36).substr(2, 9);
+            userId = 'guest_' + Math.random().toString(36).substr(2, 9);
             localStorage.setItem('coinfliip_userId', userId);
         }
+
+        // 2. Intentamos "mejorar" ese ID a uno oficial de Firebase Auth
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                // Éxito: Tenemos un ID real autenticado
+                userId = user.uid;
+                console.log("Conectado con seguridad (Firebase):", userId);
+            } else {
+                // No hay usuario, intentamos conectar anónimamente
+                auth.signInAnonymously()
+                    .then(() => console.log("Iniciando sesión anónima..."))
+                    .catch((error) => {
+                        // Si falla (ej. dominio no autorizado en Canvas), no pasa nada grave.
+                        // Seguimos usando el 'userId' temporal generado arriba.
+                        console.warn("Auth anónima bloqueada (usando ID local):", error.message);
+                    });
+            }
+        });
 
         // --- GAME VARIABLES ---
         window.dataLayer = window.dataLayer || [];
@@ -1632,6 +1657,12 @@
              currentRoomId = code;
              currentGameMode = 'multiplayer';
              
+             // SEGURIDAD: Comprobamos si userId ya existe (debería existir por Auth)
+             if (!userId) {
+                 showToast(isSpanish ? "Conectando..." : "Connecting...");
+                 return; // Auth debería completarse en breve
+             }
+
              // NOTA IMPORTANTE: En multiplayer, no sobreescribimos el nombre con el de localStorage
              // a menos que sea un jugador nuevo. La persistencia se maneja en el .then()
              
