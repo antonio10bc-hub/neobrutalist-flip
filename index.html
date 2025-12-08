@@ -1070,14 +1070,22 @@
         function startGame(mode) {
             currentGameMode = mode;
             if (mode === 'story') {
+                // FIX: Limpiamos variables ANTES de cargar para evitar datos basura del multijugador
+                currentPoints = 0; 
+                bestCombo = 0; 
+                bestClaimedCombo = 0;
+
+                // INIT llama a loadGameData(), que sobreescribe bestCombo y bestClaimedCombo si existen datos guardados
                 initPlayers('story');
+                
                 updateLeaderboard();
                 mainMenu.classList.add('hidden');
                 gameApp.classList.remove('hidden');
                 if(seoContentSection) seoContentSection.classList.remove('hidden'); 
                 if(roomCodeDisplay) roomCodeDisplay.style.display = 'none'; 
                 document.body.classList.remove('multiplayer-theme');
-                currentPoints = 0; bestCombo = 0; bestClaimedCombo = 0;
+                
+                // YA NO REINICIAMOS A 0 AQUI, porque borraríamos lo que acabamos de cargar
                 updateSpeechBubble(); updateBestCombo(); updateBestClaimedCombo(); scheduleIdleCta();
                 sendAnalyticsEvent('start_game', { mode: 'story' });
                 if(headerAuthor) headerAuthor.textContent = isSpanish ? 'por antonio10bc' : 'by antonio10bc';
