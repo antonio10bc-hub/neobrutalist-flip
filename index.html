@@ -22,7 +22,7 @@
     <meta property="og:description" content="How many heads can you get in a row?">
     <meta property="og:url" content="https://www.coinfliip.com/">
     <meta property="og:type" content="website">
-        <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="icon" type="image/png" href="favicon.png">
     <style>
       :root {
         --lime: #c6ff33;
@@ -312,14 +312,30 @@
         border-radius: 18px 18px 0 0; border: 3px solid var(--black);
         padding: 18px 16px 20px; background: #ffffff; box-shadow: 8px 8px 0 var(--black);
       }
+      
       .leaderboard-header { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 16px; }
       .leaderboard-header h1 { margin: 0; font-size: 1.4rem; text-transform: uppercase; letter-spacing: 0.08em; }
+      
+      /* ACTIONS CONTAINER FOR LEADERBOARD HEADER */
+      .room-actions { display: flex; align-items: center; gap: 8px; }
+      
       .room-code-display {
         font-size: 0.9rem; font-weight: 800; background: var(--black); color: var(--white);
         padding: 4px 12px; cursor: pointer; display: none; border: 2px solid var(--black);
         transition: transform 0.1s;
       }
       .room-code-display:active { transform: scale(0.95); }
+      
+      /* SHARE BUTTON */
+      .share-btn {
+        background: var(--neon-yellow); color: var(--black); border: 2px solid var(--black);
+        font-size: 1rem; padding: 4px 10px; cursor: pointer; font-weight: 800;
+        box-shadow: 3px 3px 0 var(--black); transition: transform 0.1s, box-shadow 0.1s;
+        display: none; /* Hidden by default, shown in multiplayer */
+        line-height: 1;
+      }
+      .share-btn:active { transform: translate(1px, 1px); box-shadow: 1px 1px 0 var(--black); }
+      
       .leaderboard { border-radius: 12px; overflow: hidden; border: 2px solid var(--black); }
       .leaderboard-row {
         display: grid; grid-template-columns: 56px minmax(0, 1.4fr) minmax(0, 1fr);
@@ -408,14 +424,16 @@
       .name-modal-overlay.visible .name-modal { transform: scale(1); }
       .name-modal h3 { margin: 0; text-transform: uppercase; font-size: 1.2rem; font-weight: 800; letter-spacing: 0.06em; }
       .name-modal p { margin: 0; font-size: 1rem; line-height: 1.4; font-weight: 600; }
-      .name-modal input { padding: 12px 16px; border: 3px solid var(--black); background: var(--white); font-size: 1rem; font-weight: 600; font-family: inherit; color: var(--black); box-shadow: 4px 4px 0 var(--black); transition: transform 0.1s, box-shadow 0.1s; letter-spacing: 0.05em; }
-      .name-modal input:focus { outline: none; transform: translate(2px, 2px); box-shadow: 2px 2px 0 var(--black); background: var(--lime-soft); }
+      .name-modal input, .name-modal textarea { padding: 12px 16px; border: 3px solid var(--black); background: var(--white); font-size: 1rem; font-weight: 600; font-family: inherit; color: var(--black); box-shadow: 4px 4px 0 var(--black); transition: transform 0.1s, box-shadow 0.1s; letter-spacing: 0.05em; }
+      .name-modal textarea { resize: vertical; min-height: 80px; }
+      .name-modal input:focus, .name-modal textarea:focus { outline: none; transform: translate(2px, 2px); box-shadow: 2px 2px 0 var(--black); background: var(--lime-soft); }
       .name-modal-buttons { display: flex; gap: 12px; justify-content: flex-end; margin-top: 8px; }
       .name-modal-btn { padding: 10px 20px; font-weight: 800; text-transform: uppercase; border: 3px solid var(--black); cursor: pointer; font-size: 0.85rem; box-shadow: 4px 4px 0 var(--black); transition: transform 0.1s, box-shadow 0.1s; font-family: inherit; }
       .name-modal-btn:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0 var(--black); }
       .name-modal-btn.cancel { background: #e0e0e0; color: var(--black); }
       .name-modal-btn.save { background: var(--lime); color: var(--black); }
       .name-modal-btn.delete { background: #ff5e5e; color: var(--black); }
+      .name-modal-btn.share-x { background: #000000; color: #ffffff; border-color: #000000; }
 
       @media (max-width: 600px) {
         .cookie-banner { bottom: 10px; padding: 0; max-width: 95%; left: 2.5%; right: 2.5%; }
@@ -559,7 +577,10 @@
         <section class="leaderboard-section">
           <div class="leaderboard-header">
             <h1>Leaderboard</h1>
-            <div id="roomCodeDisplay" class="room-code-display" title="Copy Code">-----</div>
+            <div class="room-actions">
+                <button id="btnShareRoom" class="share-btn" title="Compartir Sala">📢</button>
+                <div id="roomCodeDisplay" class="room-code-display" title="Copy Code">-----</div>
+            </div>
           </div>
           <div class="leaderboard" id="leaderboard"></div>
         </section>
@@ -658,6 +679,17 @@
         // Si en 5 segundos no hay auth, desbloqueamos el botón igualmente
         const AUTH_TIMEOUT_MS = 5000;
         
+        // --- LOGIC FOR AUTO-JOIN VIA URL ---
+        let pendingRoomJoin = null;
+        
+        // Check for ?room=CODE in URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const roomParam = urlParams.get('room');
+        if (roomParam) {
+            console.log("Room param detected:", roomParam);
+            pendingRoomJoin = roomParam.toUpperCase();
+        }
+
         function updateAuthUI(isReady, isError = false) {
             const btnMulti = document.getElementById('btnMultiplayerMenu');
             const statusDiv = document.getElementById('authStatus');
@@ -711,6 +743,19 @@
                 localStorage.setItem('coinfliip_userId', userId);
                 console.log("Auth Exitosa. ID:", userId);
                 updateAuthUI(true);
+                
+                // AUTO-JOIN LOGIC
+                if (pendingRoomJoin) {
+                    console.log("Auto-joining room:", pendingRoomJoin);
+                    // Slight delay to ensure UI is ready
+                    setTimeout(() => {
+                        joinRoom(pendingRoomJoin);
+                        pendingRoomJoin = null;
+                        // Optional: Clear URL param to avoid re-join on refresh? 
+                        // window.history.replaceState({}, document.title, window.location.pathname);
+                    }, 500);
+                }
+                
             } else {
                 // INTENTO DE LOGIN
                 console.log("Iniciando login anónimo...");
@@ -756,6 +801,7 @@
         const btnCreateRoom = document.getElementById('btnCreateRoom');
         const btnJoinRoom = document.getElementById('btnJoinRoom');
         const btnGameExit = document.getElementById('btnGameExit');
+        const btnShareRoom = document.getElementById('btnShareRoom');
 
         const roomCodeInput = document.getElementById('roomCodeInput');
         const headerAuthor = document.getElementById('headerAuthor');
@@ -792,6 +838,7 @@
                 if(btnBackToMain) btnBackToMain.textContent = '← VOLVER';
                 if(savedRoomsLabel) savedRoomsLabel.textContent = 'Tus Salas Guardadas';
                 if(multiplayerTitle) multiplayerTitle.textContent = 'Multijugador';
+                if(btnShareRoom) btnShareRoom.title = 'Compartir Sala';
                 
                 const headerBadge = document.querySelector('.header-badge');
                 if (headerBadge) headerBadge.textContent = 'CARA 49.999% / CRUZ 49.999% / CANTO 0.002%';
@@ -833,6 +880,7 @@
                 if(roomCodeInput) roomCodeInput.placeholder = 'CODE';
                 if(savedRoomsLabel) savedRoomsLabel.textContent = 'Your Saved Rooms';
                 if(multiplayerTitle) multiplayerTitle.textContent = 'Multiplayer';
+                if(btnShareRoom) btnShareRoom.title = 'Share Room';
 
                 document.documentElement.lang = 'en';
                 if(coinButton) coinButton.setAttribute('aria-label', 'Flip coin');
@@ -1031,6 +1079,60 @@
         }
         function hideDeleteRoomModal() { const overlay = document.getElementById('deleteRoomModalOverlay'); if (overlay) overlay.classList.remove('visible'); }
 
+        // --- SHARE MODAL LOGIC ---
+        let shareModalHandlers = null;
+        function showShareModal() {
+            const overlay = document.getElementById('shareModalOverlay');
+            const textArea = document.getElementById('shareMessageInput');
+            const title = document.getElementById('shareModalTitle');
+            const cancelBtn = document.getElementById('shareModalCancel');
+            const confirmBtn = document.getElementById('shareModalConfirm');
+            
+            if (!overlay) return;
+            
+            // Clean up old listeners
+            if (shareModalHandlers) {
+                confirmBtn.removeEventListener('click', shareModalHandlers.confirm);
+                cancelBtn.removeEventListener('click', shareModalHandlers.cancel);
+                overlay.removeEventListener('click', shareModalHandlers.overlay);
+            }
+            
+            // Set text content
+            if (isSpanish) {
+                title.textContent = '¡DESAFÍA A OTROS!';
+                cancelBtn.textContent = 'CERRAR';
+                confirmBtn.textContent = 'COMPARTIR EN X';
+                textArea.value = `Mi mejor racha es de ${bestCombo} y mi mejor racha cobrada es de ${bestClaimedCombo}, intenta superarme pazguato`;
+            } else {
+                title.textContent = 'CHALLENGE OTHERS!';
+                cancelBtn.textContent = 'CLOSE';
+                confirmBtn.textContent = 'SHARE ON X';
+                textArea.value = `My best streak is ${bestCombo} and my best banked streak is ${bestClaimedCombo}, try to beat me chump`;
+            }
+            
+            const handleConfirm = function() {
+                const text = textArea.value;
+                // Get base URL without query params
+                const baseUrl = window.location.href.split('?')[0];
+                const shareUrl = `${baseUrl}?room=${currentRoomId}`;
+                const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(shareUrl)}`;
+                window.open(twitterUrl, '_blank');
+                hideShareModal();
+            };
+            
+            const handleCancel = function() { hideShareModal(); };
+            const handleOverlayClick = function(e) { if (e.target === overlay) handleCancel(); };
+            
+            shareModalHandlers = { confirm: handleConfirm, cancel: handleCancel, overlay: handleOverlayClick };
+            confirmBtn.addEventListener('click', handleConfirm);
+            cancelBtn.addEventListener('click', handleCancel);
+            overlay.addEventListener('click', handleOverlayClick);
+            
+            overlay.classList.add('visible');
+            setTimeout(() => { textArea.focus(); textArea.select(); }, 50);
+        }
+        function hideShareModal() { const overlay = document.getElementById('shareModalOverlay'); if (overlay) overlay.classList.remove('visible'); }
+
         function initPlayers(mode) {
           players = [];
           if (mode === 'story') {
@@ -1083,6 +1185,9 @@
                 gameApp.classList.remove('hidden');
                 if(seoContentSection) seoContentSection.classList.remove('hidden'); 
                 if(roomCodeDisplay) roomCodeDisplay.style.display = 'none'; 
+                // Hide share button in story mode
+                if(btnShareRoom) btnShareRoom.style.display = 'none';
+                
                 document.body.classList.remove('multiplayer-theme');
                 
                 // YA NO REINICIAMOS A 0 AQUI, porque borraríamos lo que acabamos de cargar
@@ -1130,6 +1235,9 @@
                      roomCodeDisplay.textContent = currentRoomId; 
                      roomCodeDisplay.style.display = 'block';
                  }
+                 // Show share button in multiplayer
+                 if(btnShareRoom) btnShareRoom.style.display = 'block';
+                 
                  saveRoomToHistory(currentRoomId);
                  multiplayerMenu.classList.add('hidden');
                  gameApp.classList.remove('hidden');
@@ -1575,6 +1683,8 @@
              document.body.removeChild(textArea);
         });
 
+        if (btnShareRoom) btnShareRoom.addEventListener('click', showShareModal);
+
         coinButton.addEventListener('click', handleCoinClick);
         claimButton.addEventListener('click', handleClaimClick);
         
@@ -1639,6 +1749,17 @@
         <div class="name-modal-buttons">
           <button id="deleteRoomModalCancel" class="name-modal-btn cancel">CANCELAR</button>
           <button id="deleteRoomModalConfirm" class="name-modal-btn delete">BORRAR</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="shareModalOverlay" class="name-modal-overlay">
+      <div class="name-modal">
+        <h3 id="shareModalTitle">¡DESAFÍA A OTROS!</h3>
+        <textarea id="shareMessageInput" placeholder="Escribe tu mensaje..."></textarea>
+        <div class="name-modal-buttons">
+          <button id="shareModalCancel" class="name-modal-btn cancel">CERRAR</button>
+          <button id="shareModalConfirm" class="name-modal-btn share-x">COMPARTIR EN X</button>
         </div>
       </div>
     </div>
