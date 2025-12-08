@@ -448,6 +448,7 @@
         opacity: 0; transition: opacity 0.3s;
       }
       .auth-status.visible { opacity: 1; }
+      .auth-status.error { background: #ff5e5e; color: var(--black); }
       
     </style>
   </head>
@@ -643,25 +644,48 @@
         const db = firebase.database();
         const auth = firebase.auth();
 
-        // 2. AUTH LOGIC (SOLUCIÓN DEFINITIVA)
+        // 2. AUTH LOGIC (SOLUCIÓN MEJORADA)
+        // MOVED LANGUAGE HERE TO FIX REFERENCE ERROR
+        const userLang = (navigator.language || navigator.userLanguage || '').toLowerCase();
+        const isEnglish = userLang.startsWith('en');
+        const isSpanish = !isEnglish; 
+        let currentPlayerName = isSpanish ? 'Tú' : 'You';
+
         let userId = null; 
         const authStatusEl = document.getElementById('authStatus');
         
-        // Función para actualizar UI según Auth
-        function updateAuthUI(isReady) {
+        // Timeout para que no se quede cargando infinito
+        // Si en 5 segundos no hay auth, desbloqueamos el botón igualmente
+        const AUTH_TIMEOUT_MS = 5000;
+        
+        function updateAuthUI(isReady, isError = false) {
             const btnMulti = document.getElementById('btnMultiplayerMenu');
             const statusDiv = document.getElementById('authStatus');
             
-            if (isReady) {
+            if (isReady || isError) {
+                // Desbloqueamos el botón en ambos casos
                 if(btnMulti) {
                     btnMulti.disabled = false;
-                    btnMulti.textContent = isSpanish ? 'Modo Multijugador' : 'Multiplayer Mode';
+                    if (isError) {
+                        // Avisamos, pero dejamos probar
+                        btnMulti.textContent = isSpanish ? 'Reintentar Conexión' : 'Retry Connection';
+                    } else {
+                        btnMulti.textContent = isSpanish ? 'Modo Multijugador' : 'Multiplayer Mode';
+                    }
                 }
-                if(statusDiv) statusDiv.classList.remove('visible');
+                if(statusDiv) {
+                    if (isError) {
+                        statusDiv.textContent = 'Offline / Error';
+                        statusDiv.classList.add('error');
+                    } else {
+                        statusDiv.classList.remove('visible');
+                    }
+                }
             } else {
+                // Cargando...
                 if(btnMulti) {
                     btnMulti.disabled = true;
-                    btnMulti.textContent = isSpanish ? 'Conectando...' : 'Connecting...';
+                    btnMulti.textContent = isSpanish ? 'Cargando...' : 'Loading...';
                 }
                 if(statusDiv) {
                     statusDiv.textContent = isSpanish ? 'Conectando...' : 'Connecting...';
@@ -672,20 +696,40 @@
         
         // Estado inicial
         updateAuthUI(false);
+        
+        // Timer de seguridad
+        const authTimeout = setTimeout(() => {
+            console.warn("Auth timeout - desbloqueando UI");
+            if (!userId) updateAuthUI(false, true); // Desbloquear como 'Error'
+        }, AUTH_TIMEOUT_MS);
 
         auth.onAuthStateChanged((user) => {
             if (user) {
-                // ÉXITO: Tenemos ID seguro
+                // ÉXITO
+                clearTimeout(authTimeout);
                 userId = user.uid;
-                localStorage.setItem('coinfliip_userId', userId); // Guardar para referencia
+                localStorage.setItem('coinfliip_userId', userId);
                 console.log("Auth Exitosa. ID:", userId);
                 updateAuthUI(true);
             } else {
-                // NO AUTENTICADO: Iniciar proceso
+                // INTENTO DE LOGIN
                 console.log("Iniciando login anónimo...");
                 auth.signInAnonymously().catch((error) => {
-                    console.error("Error Auth:", error);
-                    showToast("Error de conexión. Recarga la página.");
+                    // Suppress domain block error in console, just warn
+                    if (error.code && error.code.includes('requests-from-referer')) {
+                        console.warn("Auth skipped (Preview Mode): Domain not authorized.");
+                    } else {
+                        console.error("Error Auth:", error);
+                    }
+                    
+                    // IMPORTANTE: Si falla, desbloqueamos el botón con estado de error
+                    // para que el usuario no se quede atrapado.
+                    clearTimeout(authTimeout);
+                    updateAuthUI(false, true); 
+                    // No mostramos toast invasivo para este error específico
+                    if (!error.code || !error.code.includes('requests-from-referer')) {
+                        showToast("Error de conexión. Revisa si aceptaste cookies.");
+                    }
                 });
             }
         });
@@ -737,12 +781,6 @@
         const savedRoomsLabel = document.getElementById('savedRoomsLabel');
         const multiplayerTitle = document.getElementById('multiplayerTitle');
         const seoContentSection = document.getElementById('seoContentSection');
-
-        // LANGUAGE
-        const userLang = (navigator.language || navigator.userLanguage || '').toLowerCase();
-        const isEnglish = userLang.startsWith('en');
-        const isSpanish = !isEnglish; 
-        let currentPlayerName = isSpanish ? 'Tú' : 'You';
 
         function applyTranslations() {
             if (isSpanish) {
@@ -1016,6 +1054,12 @@
             document.body.classList.remove('multiplayer-theme');
         }
         function showMultiplayerMenu() {
+            // Reintentar si falló
+            if (!auth.currentUser) {
+                console.log("Reintentando auth manual al entrar al menú...");
+                auth.signInAnonymously().catch(e => console.warn(e));
+            }
+            
             mainMenu.classList.add('hidden');
             multiplayerMenu.classList.remove('hidden');
             gameApp.classList.add('hidden');
@@ -1045,12 +1089,13 @@
              currentGameMode = 'multiplayer';
              
              // --- FIX: NO PERMITIR JOIN SI AUTH ES NULL ---
-             if (!auth.currentUser) {
-                 showToast(isSpanish ? "Esperando conexión..." : "Connecting...");
+             // Fallback local mode
+             const safeUserId = auth.currentUser ? auth.currentUser.uid : userId;
+
+             if (!safeUserId) {
+                 showToast(isSpanish ? "Esperando ID..." : "Waiting for ID...");
                  return;
              }
-             // USAMOS EL ID REAL DE FIREBASE, NO EL LOCAL
-             const safeUserId = auth.currentUser.uid;
              
              const playerRef = db.ref('rooms/' + currentRoomId + '/players/' + safeUserId);
              playerRef.get().then((snapshot) => {
@@ -1109,7 +1154,7 @@
                         score: pData.score || 0,
                         bestStreak: pData.bestStreak || 0,
                         bestClaimed: pData.bestClaimed || 0,
-                        isUser: (auth.currentUser && key === auth.currentUser.uid), // Check seguro
+                        isUser: (auth.currentUser && key === auth.currentUser.uid) || (!auth.currentUser && key === userId),
                         lastRank: oldP ? oldP.lastRank : 0
                     });
                 });
