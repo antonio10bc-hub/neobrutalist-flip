@@ -11,7 +11,7 @@
     <!-- FIREBASE SCRIPTS (COMPAT VERSION 9) -->
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
-    <!-- AÑADIDO: Script de Autenticación -->
+    <!-- Script de Autenticación -->
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
 
     <meta charset="UTF-8" />
@@ -33,7 +33,7 @@
         --white: #f7f7f7;
         --gray: #a0a0a0;
         --green-trend: #2ecc71;
-        --neon-yellow: #FFFF00; /* Nuevo color para el hito */
+        --neon-yellow: #FFFF00;
       }
 
       * {
@@ -54,34 +54,23 @@
         transition: background 0.3s ease;
       }
 
-      /* --- MULTIPLAYER THEME OVERRIDES --- */
       body.multiplayer-theme {
         --lime: #ff8e8e;       
         --lime-soft: #ffc4c4;  
         background: var(--lime);
       }
 
-      /* --- UTILITIES --- */
-      .hidden {
-        display: none !important;
-      }
+      .hidden { display: none !important; }
 
-      /* --- FX CONTAINERS --- */
+      /* FX CONTAINERS */
       .fx-container {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        pointer-events: none;
-        z-index: 9999;
-        overflow: hidden;
+        position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+        pointer-events: none; z-index: 9999; overflow: hidden;
       }
 
       /* PARTICLES */
       .fire-particle {
-        position: absolute;
-        user-select: none;
+        position: absolute; user-select: none;
         filter: drop-shadow(3px 3px 0 var(--black));
         animation: firePulse 0.8s infinite alternate ease-in-out;
         line-height: 1;
@@ -91,39 +80,27 @@
         100% { transform: scale(1.2) rotate(5deg); }
       }
       .sad-particle {
-        position: absolute;
-        user-select: none;
-        font-size: 2.5rem;
+        position: absolute; user-select: none; font-size: 2.5rem;
         filter: drop-shadow(2px 2px 0 rgba(0,0,0,0.2));
-        animation: sadFall 0.75s forwards ease-in;
-        opacity: 1;
+        animation: sadFall 0.75s forwards ease-in; opacity: 1;
       }
       @keyframes sadFall {
         0% { transform: translateY(0) rotate(0deg); opacity: 1; }
         100% { transform: translateY(100px) rotate(20deg); opacity: 0; }
       }
       .happy-particle {
-        position: absolute;
-        user-select: none;
-        font-size: 2.5rem;
+        position: absolute; user-select: none; font-size: 2.5rem;
         filter: drop-shadow(2px 2px 0 rgba(255,255,255,0.5));
-        animation: happyRise 1.2s forwards ease-out;
-        opacity: 1;
-        z-index: 10000;
+        animation: happyRise 1.2s forwards ease-out; opacity: 1; z-index: 10000;
       }
       @keyframes happyRise {
         0% { transform: translateY(0) scale(0.5); opacity: 1; }
         50% { transform: translateY(-80px) scale(1.2); opacity: 1; }
         100% { transform: translateY(-150px) scale(1); opacity: 0; }
       }
-
-      /* STAR PARTICLES (NEW) */
       .star-particle {
-        position: absolute;
-        user-select: none;
-        font-size: 2rem;
-        animation: starExplode 2s forwards ease-out;
-        z-index: 10002; /* Above toast */
+        position: absolute; user-select: none; font-size: 2rem;
+        animation: starExplode 2s forwards ease-out; z-index: 10002;
         text-shadow: 2px 2px 0 var(--black);
       }
       @keyframes starExplode {
@@ -132,651 +109,250 @@
         100% { opacity: 0; transform: translate(var(--tx-end), var(--ty-end)) scale(0.8) rotate(360deg); }
       }
 
-      /* MILESTONE TOAST (NEW) */
+      /* TOASTS */
       .milestone-toast {
-        position: fixed;
-        top: 30%; /* Slightly above center to avoid covering coin */
-        left: 50%;
+        position: fixed; top: 30%; left: 50%;
         transform: translate(-50%, -50%) scale(0);
-        background: var(--neon-yellow);
-        color: var(--black);
-        padding: 24px 32px;
-        border-radius: 20px;
-        border: 4px solid var(--black);
-        font-weight: 900;
-        font-size: 1.2rem;
-        text-transform: uppercase;
-        box-shadow: 12px 12px 0 var(--black);
-        z-index: 10001;
-        text-align: center;
-        transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        pointer-events: none;
-        max-width: 90%;
-        line-height: 1.3;
+        background: var(--neon-yellow); color: var(--black);
+        padding: 24px 32px; border-radius: 20px;
+        border: 4px solid var(--black); font-weight: 900;
+        font-size: 1.2rem; text-transform: uppercase;
+        box-shadow: 12px 12px 0 var(--black); z-index: 10001;
+        text-align: center; transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        pointer-events: none; max-width: 90%; line-height: 1.3;
       }
-      .milestone-toast.visible {
-        transform: translate(-50%, -50%) scale(1);
-      }
-      .milestone-toast span {
-        display: block;
-        font-size: 2rem;
-        margin-top: 8px;
-        color: var(--black);
-      }
-      /* Speech bubble tail for milestone toast */
+      .milestone-toast.visible { transform: translate(-50%, -50%) scale(1); }
+      .milestone-toast span { display: block; font-size: 2rem; margin-top: 8px; color: var(--black); }
       .milestone-toast::after {
-        content: '';
-        position: absolute;
-        bottom: -14px;
-        left: 50%;
-        transform: translateX(-50%);
-        border-width: 14px 14px 0 14px;
-        border-style: solid;
-        border-color: var(--black) transparent transparent transparent;
+        content: ''; position: absolute; bottom: -14px; left: 50%;
+        transform: translateX(-50%); border-width: 14px 14px 0 14px;
+        border-style: solid; border-color: var(--black) transparent transparent transparent;
       }
       .milestone-toast::before {
-        content: '';
-        position: absolute;
-        bottom: -8px;
-        left: 50%;
-        transform: translateX(-50%);
-        border-width: 10px 10px 0 10px;
-        border-style: solid;
-        border-color: var(--neon-yellow) transparent transparent transparent;
+        content: ''; position: absolute; bottom: -8px; left: 50%;
+        transform: translateX(-50%); border-width: 10px 10px 0 10px;
+        border-style: solid; border-color: var(--neon-yellow) transparent transparent transparent;
         z-index: 1;
       }
 
-
-      /* --- APP CONTAINER --- */
+      /* APP LAYOUT */
       .app {
-        width: min(960px, 100%);
-        background: var(--white);
-        border: 4px solid var(--black);
-        box-shadow: 12px 12px 0 var(--black);
-        display: flex;
-        flex-direction: column;
-        overflow: hidden;
-        position: relative; 
-        z-index: 1;
+        width: min(960px, 100%); background: var(--white);
+        border: 4px solid var(--black); box-shadow: 12px 12px 0 var(--black);
+        display: flex; flex-direction: column; overflow: hidden;
+        position: relative; z-index: 1;
       }
+      .app.menu-layout { width: min(480px, 100%); align-self: center; }
 
-      .app.menu-layout {
-        width: min(480px, 100%);
-        align-self: center;
-      }
-
-      /* --- MENU STYLES --- */
       .menu-content {
-        display: flex;
-        flex-direction: column;
-        gap: 16px;
-        align-items: center;
-        width: 100%;
-        max-width: 400px;
-        margin: 0 auto;
+        display: flex; flex-direction: column; gap: 16px;
+        align-items: center; width: 100%; max-width: 400px; margin: 0 auto;
       }
 
       .menu-btn {
-        width: 100%;
-        padding: 16px;
-        font-weight: 800;
-        text-transform: uppercase;
-        border: 4px solid var(--black);
-        background: var(--lime); 
-        color: var(--black);
-        cursor: pointer;
-        font-size: 1.1rem;
-        box-shadow: 6px 6px 0 var(--black);
-        transition: transform 0.1s, box-shadow 0.1s;
-        letter-spacing: 0.08em;
-        text-align: center;
-        font-family: inherit;
+        width: 100%; padding: 16px; font-weight: 800; text-transform: uppercase;
+        border: 4px solid var(--black); background: var(--lime); color: var(--black);
+        cursor: pointer; font-size: 1.1rem; box-shadow: 6px 6px 0 var(--black);
+        transition: transform 0.1s, box-shadow 0.1s, opacity 0.2s;
+        letter-spacing: 0.08em; text-align: center; font-family: inherit;
       }
-
-      .menu-btn:active {
-        transform: translate(3px, 3px);
-        box-shadow: 3px 3px 0 var(--black);
-      }
-
-      .menu-btn.salmon {
-        background: var(--salmon);
-      }
-
-      .menu-btn.secondary {
-        background: var(--white);
-      }
-      
-      .menu-btn.join-btn {
-        background: var(--black);
-        color: var(--lime);
-        border-color: var(--black);
-      }
-      
-      body.multiplayer-theme .menu-btn.join-btn {
-          color: var(--salmon);
-      }
-
-      .back-btn-container {
-        width: 100%;
-        display: flex;
-        justify-content: flex-start;
-      }
-      
-      .menu-btn.back-btn {
-        width: auto;
-        padding: 8px 16px;
-        font-size: 0.8rem;
-        margin-bottom: 4px;
-      }
+      .menu-btn:active { transform: translate(3px, 3px); box-shadow: 3px 3px 0 var(--black); }
+      .menu-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; box-shadow: 6px 6px 0 var(--black) !important; }
+      .menu-btn.salmon { background: var(--salmon); }
+      .menu-btn.secondary { background: var(--white); }
+      .menu-btn.join-btn { background: var(--black); color: var(--lime); border-color: var(--black); }
+      body.multiplayer-theme .menu-btn.join-btn { color: var(--salmon); }
+      .menu-btn.back-btn { width: auto; padding: 8px 16px; font-size: 0.8rem; margin-bottom: 4px; }
+      .back-btn-container { width: 100%; display: flex; justify-content: flex-start; }
 
       .menu-input {
-        width: 100%;
-        padding: 16px;
-        border: 4px solid var(--black);
-        background: var(--white);
-        font-size: 1.1rem;
-        font-weight: 700;
-        color: var(--black);
-        box-shadow: 4px 4px 0 var(--black);
-        text-transform: uppercase;
-        text-align: center;
-        letter-spacing: 0.1em;
-        font-family: inherit;
-        transition: transform 0.1s, box-shadow 0.1s;
+        width: 100%; padding: 16px; border: 4px solid var(--black);
+        background: var(--white); font-size: 1.1rem; font-weight: 700;
+        color: var(--black); box-shadow: 4px 4px 0 var(--black);
+        text-transform: uppercase; text-align: center; letter-spacing: 0.1em;
+        font-family: inherit; transition: transform 0.1s, box-shadow 0.1s;
       }
-      
-      .menu-input:focus {
-        outline: none;
-        transform: translate(2px, 2px);
-        box-shadow: 2px 2px 0 var(--black);
-        background: var(--lime-soft);
-      }
+      .menu-input:focus { outline: none; transform: translate(2px, 2px); box-shadow: 2px 2px 0 var(--black); background: var(--lime-soft); }
 
-      .menu-separator {
-        width: 100%;
-        height: 4px;
-        background: var(--black);
-        margin: 10px 0;
-        opacity: 0.1;
-      }
-      
-      .menu-or-text {
-        text-transform: uppercase;
-        font-weight: 800;
-        font-size: 0.9rem;
-        margin: -8px 0;
-        opacity: 0.6;
-      }
-      
-      .menu-row {
-        display: flex; 
-        gap: 12px; 
-        width: 100%;
-      }
+      .menu-separator { width: 100%; height: 4px; background: var(--black); margin: 10px 0; opacity: 0.1; }
+      .menu-or-text { text-transform: uppercase; font-weight: 800; font-size: 0.9rem; margin: -8px 0; opacity: 0.6; }
+      .menu-row { display: flex; gap: 12px; width: 100%; }
 
-      /* --- ROOM HISTORY LIST ADJUSTMENTS --- */
+      /* ROOM LIST */
       .room-list {
-        width: 100%;
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-        margin-top: 20px;
-        /* SCROLL REMOVED as requested */
-        max-height: none; 
-        overflow-y: visible;
+        width: 100%; display: flex; flex-direction: column; gap: 8px;
+        margin-top: 20px; max-height: none; overflow-y: visible;
       }
-
-      .room-row-wrapper {
-        display: flex;
-        width: 100%;
-        gap: 8px;
-        align-items: stretch;
-      }
-
+      .room-row-wrapper { display: flex; width: 100%; gap: 8px; align-items: stretch; }
       .room-item {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 10px 14px;
-        border: 2px solid var(--black);
-        background: var(--white);
-        box-shadow: 3px 3px 0 var(--black);
-        cursor: pointer;
-        transition: transform 0.1s;
-        user-select: none;
-        flex: 1; /* Takes up remaining space */
-        min-width: 0;
+        display: flex; justify-content: space-between; align-items: center;
+        padding: 10px 14px; border: 2px solid var(--black); background: var(--white);
+        box-shadow: 3px 3px 0 var(--black); cursor: pointer; transition: transform 0.1s;
+        user-select: none; flex: 1; min-width: 0;
       }
-      .room-item:active {
-        transform: translate(2px, 2px);
-        box-shadow: 1px 1px 0 var(--black);
-      }
-
-      /* Side delete button styling */
+      .room-item:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--black); }
       .room-delete-btn {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 44px;
-        background: #ff8e8e; /* Changed to #ff8e8e */
-        border: 2px solid var(--black);
-        box-shadow: 3px 3px 0 var(--black);
-        cursor: pointer;
-        font-weight: 800;
-        font-size: 1.1rem;
-        transition: transform 0.1s, box-shadow 0.1s;
-        color: var(--black);
+        display: flex; align-items: center; justify-content: center; width: 44px;
+        background: #ff8e8e; border: 2px solid var(--black);
+        box-shadow: 3px 3px 0 var(--black); cursor: pointer; font-weight: 800;
+        font-size: 1.1rem; transition: transform 0.1s, box-shadow 0.1s; color: var(--black);
       }
-      .room-delete-btn:active {
-        transform: translate(2px, 2px);
-        box-shadow: 1px 1px 0 var(--black);
-      }
-
+      .room-delete-btn:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--black); }
       .room-item-name {
-        font-weight: 700;
-        font-size: 0.9rem;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        flex: 1;
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-        margin-right: 8px;
+        font-weight: 700; font-size: 0.9rem; display: flex; align-items: center;
+        gap: 8px; flex: 1; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; margin-right: 8px;
       }
-
-      .room-item-right {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        flex-shrink: 0;
-      }
-
+      .room-item-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
       .room-item-code {
-        font-family: monospace;
-        background: var(--black);
-        color: var(--white);
-        padding: 2px 6px;
-        font-size: 0.8rem;
-        border-radius: 4px;
+        font-family: monospace; background: var(--black); color: var(--white);
+        padding: 2px 6px; font-size: 0.8rem; border-radius: 4px;
       }
-
-      /* FAVORITE STAR STYLING */
-      .star-icon {
-        font-size: 1.2rem;
-        line-height: 1;
-        cursor: pointer;
-        color: var(--gray);
-        transition: color 0.2s, transform 0.1s;
-      }
-      .star-icon:hover {
-        transform: scale(1.1);
-      }
-      .star-icon.active {
-        color: #ffcc00; /* Gold */
-        text-shadow: 1px 1px 0 var(--black);
-      }
-
+      .star-icon { font-size: 1.2rem; line-height: 1; cursor: pointer; color: var(--gray); transition: color 0.2s, transform 0.1s; }
+      .star-icon:hover { transform: scale(1.1); }
+      .star-icon.active { color: #ffcc00; text-shadow: 1px 1px 0 var(--black); }
       .edit-icon-btn {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1rem;
-        width: 24px;
-        height: 24px;
-        border-radius: 50%;
-        cursor: pointer;
-        opacity: 0.4;
-        transition: opacity 0.2s, background 0.2s;
-        z-index: 2;
-        flex-shrink: 0;
+        display: inline-flex; align-items: center; justify-content: center;
+        font-size: 1rem; width: 24px; height: 24px; border-radius: 50%;
+        cursor: pointer; opacity: 0.4; transition: opacity 0.2s, background 0.2s;
+        z-index: 2; flex-shrink: 0;
       }
-      .edit-icon-btn:hover { 
-          opacity: 1; 
-          background: rgba(0,0,0,0.1);
-      }
+      .edit-icon-btn:hover { opacity: 1; background: rgba(0,0,0,0.1); }
 
-      /* --- HEADER & GAME --- */
+      /* HEADER */
       .header {
-        border-bottom: 4px solid var(--black);
-        background: var(--lime-soft);
-        padding: 24px 20px 32px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 16px;
-        position: relative;
-        transition: background 0.3s ease;
+        border-bottom: 4px solid var(--black); background: var(--lime-soft);
+        padding: 24px 20px 32px; display: flex; flex-direction: column;
+        align-items: center; gap: 16px; position: relative; transition: background 0.3s ease;
       }
-
       .header-title {
-        width: 100%;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.06em;
-        font-size: 0.9rem;
+        width: 100%; display: flex; justify-content: space-between;
+        align-items: center; font-weight: 700; text-transform: uppercase;
+        letter-spacing: 0.06em; font-size: 0.9rem;
       }
-      
-      .header-left-col {
-          display: flex;
-          flex-direction: column;
-          align-items: flex-start;
-          gap: 4px;
-      }
-
+      .header-left-col { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; }
       .header-badge {
-        padding: 4px 10px;
-        border-radius: 999px;
-        border: 2px solid var(--black);
-        background: var(--white);
-        text-align: center;
+        padding: 4px 10px; border-radius: 999px; border: 2px solid var(--black);
+        background: var(--white); text-align: center;
       }
-
       .exit-btn-inline {
-        background: var(--black);
-        color: var(--white);
-        border: none;
-        padding: 4px 10px;
-        font-weight: 800;
-        font-size: 0.7rem;
-        cursor: pointer;
-        box-shadow: 2px 2px 0 rgba(0,0,0,0.2);
-        margin-top: 6px;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
+        background: var(--black); color: var(--white); border: none;
+        padding: 4px 10px; font-weight: 800; font-size: 0.7rem; cursor: pointer;
+        box-shadow: 2px 2px 0 rgba(0,0,0,0.2); margin-top: 6px;
+        text-transform: uppercase; letter-spacing: 0.05em;
       }
       .exit-btn-inline:active { transform: translate(1px, 1px); box-shadow: 1px 1px 0 rgba(0,0,0,0.2); }
-
-      .coin-panel {
-        display: grid;
-        grid-template-columns: 1.2fr 1fr;
-        gap: 24px;
-        width: 100%;
-        align-items: center;
-      }
+      .coin-panel { display: grid; grid-template-columns: 1.2fr 1fr; gap: 24px; width: 100%; align-items: center; }
 
       @media (max-width: 720px) {
-        /* MOBILE TWEAKS */
-        .header { 
-            padding-top: 16px; 
-            gap: 16px;         
-            padding-bottom: 20px; 
-        }
-        .header-title { 
-            flex-direction: column; 
-            align-items: flex-start; 
-            gap: 8px; 
-        }
-        .header-left-col { 
-            width: 100%; 
-            align-items: center; 
-            text-align: center; 
-        } 
-        .coin-panel { 
-            grid-template-columns: 1fr; 
-            margin-top: 8px; 
-            gap: 16px;       
-        }
-        .header-badge { 
-            font-size: 0.6rem; 
-            padding: 3px 6px; 
-            letter-spacing: 0.03em; 
-            text-align: center;
-        }
-        
-        .coin-wrapper { 
-            margin-top: 12px; 
-            transform: translateY(21px); 
-        }
-        .coin-info {
-            text-align: left;
-            font-size: 0.85rem;
-            transform: translateY(11px); 
-        }
-        .result-pill {
-            transform: translateY(-3px); 
-        }
-        .claim-button {
-            transform: translateY(-3px);
-        }
-        .coin-info p {
-            margin: 0 0 12px 0;
-        }
+        .header { padding-top: 16px; gap: 16px; padding-bottom: 20px; }
+        .header-title { flex-direction: column; align-items: flex-start; gap: 8px; }
+        .header-left-col { width: 100%; align-items: center; text-align: center; } 
+        .coin-panel { grid-template-columns: 1fr; margin-top: 8px; gap: 16px; }
+        .header-badge { font-size: 0.6rem; padding: 3px 6px; letter-spacing: 0.03em; text-align: center; }
+        .coin-wrapper { margin-top: 12px; transform: translateY(21px); }
+        .coin-info { text-align: left; font-size: 0.85rem; transform: translateY(11px); }
+        .result-pill { transform: translateY(-3px); }
+        .claim-button { transform: translateY(-3px); }
+        .coin-info p { margin: 0 0 12px 0; }
       }
 
-      .coin-wrapper {
-        position: relative;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 16px;
-      }
-
+      .coin-wrapper { position: relative; display: flex; flex-direction: column; align-items: center; gap: 16px; }
       .coin {
-        width: 200px;
-        height: 200px;
-        border-radius: 50%;
-        border: 4px solid var(--black);
-        background: var(--white);
-        box-shadow: 8px 8px 0 var(--black);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 2.26rem;
-        font-weight: 800;
-        color: var(--black);
-        cursor: pointer;
-        outline: none;
+        width: 200px; height: 200px; border-radius: 50%;
+        border: 4px solid var(--black); background: var(--white);
+        box-shadow: 8px 8px 0 var(--black); display: flex; align-items: center;
+        justify-content: center; font-size: 2.26rem; font-weight: 800;
+        color: var(--black); cursor: pointer; outline: none;
         transition: transform 120ms ease-out, box-shadow 120ms ease-out, background 120ms ease-out;
       }
-
-      .coin:active {
-        transform: translate(4px, 4px);
-        box-shadow: 2px 2px 0 var(--black);
-        background: var(--lime-soft);
-      }
-
-      .coin-face-label {
-        font-size: 0.8rem;
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
-        margin-top: 4px;
-      }
+      .coin:active { transform: translate(4px, 4px); box-shadow: 2px 2px 0 var(--black); background: var(--lime-soft); }
+      .coin-face-label { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.08em; margin-top: 4px; }
       .coin-face-label.cta { animation: ctaPulse 1s ease-in-out infinite; }
-      @keyframes ctaPulse {
-        0%, 100% { opacity: 0.5; transform: translateY(0); }
-        50% { opacity: 1; transform: translateY(-2px); }
-      }
-
+      @keyframes ctaPulse { 0%, 100% { opacity: 0.5; transform: translateY(0); } 50% { opacity: 1; transform: translateY(-2px); } }
       .speech-bubble {
-        position: absolute;
-        top: -52px;
-        left: 50%;
-        transform: translateX(-50%);
-        padding: 6px 14px;
-        background: var(--black);
-        color: var(--lime);
-        border-radius: 999px;
-        font-weight: 800;
-        font-size: 1.1rem;
-        box-shadow: 4px 4px 0 var(--black);
-        border: 2px solid var(--white);
-        white-space: nowrap;
+        position: absolute; top: -52px; left: 50%; transform: translateX(-50%);
+        padding: 6px 14px; background: var(--black); color: var(--lime);
+        border-radius: 999px; font-weight: 800; font-size: 1.1rem;
+        box-shadow: 4px 4px 0 var(--black); border: 2px solid var(--white); white-space: nowrap;
       }
-
       .speech-bubble::after {
-        content: '';
-        position: absolute;
-        bottom: -6px;
-        left: 50%;
-        transform: translateX(-50%);
-        border-width: 6px 6px 0 6px;
-        border-style: solid;
+        content: ''; position: absolute; bottom: -6px; left: 50%; transform: translateX(-50%);
+        border-width: 6px 6px 0 6px; border-style: solid;
         border-color: var(--black) transparent transparent transparent;
       }
-
       .coin-info { font-size: 0.9rem; line-height: 1.4; }
       .coin-info p { margin: 4px 0; }
       .coin-info strong { text-transform: uppercase; }
-
       .claim-button {
-        margin-top: 12px;
-        padding: 10px 24px;
-        border-radius: 999px;
-        border: 4px solid var(--black);
-        background: var(--lime);
-        color: var(--black);
-        font-weight: 800;
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
-        font-size: 0.8rem;
-        cursor: pointer;
-        box-shadow: 6px 6px 0 var(--black);
+        margin-top: 12px; padding: 10px 24px; border-radius: 999px;
+        border: 4px solid var(--black); background: var(--lime); color: var(--black);
+        font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em;
+        font-size: 0.8rem; cursor: pointer; box-shadow: 6px 6px 0 var(--black);
         transition: transform 120ms ease-out, box-shadow 120ms ease-out, background 120ms ease-out, opacity 120ms ease-out;
       }
-
       .claim-button:disabled { opacity: 0.4; cursor: default; box-shadow: 0 0 0 var(--black); transform: none; }
       .claim-button:not(:disabled):active { transform: translate(3px, 3px); box-shadow: 2px 2px 0 var(--black); background: var(--white); }
 
       .result-pill {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        padding: 4px 10px;
-        margin-top: 8px;
-        border-radius: 999px;
-        border: 2px solid var(--black);
-        background: var(--white);
-        font-size: 0.8rem;
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
-        transition: background-color 200ms ease, color 200ms ease, transform 200ms ease, box-shadow 200ms ease;
+        display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px;
+        margin-top: 8px; border-radius: 999px; border: 2px solid var(--black);
+        background: var(--white); font-size: 0.8rem; text-transform: uppercase;
+        letter-spacing: 0.08em; transition: background-color 200ms ease, color 200ms ease, transform 200ms ease, box-shadow 200ms ease;
       }
       .result-pill.highlight {
-        background-color: var(--lime) !important;
-        color: var(--white) !important;
+        background-color: var(--lime) !important; color: var(--white) !important;
         text-shadow: 1px 1px 0 var(--black), -1px -1px 0 var(--black), 1px -1px 0 var(--black), -1px 1px 0 var(--black);
-        transform: scale(1.1);
-        box-shadow: 4px 4px 0 var(--black);
-        border-color: var(--black);
+        transform: scale(1.1); box-shadow: 4px 4px 0 var(--black); border-color: var(--black);
       }
       .app.multiplayer-theme .result-pill.highlight { background-color: var(--salmon) !important; }
       .result-pill span { font-weight: 700; }
 
       .main { padding: 24px 20px 28px; background: var(--white); }
-
       .leaderboard-section {
-        border-radius: 18px 18px 0 0;
-        border: 3px solid var(--black);
-        padding: 18px 16px 20px;
-        background: #ffffff;
-        box-shadow: 8px 8px 0 var(--black);
+        border-radius: 18px 18px 0 0; border: 3px solid var(--black);
+        padding: 18px 16px 20px; background: #ffffff; box-shadow: 8px 8px 0 var(--black);
       }
-
-      .leaderboard-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 12px;
-        margin-bottom: 16px;
-      }
+      .leaderboard-header { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 16px; }
       .leaderboard-header h1 { margin: 0; font-size: 1.4rem; text-transform: uppercase; letter-spacing: 0.08em; }
-      
       .room-code-display {
-        font-size: 0.9rem;
-        font-weight: 800;
-        background: var(--black);
-        color: var(--white);
-        padding: 4px 12px;
-        cursor: pointer;
-        display: none;
-        border: 2px solid var(--black);
+        font-size: 0.9rem; font-weight: 800; background: var(--black); color: var(--white);
+        padding: 4px 12px; cursor: pointer; display: none; border: 2px solid var(--black);
         transition: transform 0.1s;
       }
       .room-code-display:active { transform: scale(0.95); }
-
       .leaderboard { border-radius: 12px; overflow: hidden; border: 2px solid var(--black); }
       .leaderboard-row {
-        display: grid;
-        grid-template-columns: 56px minmax(0, 1.4fr) minmax(0, 1fr);
-        align-items: center;
-        padding: 8px 12px;
-        border-bottom: 2px solid var(--black);
-        font-size: 0.9rem;
-        background: var(--white);
+        display: grid; grid-template-columns: 56px minmax(0, 1.4fr) minmax(0, 1fr);
+        align-items: center; padding: 8px 12px; border-bottom: 2px solid var(--black);
+        font-size: 0.9rem; background: var(--white);
       }
       .leaderboard-row:last-child { border-bottom: none; }
       .leaderboard-row:nth-child(odd) { background: #f1f1f1; }
       .leaderboard-row.is-user { background: var(--lime-soft); }
-
       .leaderboard-pos { font-weight: 800; }
-      
-      /* --- LEADERBOARD HORIZONTAL LAYOUT --- */
-      .leaderboard-name { 
-          display: flex; 
-          flex-direction: row; /* FORCE ROW */
-          align-items: center; 
-          gap: 6px; 
-          overflow: hidden; 
-          width: 100%;
+      .leaderboard-name { display: flex; flex-direction: row; align-items: center; gap: 6px; overflow: hidden; width: 100%; }
+      .leaderboard-name-text { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 600; flex: 0 1 auto; min-width: 0; }
+      .leaderboard-stats-tags { display: flex; flex-direction: row; gap: 4px; font-size: 0.65rem; flex-shrink: 0; opacity: 0.9; }
+      .stat-tag {
+        background: var(--white); border: 1px solid var(--black); padding: 1px 5px;
+        border-radius: 999px; display: flex; align-items: center; gap: 2px;
+        white-space: nowrap; font-weight: 700; line-height: 1;
       }
-      .leaderboard-name-text { 
-          white-space: nowrap; 
-          overflow: hidden; 
-          text-overflow: ellipsis; 
-          font-weight: 600;
-          flex: 0 1 auto; /* Allow shrinking */
-          min-width: 0;
-      }
-      .leaderboard-stats-tags { 
-          display: flex; 
-          flex-direction: row;
-          gap: 4px; 
-          font-size: 0.65rem; 
-          flex-shrink: 0; /* Never shrink tags */
-          opacity: 0.9;
-      }
-      .stat-tag { 
-          background: var(--white);
-          border: 1px solid var(--black);
-          padding: 1px 5px; 
-          border-radius: 999px; 
-          display: flex; 
-          align-items: center; 
-          gap: 2px;
-          white-space: nowrap;
-          font-weight: 700;
-          line-height: 1;
-      }
-
-      .leaderboard-score {
-        text-align: right;
-        font-family: 'JetBrains Mono', monospace;
-      }
-
+      .leaderboard-score { text-align: right; font-family: 'JetBrains Mono', monospace; }
       .leaderboard-tag {
-        display: inline-block; padding: 1px 6px; border-radius: 999px; border: 1px solid var(--black);
-        font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.06em; white-space: nowrap;
-        flex-shrink: 0;
+        display: inline-block; padding: 1px 6px; border-radius: 999px;
+        border: 1px solid var(--black); font-size: 0.65rem; text-transform: uppercase;
+        letter-spacing: 0.06em; white-space: nowrap; flex-shrink: 0;
       }
-
       .trend-icon { font-weight: 800; font-size: 0.8rem; line-height: 1; display: inline-block; opacity: 0; transition: opacity 200ms ease; flex-shrink: 0; }
       .trend-icon.visible { opacity: 1; }
       .trend-up { color: var(--green-trend); }
       .trend-down { color: var(--black); }
 
-      /* Mobile Leaderboard Tweaks */
       @media (max-width: 600px) {
           .leaderboard-header h1 { font-size: 1.1rem; }
           .room-code-display { font-size: 0.8rem; padding: 2px 8px; }
-          .leaderboard-row { 
-              font-size: 0.8rem; 
-              grid-template-columns: 40px minmax(0, 1.8fr) minmax(0, 0.8fr); /* More space for name */
-              padding: 8px 8px;
-          }
+          .leaderboard-row { font-size: 0.8rem; grid-template-columns: 40px minmax(0, 1.8fr) minmax(0, 0.8fr); padding: 8px 8px; }
           .leaderboard-name-text { font-size: 0.85rem; }
       }
 
@@ -790,20 +366,19 @@
         z-index: 10000;
       }
       .toast.visible { opacity: 1; transform: translate(-50%, -4px); }
-
       .header-author { font-size: 0.65rem; font-weight: 400; text-transform: none; letter-spacing: 0; margin-top: 4px; color: var(--black); }
-
       .social-links { display: flex; justify-content: center; align-items: center; gap: 12px; margin-top: 24px; }
       .social-link {
-        display: inline-block; padding: 8px 16px; border-radius: 999px; border: 2px solid var(--black);
-        background: #e0e0e0; color: var(--black); text-decoration: none;
-        font-size: 0.65rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em;
+        display: inline-block; padding: 8px 16px; border-radius: 999px;
+        border: 2px solid var(--black); background: #e0e0e0; color: var(--black);
+        text-decoration: none; font-size: 0.65rem; font-weight: 600;
+        text-transform: uppercase; letter-spacing: 0.06em;
         box-shadow: 4px 4px 0 var(--black); transition: transform 120ms ease-out, box-shadow 120ms ease-out, background 120ms ease-out;
       }
       .social-link:hover { transform: translate(2px, 2px); box-shadow: 2px 2px 0 var(--black); background: #d0d0d0; }
       .social-link:active { transform: translate(3px, 3px); box-shadow: 1px 1px 0 var(--black); }
 
-      /* --- COOKIE & MODAL --- */
+      /* COOKIE & MODAL */
       .cookie-banner { 
           position: fixed; bottom: 10px; left: 10px; right: 10px; 
           z-index: 20000; display: flex; justify-content: center; pointer-events: none; 
@@ -844,93 +419,36 @@
 
       @media (max-width: 600px) {
         .cookie-banner { bottom: 10px; padding: 0; max-width: 95%; left: 2.5%; right: 2.5%; }
-        .menu-row { 
-            /* En móvil mantenemos el row si cabe, o lo dejamos así */
-            /* User asked for one line input+btn. Default flex does this. */
-        }
+        .menu-row { }
       }
 
-      /* --- SEO ACCORDION STYLES (NEW) --- */
-      .seo-section {
-        margin-top: 32px;
-        display: flex;
-        flex-direction: column;
-        gap: 16px;
-        width: 100%;
-      }
-
-      .accordion-item {
-        border: 3px solid var(--black);
-        background: var(--white);
-        box-shadow: 6px 6px 0 var(--black);
-        transition: transform 0.1s;
-      }
-
+      /* SEO ACCORDION */
+      .seo-section { margin-top: 32px; display: flex; flex-direction: column; gap: 16px; width: 100%; }
+      .accordion-item { border: 3px solid var(--black); background: var(--white); box-shadow: 6px 6px 0 var(--black); transition: transform 0.1s; }
       .accordion-header {
-        width: 100%;
-        padding: 16px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        background: transparent;
-        border: none;
-        cursor: pointer;
-        text-align: left;
-        color: var(--black);
+        width: 100%; padding: 16px; display: flex; justify-content: space-between;
+        align-items: center; background: transparent; border: none; cursor: pointer; text-align: left; color: var(--black);
       }
+      .accordion-header:hover { background: rgba(0,0,0,0.03); }
+      .accordion-title { font-family: inherit; font-weight: 800; text-transform: uppercase; font-size: 0.9rem; letter-spacing: 0.05em; margin: 0; }
+      .accordion-icon { font-weight: 800; font-size: 1.2rem; transition: transform 0.3s ease; }
+      .accordion-content { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; border-top: 0px solid var(--black); }
+      .accordion-content-inner { padding: 0 16px 20px; font-size: 0.9rem; line-height: 1.6; color: var(--black); opacity: 0.9; }
+      .accordion-content-inner p, .accordion-content-inner ul { margin: 10px 0 0 0; }
+      .accordion-content-inner ul { padding-left: 20px; }
+      .accordion-content-inner li { margin-bottom: 6px; }
+      .accordion-item.active .accordion-icon { transform: rotate(180deg); }
+      .accordion-item.active .accordion-content { max-height: 500px; border-top: 3px solid var(--black); }
       
-      .accordion-header:hover {
-          background: rgba(0,0,0,0.03);
+      /* AUTH LOADING STATUS (NEW) */
+      .auth-status {
+        position: fixed; top: 10px; right: 10px; background: var(--black);
+        color: var(--neon-yellow); padding: 4px 8px; font-size: 0.7rem;
+        border-radius: 4px; z-index: 20000; font-weight: bold; pointer-events: none;
+        opacity: 0; transition: opacity 0.3s;
       }
-
-      .accordion-title {
-        font-family: inherit;
-        font-weight: 800;
-        text-transform: uppercase;
-        font-size: 0.9rem;
-        letter-spacing: 0.05em;
-        margin: 0;
-      }
-
-      .accordion-icon {
-        font-weight: 800;
-        font-size: 1.2rem;
-        transition: transform 0.3s ease;
-      }
-
-      .accordion-content {
-        max-height: 0;
-        overflow: hidden;
-        transition: max-height 0.3s ease-out;
-        border-top: 0px solid var(--black);
-      }
-
-      .accordion-content-inner {
-        padding: 0 16px 20px;
-        font-size: 0.9rem;
-        line-height: 1.6;
-        color: var(--black);
-        opacity: 0.9;
-      }
+      .auth-status.visible { opacity: 1; }
       
-      .accordion-content-inner p, .accordion-content-inner ul {
-          margin: 10px 0 0 0;
-      }
-      .accordion-content-inner ul {
-          padding-left: 20px;
-      }
-      .accordion-content-inner li {
-          margin-bottom: 6px;
-      }
-
-      /* Active State */
-      .accordion-item.active .accordion-icon {
-        transform: rotate(180deg);
-      }
-      .accordion-item.active .accordion-content {
-        max-height: 500px; /* Suficiente para el contenido */
-        border-top: 3px solid var(--black);
-      }
     </style>
   </head>
   <body>
@@ -939,11 +457,11 @@
     height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <!-- End Google Tag Manager (noscript) -->
     
-    <!-- Containers for the effects -->
+    <div id="authStatus" class="auth-status">Conectando...</div>
+    
     <div id="fireContainer" class="fx-container"></div>
     <div id="sadContainer" class="fx-container"></div>
     <div id="happyContainer" class="fx-container"></div>
-    <!-- NEW: Star Container for milestones -->
     <div id="starContainer" class="fx-container"></div>
 
     <!-- MAIN MENU -->
@@ -954,7 +472,8 @@
         <main class="main">
           <div class="menu-content">
             <button id="btnStoryMode" class="menu-btn">Modo Historia</button>
-            <button id="btnMultiplayerMenu" class="menu-btn salmon">Modo Multijugador</button>
+            <!-- Disable until Auth is ready -->
+            <button id="btnMultiplayerMenu" class="menu-btn salmon" disabled>Cargando Multijugador...</button>
           </div>
         </main>
     </div>
@@ -986,7 +505,6 @@
                     <span id="savedRoomsLabel">Tus Salas Guardadas</span>
                 </div>
                 <div id="roomHistoryList" class="room-list">
-                    <!-- History items injected here -->
                 </div>
             </div>
         </main>
@@ -1042,7 +560,6 @@
             <h1>Leaderboard</h1>
             <div id="roomCodeDisplay" class="room-code-display" title="Copy Code">-----</div>
           </div>
-          
           <div class="leaderboard" id="leaderboard"></div>
         </section>
 
@@ -1051,10 +568,7 @@
           <a href="https://www.paypal.com/paypalme/antonio10bc" target="_blank" rel="noopener noreferrer" class="social-link">Donate</a>
         </div>
 
-        <!-- SEO CONTENT BLOCK (Visible only in Story Mode via JS) -->
         <section id="seoContentSection" class="seo-section hidden">
-          
-          <!-- Block 1 -->
           <article class="accordion-item">
             <button class="accordion-header" aria-expanded="false">
               <h2 class="accordion-title">Flip a Coin Online: The Fairest Game</h2>
@@ -1066,8 +580,6 @@
               </div>
             </div>
           </article>
-
-          <!-- Block 2 -->
           <article class="accordion-item">
             <button class="accordion-header" aria-expanded="false">
               <h3 class="accordion-title">Why use a Virtual Coin Flip?</h3>
@@ -1085,8 +597,6 @@
               </div>
             </div>
           </article>
-
-          <!-- Block 3 -->
           <article class="accordion-item">
             <button class="accordion-header" aria-expanded="false">
               <h3 class="accordion-title">True Randomness & Security</h3>
@@ -1098,8 +608,6 @@
               </div>
             </div>
           </article>
-
-          <!-- Block 4 -->
           <article class="accordion-item">
             <button class="accordion-header" aria-expanded="false">
               <h3 class="accordion-title">The Streak Challenge</h3>
@@ -1111,15 +619,11 @@
               </div>
             </div>
           </article>
-
         </section>
       </main>
     </div>
 
-    <!-- EXISTING TOAST -->
     <div class="toast" id="toast">EDGE IMPOSSIBLE (?)</div>
-    
-    <!-- NEW MILESTONE TOAST -->
     <div id="milestoneToast" class="milestone-toast"></div>
 
     <script>
@@ -1135,63 +639,73 @@
             appId: "1:634679701084:web:1c036b210224f2a41cc099"
         };
 
-        // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
-        // AÑADIDO: Inicializar Auth
         const auth = firebase.auth();
 
-        // AÑADIDO: Lógica de Identidad Híbrida (Segura + Respaldo Local)
-        // 1. Intentamos obtener un ID existente del almacenamiento local o creamos uno temporal
-        // Esto asegura que el juego funcione inmediatamente, incluso si Firebase Auth falla por dominio no autorizado.
-        let userId = localStorage.getItem('coinfliip_userId');
-        if (!userId) {
-            userId = 'guest_' + Math.random().toString(36).substr(2, 9);
-            localStorage.setItem('coinfliip_userId', userId);
+        // 2. AUTH LOGIC (SOLUCIÓN DEFINITIVA)
+        let userId = null; 
+        const authStatusEl = document.getElementById('authStatus');
+        
+        // Función para actualizar UI según Auth
+        function updateAuthUI(isReady) {
+            const btnMulti = document.getElementById('btnMultiplayerMenu');
+            const statusDiv = document.getElementById('authStatus');
+            
+            if (isReady) {
+                if(btnMulti) {
+                    btnMulti.disabled = false;
+                    btnMulti.textContent = isSpanish ? 'Modo Multijugador' : 'Multiplayer Mode';
+                }
+                if(statusDiv) statusDiv.classList.remove('visible');
+            } else {
+                if(btnMulti) {
+                    btnMulti.disabled = true;
+                    btnMulti.textContent = isSpanish ? 'Conectando...' : 'Connecting...';
+                }
+                if(statusDiv) {
+                    statusDiv.textContent = isSpanish ? 'Conectando...' : 'Connecting...';
+                    statusDiv.classList.add('visible');
+                }
+            }
         }
+        
+        // Estado inicial
+        updateAuthUI(false);
 
-        // 2. Intentamos "mejorar" ese ID a uno oficial de Firebase Auth
         auth.onAuthStateChanged((user) => {
             if (user) {
-                // Éxito: Tenemos un ID real autenticado
+                // ÉXITO: Tenemos ID seguro
                 userId = user.uid;
-                console.log("Conectado con seguridad (Firebase):", userId);
+                localStorage.setItem('coinfliip_userId', userId); // Guardar para referencia
+                console.log("Auth Exitosa. ID:", userId);
+                updateAuthUI(true);
             } else {
-                // No hay usuario, intentamos conectar anónimamente
-                auth.signInAnonymously()
-                    .then(() => console.log("Iniciando sesión anónima..."))
-                    .catch((error) => {
-                        // Si falla (ej. dominio no autorizado en Canvas), no pasa nada grave.
-                        // Seguimos usando el 'userId' temporal generado arriba.
-                        console.warn("Auth anónima bloqueada (usando ID local):", error.message);
-                    });
+                // NO AUTENTICADO: Iniciar proceso
+                console.log("Iniciando login anónimo...");
+                auth.signInAnonymously().catch((error) => {
+                    console.error("Error Auth:", error);
+                    showToast("Error de conexión. Recarga la página.");
+                });
             }
         });
 
-        // --- GAME VARIABLES ---
+        // --- GAME VARIABLES & LOGIC ---
         window.dataLayer = window.dataLayer || [];
         function sendAnalyticsEvent(eventName, params = {}) {
           window.dataLayer.push({ event: eventName, ...params, });
         }
 
-        let totalFlips = 0;
-        let headsCount = 0;
-        let tailsCount = 0;
-        let edgesCount = 0;
-        let currentPoints = 0; 
-        let bestCombo = 0; 
-        let bestClaimedCombo = 0; 
-        let ctaTimeoutId = null; 
-        let currentGameMode = null; // 'story' or 'multiplayer'
-        let currentRoomId = null;
-        let roomSubscription = null;
+        let totalFlips = 0; let headsCount = 0; let tailsCount = 0; let edgesCount = 0;
+        let currentPoints = 0; let bestCombo = 0; let bestClaimedCombo = 0; 
+        let ctaTimeoutId = null; let currentGameMode = null; 
+        let currentRoomId = null; let roomSubscription = null;
 
-        // --- DOM ELEMENTS ---
+        // DOM ELEMENTS
         const mainMenu = document.getElementById('mainMenu');
         const multiplayerMenu = document.getElementById('multiplayerMenu');
         const gameApp = document.getElementById('gameApp');
         
-        // Buttons
         const btnStoryMode = document.getElementById('btnStoryMode');
         const btnMultiplayerMenu = document.getElementById('btnMultiplayerMenu');
         const btnBackToMain = document.getElementById('btnBackToMain');
@@ -1218,33 +732,29 @@
         const fireContainer = document.getElementById('fireContainer');
         const sadContainer = document.getElementById('sadContainer');
         const happyContainer = document.getElementById('happyContainer');
-        const starContainer = document.getElementById('starContainer'); // NEW
-        const milestoneToast = document.getElementById('milestoneToast'); // NEW
+        const starContainer = document.getElementById('starContainer');
+        const milestoneToast = document.getElementById('milestoneToast');
         const savedRoomsLabel = document.getElementById('savedRoomsLabel');
         const multiplayerTitle = document.getElementById('multiplayerTitle');
         const seoContentSection = document.getElementById('seoContentSection');
 
-        // --- LANGUAGE & LOCALIZATION ---
-        // CORRECCIÓN: Detectar si es inglés. Si NO es inglés, asumimos español por defecto.
+        // LANGUAGE
         const userLang = (navigator.language || navigator.userLanguage || '').toLowerCase();
         const isEnglish = userLang.startsWith('en');
-        const isSpanish = !isEnglish; // Español por defecto para cualquier otro idioma
-
+        const isSpanish = !isEnglish; 
         let currentPlayerName = isSpanish ? 'Tú' : 'You';
 
         function applyTranslations() {
             if (isSpanish) {
                 document.documentElement.lang = 'es';
-                // Menú
                 if(btnStoryMode) btnStoryMode.textContent = 'Modo Historia';
-                if(btnMultiplayerMenu) btnMultiplayerMenu.textContent = 'Modo Multijugador';
+                // btnMultiplayerMenu se maneja en updateAuthUI
                 if(btnCreateRoom) btnCreateRoom.textContent = 'Crear Sala';
                 if(btnJoinRoom) btnJoinRoom.textContent = 'Unirse';
                 if(btnBackToMain) btnBackToMain.textContent = '← VOLVER';
                 if(savedRoomsLabel) savedRoomsLabel.textContent = 'Tus Salas Guardadas';
                 if(multiplayerTitle) multiplayerTitle.textContent = 'Multijugador';
                 
-                // Juego
                 const headerBadge = document.querySelector('.header-badge');
                 if (headerBadge) headerBadge.textContent = 'CARA 49.999% / CRUZ 49.999% / CANTO 0.002%';
                 if(coinButton) coinButton.setAttribute('aria-label', 'Lanzar moneda');
@@ -1268,11 +778,8 @@
                 if(claimButton) claimButton.textContent = 'COBRAR';
                 if (headerAuthor) headerAuthor.textContent = 'por antonio10bc';
                 if(roomCodeDisplay) roomCodeDisplay.title = 'Copiar Código';
-                
-                // Always MENU
                 if(btnGameExit) btnGameExit.textContent = 'MENU'; 
                 
-                // Cookie
                 const cookieText = document.querySelector('.cookie-text');
                 if(cookieText) cookieText.textContent = 'Usamos cookies para mejorar tu experiencia.';
                 const btnAccept = document.getElementById('btnAccept');
@@ -1281,9 +788,7 @@
                 if(btnReject) btnReject.textContent = 'Denegar';
 
             } else {
-                // ENGLISH
                 if(btnStoryMode) btnStoryMode.textContent = 'Story Mode';
-                if(btnMultiplayerMenu) btnMultiplayerMenu.textContent = 'Multiplayer Mode';
                 if(btnCreateRoom) btnCreateRoom.textContent = 'Create Room';
                 if(btnJoinRoom) btnJoinRoom.textContent = 'Join Room';
                 if(btnBackToMain) btnBackToMain.textContent = '← BACK';
@@ -1295,8 +800,6 @@
                 if(coinButton) coinButton.setAttribute('aria-label', 'Flip coin');
                 if(btnGameExit) btnGameExit.textContent = 'MENU';
                 if(roomCodeDisplay) roomCodeDisplay.title = 'Copy Code';
-                
-                // Cookie
                 const cookieText = document.querySelector('.cookie-text');
                 if(cookieText) cookieText.textContent = 'We use cookies to improve your experience.';
                 const btnAccept = document.getElementById('btnAccept');
@@ -1305,55 +808,35 @@
                 if(btnReject) btnReject.textContent = 'Reject';
             }
         }
-        
-        // Ejecutar traducciones al inicio
         applyTranslations();
 
         const SOCIAL_LINKS_MARGIN_TOP = 24;
         document.documentElement.style.setProperty('--social-links-margin-top', SOCIAL_LINKS_MARGIN_TOP + 'px');
 
-        // --- CONSTANTS ---
-        const P_HEADS = 49.999;
-        const P_TAILS = 49.999;
-        const P_EDGE = 0.002;
-        const P_TOTAL = P_HEADS + P_TAILS + P_EDGE; 
-
-        // --- HISTORICAL DATA ---
+        const P_HEADS = 49.999; const P_TAILS = 49.999; const P_EDGE = 0.002; const P_TOTAL = P_HEADS + P_TAILS + P_EDGE; 
         const historicalNamesEn = ["Antonio Bastos de Córdoba","Malala Yousafzai","Tim Berners-Lee","Rigoberta Menchú","Valentina Tereshkova","Gabriel Garcia Marquez","Nelson Mandela","Rosa Parks","The Beatles","Deng Xiaoping","Simone de Beauvoir","Charlie Chaplin","Mao Zedong","Pablo Picasso","Kwame Nkrumah","Martin Luther King Jr.","Walt Disney","Winston Churchill","Eleanor Roosevelt","Rosalind Franklin","Albert Einstein","Alexander Fleming","Alan Turing","Frida Kahlo","Mahatma Gandhi","The Wright Brothers","Franklin D. Roosevelt","Nikola Tesla","George Washington Carver","Sigmund Freud","Mustafa Kemal Ataturk","Marie Curie","Fritz Haber","Emmeline Pankhurst","Lenin","Harriet Tubman","Florence Nightingale","Queen Victoria","Louis Pasteur","Karl Marx","Charles Darwin","Abraham Lincoln","Ada Lovelace","José de San Martín","Simón Bolívar","Ludwig van Beethoven","Napoleon Bonaparte","James Watt","Immanuel Kant","George Washington","Catherine the Great","Wolfgang Amadeus Mozart","Jean-Jacques Rousseau","Voltaire","Isaac Newton","René Descartes","Galileo Galilei","William Shakespeare","Miguel de Cervantes","Suleiman the Magnificent","Michelangelo","Martin Luther","Nicolaus Copernicus","Guru Nanak","Vasco da Gama","Leonardo da Vinci","Christopher Columbus","Isabella I of Castile","Johannes Gutenberg","Mansa Musa","Dante Alighieri","Thomas Aquinas","Genghis Khan","Saladin","Avicenna","Murasaki Shikibu","Al-Khwarizmi","Charlemagne","Wu Zetian","Muhammad","Cai Lun","Jesus of Nazareth","Augustus","Cleopatra","Julius Caesar","Qin Shi Huang","Ashoka","Alexander the Great","Aristotle","Plato","Socrates","Confucius","Buddha","Cyrus the Great","Laozi","Homer","Zoroaster","Moses","Hatshepsut"];
         const historicalNamesEs = ["Antonio Bastos de Córdoba","Malala Yousafzai","Tim Berners-Lee","Rigoberta Menchú","Valentina Tereshkova","Gabriel García Márquez","Nelson Mandela","Rosa Parks","The Beatles","Deng Xiaoping","Simone de Beauvoir","Charlie Chaplin","Mao Zedong","Pablo Picasso","Kwame Nkrumah","Martin Luther King Jr.","Walt Disney","Winston Churchill","Eleanor Roosevelt","Rosalind Franklin","Albert Einstein","Alexander Fleming","Alan Turing","Frida Kahlo","Mahatma Gandhi","Los Hermanos Wright","Franklin D. Roosevelt","Nikola Tesla","George Washington Carver","Sigmund Freud","Mustafa Kemal Ataturk","Marie Curie","Fritz Haber","Emmeline Pankhurst","Lenin","Harriet Tubman","Florence Nightingale","Reina Victoria","Louis Pasteur","Karl Marx","Charles Darwin","Abraham Lincoln","Ada Lovelace","José de San Martín","Simón Bolívar","Ludwig van Beethoven","Napoleón Bonaparte","James Watt","Immanuel Kant","George Washington","Catalina la Grande","Wolfgang Amadeus Mozart","Jean-Jacques Rousseau","Voltaire","Isaac Newton","René Descartes","Galileo Galilei","William Shakespeare","Miguel de Cervantes","Solimán el Magnífico","Miguel Ángel","Martín Lutero","Nicolás Copérnico","Guru Nanak","Vasco de Gama","Leonardo da Vinci","Cristóbal Colón","Isabel I de Castilla","Johannes Gutenberg","Mansa Musa","Dante Alighieri","Tomás de Aquino","Gengis Kan","Saladino","Avicena","Murasaki Shikibu","Al-Juarismi","Carlomagno","Wu Zetian","Mahoma","Cai Lun","Jesús de Nazaret","Augusto","Cleopatra","Julio César","Qin Shi Huang","Ashoka","Alejandro Magno","Aristóteles","Platón","Sócrates","Confucio","Buda","Ciro el Grande","Laozi","Homero","Zoroastro","Moisés","Hatshepsut"];
         const historicalNames = isSpanish ? historicalNamesEs : historicalNamesEn;
 
-        // --- PLAYERS DATA ---
         let players = [];
         
-        // --- LOGIC: ROOM HISTORY ---
         function getRoomHistory() {
-            try {
-                return JSON.parse(localStorage.getItem('coinfliip_rooms') || '[]');
-            } catch(e) { return []; }
+            try { return JSON.parse(localStorage.getItem('coinfliip_rooms') || '[]'); } catch(e) { return []; }
         }
 
         function saveRoomToHistory(code, customName = null) {
             let history = getRoomHistory();
             const existingIndex = history.findIndex(r => r.code === code);
             const defaultName = isSpanish ? ('Sala ' + code) : ('Room ' + code);
-            
             let isFav = false;
-            
             if (existingIndex >= 0) {
-                // Preserve existing favorite status
                 isFav = history[existingIndex].favorite || false;
                 const room = history.splice(existingIndex, 1)[0];
                 if (customName) room.name = customName; 
-                // re-add to beginning to show recency, but favorite sort will happen in render
                 room.favorite = isFav;
                 history.unshift(room);
             } else {
-                history.unshift({ 
-                    code: code, 
-                    name: customName || defaultName,
-                    favorite: false
-                });
+                history.unshift({ code: code, name: customName || defaultName, favorite: false });
             }
             if (history.length > 10) history = history.slice(0, 10);
             localStorage.setItem('coinfliip_rooms', JSON.stringify(history));
@@ -1364,7 +847,6 @@
              let history = getRoomHistory();
              const index = history.findIndex(r => r.code === code);
              if (index >= 0) {
-                 // Toggle boolean
                  history[index].favorite = !history[index].favorite;
                  localStorage.setItem('coinfliip_rooms', JSON.stringify(history));
                  renderRoomHistory();
@@ -1381,7 +863,6 @@
         function renderRoomHistory() {
             roomHistoryList.innerHTML = '';
             let history = getRoomHistory();
-            
             if (history.length === 0) {
                 const emptyMsg = document.createElement('div');
                 emptyMsg.textContent = isSpanish ? 'No hay salas recientes.' : 'No recent rooms.';
@@ -1391,31 +872,20 @@
                 roomHistoryList.appendChild(emptyMsg);
                 return;
             }
-
-            // SORT: Favorites first
             history.sort((a, b) => {
-                if (a.favorite === b.favorite) return 0; // Maintain recent order if both same state
-                return a.favorite ? -1 : 1; // True comes before False
+                if (a.favorite === b.favorite) return 0;
+                return a.favorite ? -1 : 1; 
             });
-
             history.forEach(room => {
-                // Main Container (Flex Row)
                 const wrapper = document.createElement('div');
                 wrapper.className = 'room-row-wrapper';
-
-                // --- 1. The Room Button (Click to join) ---
                 const roomBtn = document.createElement('div');
                 roomBtn.className = 'room-item';
                 roomBtn.onclick = () => { joinRoom(room.code); };
-
-                // Left Side: Name + Edit
                 const nameSpan = document.createElement('span');
                 nameSpan.className = 'room-item-name';
-                
                 const nameText = document.createTextNode(room.name + ' ');
                 nameSpan.appendChild(nameText);
-
-                // Edit Icon
                 const editIcon = document.createElement('span');
                 editIcon.className = 'edit-icon-btn';
                 editIcon.textContent = '✏️';
@@ -1425,54 +895,31 @@
                     showRoomNameModal(room.code, room.name);
                 };
                 nameSpan.appendChild(editIcon);
-
-                // Right Side: Star + Code
                 const rightContainer = document.createElement('div');
                 rightContainer.className = 'room-item-right';
-
-                // Star Icon
                 const starIcon = document.createElement('span');
                 starIcon.className = 'star-icon';
-                if (room.favorite) {
-                    starIcon.textContent = '★'; // Marked
-                    starIcon.classList.add('active');
-                } else {
-                    starIcon.textContent = '☆'; // Unmarked
-                }
-                starIcon.onclick = (e) => {
-                    e.stopPropagation();
-                    toggleRoomFavorite(room.code);
-                };
-
-                // Code Pill
+                if (room.favorite) { starIcon.textContent = '★'; starIcon.classList.add('active'); } 
+                else { starIcon.textContent = '☆'; }
+                starIcon.onclick = (e) => { e.stopPropagation(); toggleRoomFavorite(room.code); };
                 const codeSpan = document.createElement('span');
                 codeSpan.className = 'room-item-code';
                 codeSpan.textContent = room.code;
-
                 rightContainer.appendChild(starIcon);
                 rightContainer.appendChild(codeSpan);
-
                 roomBtn.appendChild(nameSpan);
                 roomBtn.appendChild(rightContainer);
-
-                // --- 2. The Delete Button (X) ---
                 const deleteBtn = document.createElement('button');
                 deleteBtn.className = 'room-delete-btn';
                 deleteBtn.textContent = 'X';
                 deleteBtn.title = isSpanish ? 'Eliminar' : 'Delete';
-                deleteBtn.onclick = () => {
-                     showDeleteRoomModal(room.code, room.name);
-                };
-
-                // Add to wrapper
+                deleteBtn.onclick = () => { showDeleteRoomModal(room.code, room.name); };
                 wrapper.appendChild(roomBtn);
                 wrapper.appendChild(deleteBtn);
-                
                 roomHistoryList.appendChild(wrapper);
             });
         }
 
-        // --- ROOM NAME MODAL ---
         let roomNameModalHandlers = null;
         function showRoomNameModal(roomCode, currentName) {
           const overlay = document.getElementById('roomNameModalOverlay');
@@ -1480,65 +927,40 @@
           const title = document.getElementById('roomNameModalTitle');
           const cancelBtn = document.getElementById('roomNameModalCancel');
           const saveBtn = document.getElementById('roomNameModalSave');
-          
           if (!overlay) return;
-          
           if (roomNameModalHandlers) {
             saveBtn.removeEventListener('click', roomNameModalHandlers.save);
             cancelBtn.removeEventListener('click', roomNameModalHandlers.cancel);
             input.removeEventListener('keydown', roomNameModalHandlers.keydown);
             overlay.removeEventListener('click', roomNameModalHandlers.overlay);
           }
-          
-          input.value = currentName;
-          input.maxLength = 20; 
-          
+          input.value = currentName; input.maxLength = 20; 
           if (isSpanish) {
-            title.textContent = 'Nombre de Sala';
-            cancelBtn.textContent = 'Cancelar';
-            saveBtn.textContent = 'Guardar';
-            input.placeholder = 'Nombre...';
+            title.textContent = 'Nombre de Sala'; cancelBtn.textContent = 'Cancelar';
+            saveBtn.textContent = 'Guardar'; input.placeholder = 'Nombre...';
           } else {
-            title.textContent = 'Room Name';
-            cancelBtn.textContent = 'Cancel';
-            saveBtn.textContent = 'Save';
-            input.placeholder = 'Name...';
+            title.textContent = 'Room Name'; cancelBtn.textContent = 'Cancel';
+            saveBtn.textContent = 'Save'; input.placeholder = 'Name...';
           }
-          
           const handleSave = function() {
             const trimmedName = input.value.trim().substring(0, 20);
-            if (trimmedName.length > 0) {
-              saveRoomToHistory(roomCode, trimmedName);
-            }
+            if (trimmedName.length > 0) saveRoomToHistory(roomCode, trimmedName);
             hideRoomNameModal();
           };
-          
           const handleCancel = function() { hideRoomNameModal(); };
-          
           const handleKeyPress = function(e) {
             if (e.key === 'Enter') { e.preventDefault(); handleSave(); } 
             else if (e.key === 'Escape') { e.preventDefault(); handleCancel(); }
           };
-          
           const handleOverlayClick = function(e) { if (e.target === overlay) handleCancel(); };
-          
           roomNameModalHandlers = { save: handleSave, cancel: handleCancel, keydown: handleKeyPress, overlay: handleOverlayClick };
-          
-          saveBtn.addEventListener('click', handleSave);
-          cancelBtn.addEventListener('click', handleCancel);
-          input.addEventListener('keydown', handleKeyPress);
-          overlay.addEventListener('click', handleOverlayClick);
-          
+          saveBtn.addEventListener('click', handleSave); cancelBtn.addEventListener('click', handleCancel);
+          input.addEventListener('keydown', handleKeyPress); overlay.addEventListener('click', handleOverlayClick);
           overlay.classList.add('visible');
           setTimeout(() => { input.focus(); input.select(); }, 50);
         }
-        
-        function hideRoomNameModal() {
-          const overlay = document.getElementById('roomNameModalOverlay');
-          if (overlay) overlay.classList.remove('visible');
-        }
+        function hideRoomNameModal() { const overlay = document.getElementById('roomNameModalOverlay'); if (overlay) overlay.classList.remove('visible'); }
 
-        // --- DELETE ROOM MODAL ---
         let deleteRoomModalHandlers = null;
         function showDeleteRoomModal(roomCode, roomName) {
           const overlay = document.getElementById('deleteRoomModalOverlay');
@@ -1546,70 +968,42 @@
           const message = document.getElementById('deleteRoomModalMessage');
           const cancelBtn = document.getElementById('deleteRoomModalCancel');
           const confirmBtn = document.getElementById('deleteRoomModalConfirm');
-          
           if (!overlay) return;
-          
           if (deleteRoomModalHandlers) {
             confirmBtn.removeEventListener('click', deleteRoomModalHandlers.confirm);
             cancelBtn.removeEventListener('click', deleteRoomModalHandlers.cancel);
             overlay.removeEventListener('click', deleteRoomModalHandlers.overlay);
           }
-          
           if (isSpanish) {
             title.textContent = 'ELIMINAR SALA';
             message.innerHTML = `¿Seguro que quieres borrar <strong>${roomName}</strong> de tu historial?`;
-            cancelBtn.textContent = 'CANCELAR';
-            confirmBtn.textContent = 'BORRAR';
+            cancelBtn.textContent = 'CANCELAR'; confirmBtn.textContent = 'BORRAR';
           } else {
             title.textContent = 'DELETE ROOM';
             message.innerHTML = `Are you sure you want to remove <strong>${roomName}</strong> from your history?`;
-            cancelBtn.textContent = 'CANCEL';
-            confirmBtn.textContent = 'DELETE';
+            cancelBtn.textContent = 'CANCEL'; confirmBtn.textContent = 'DELETE';
           }
-          
-          const handleConfirm = function() {
-            deleteRoomFromHistory(roomCode);
-            hideDeleteRoomModal();
-          };
-          
+          const handleConfirm = function() { deleteRoomFromHistory(roomCode); hideDeleteRoomModal(); };
           const handleCancel = function() { hideDeleteRoomModal(); };
           const handleOverlayClick = function(e) { if (e.target === overlay) handleCancel(); };
-          
           deleteRoomModalHandlers = { confirm: handleConfirm, cancel: handleCancel, overlay: handleOverlayClick };
-          
-          confirmBtn.addEventListener('click', handleConfirm);
-          cancelBtn.addEventListener('click', handleCancel);
+          confirmBtn.addEventListener('click', handleConfirm); cancelBtn.addEventListener('click', handleCancel);
           overlay.addEventListener('click', handleOverlayClick);
-          
           overlay.classList.add('visible');
         }
-        
-        function hideDeleteRoomModal() {
-          const overlay = document.getElementById('deleteRoomModalOverlay');
-          if (overlay) overlay.classList.remove('visible');
-        }
+        function hideDeleteRoomModal() { const overlay = document.getElementById('deleteRoomModalOverlay'); if (overlay) overlay.classList.remove('visible'); }
 
-        // --- GAME LOGIC FUNCTIONS ---
         function initPlayers(mode) {
           players = [];
-          
           if (mode === 'story') {
             players.push({ id: 'user', name: currentPlayerName, score: 0, isUser: true, lastRank: 0 });
             for (let i = 0; i < historicalNames.length; i++) {
                 const score = Math.floor(999 - (i * (999 / (historicalNames.length - 1))));
-                players.push({
-                  id: 'historical' + i,
-                  name: historicalNames[i],
-                  score: score,
-                  isUser: false,
-                  lastRank: 0 
-                });
+                players.push({ id: 'historical' + i, name: historicalNames[i], score: score, isUser: false, lastRank: 0 });
             }
             const initialSorted = players.slice().sort((a, b) => b.score - a.score);
             initialSorted.forEach((p, i) => p.lastRank = i + 1);
-            
             loadGameData();
-            
             const user = players.find(p => p.isUser);
             if (user) currentPlayerName = user.name;
           } 
@@ -1621,7 +1015,6 @@
             gameApp.classList.add('hidden');
             document.body.classList.remove('multiplayer-theme');
         }
-
         function showMultiplayerMenu() {
             mainMenu.classList.add('hidden');
             multiplayerMenu.classList.remove('hidden');
@@ -1632,22 +1025,16 @@
 
         function startGame(mode) {
             currentGameMode = mode;
-            
             if (mode === 'story') {
                 initPlayers('story');
                 updateLeaderboard();
                 mainMenu.classList.add('hidden');
                 gameApp.classList.remove('hidden');
-
-                // --- NUEVO: MOSTRAR SEO SECTION SOLO EN STORY ---
                 if(seoContentSection) seoContentSection.classList.remove('hidden'); 
-                
                 if(roomCodeDisplay) roomCodeDisplay.style.display = 'none'; 
                 document.body.classList.remove('multiplayer-theme');
-                
                 currentPoints = 0; bestCombo = 0; bestClaimedCombo = 0;
                 updateSpeechBubble(); updateBestCombo(); updateBestClaimedCombo(); scheduleIdleCta();
-                
                 sendAnalyticsEvent('start_game', { mode: 'story' });
                 if(headerAuthor) headerAuthor.textContent = isSpanish ? 'por antonio10bc' : 'by antonio10bc';
             } 
@@ -1657,40 +1044,25 @@
              currentRoomId = code;
              currentGameMode = 'multiplayer';
              
-             // SEGURIDAD: Comprobamos si userId ya existe (debería existir por Auth)
-             if (!userId) {
-                 showToast(isSpanish ? "Conectando..." : "Connecting...");
-                 return; // Auth debería completarse en breve
+             // --- FIX: NO PERMITIR JOIN SI AUTH ES NULL ---
+             if (!auth.currentUser) {
+                 showToast(isSpanish ? "Esperando conexión..." : "Connecting...");
+                 return;
              }
-
-             // NOTA IMPORTANTE: En multiplayer, no sobreescribimos el nombre con el de localStorage
-             // a menos que sea un jugador nuevo. La persistencia se maneja en el .then()
+             // USAMOS EL ID REAL DE FIREBASE, NO EL LOCAL
+             const safeUserId = auth.currentUser.uid;
              
-             const playerRef = db.ref('rooms/' + currentRoomId + '/players/' + userId);
-             
+             const playerRef = db.ref('rooms/' + currentRoomId + '/players/' + safeUserId);
              playerRef.get().then((snapshot) => {
                  if (snapshot.exists()) {
-                     // CORRECCIÓN PERSISTENCIA:
-                     // Si el jugador existe en Firebase, usamos SU nombre guardado.
                      const data = snapshot.val();
-                     if (data.name) {
-                         currentPlayerName = data.name;
-                     }
-                     // Recuperamos bestStreak y bestClaimed desde Firebase para el estado local
+                     if (data.name) currentPlayerName = data.name;
                      if (data.bestStreak) bestCombo = data.bestStreak;
                      if (data.bestClaimed) bestClaimedCombo = data.bestClaimed;
-                     
-                     // Actualizamos UI inmediatamente
-                     updateBestCombo();
-                     updateBestClaimedCombo();
-                     
+                     updateBestCombo(); updateBestClaimedCombo();
                      return; 
                  } else {
-                     // Si el jugador NO existe (es nuevo en la sala), creamos la entrada.
-                     // Reseteamos valores locales para nueva sala
-                     bestCombo = 0;
-                     bestClaimedCombo = 0;
-                     
+                     bestCombo = 0; bestClaimedCombo = 0;
                      return playerRef.set({
                          name: currentPlayerName,
                          score: 0,
@@ -1700,70 +1072,49 @@
                  }
              }).then(() => {
                  subscribeToRoom(currentRoomId);
-                 
-                 // --- NUEVO: OCULTAR SEO SECTION EN MULTIPLAYER ---
                  if(seoContentSection) seoContentSection.classList.add('hidden');
-
                  if(roomCodeDisplay) {
                      roomCodeDisplay.textContent = currentRoomId; 
                      roomCodeDisplay.style.display = 'block';
                  }
-                 
                  saveRoomToHistory(currentRoomId);
- 
                  multiplayerMenu.classList.add('hidden');
                  gameApp.classList.remove('hidden');
                  document.body.classList.add('multiplayer-theme');
- 
                  currentPoints = 0; 
-                 // bestCombo y bestClaimedCombo ya se setearon arriba si existian
-                 updateSpeechBubble(); 
-                 updateBestCombo(); 
-                 updateBestClaimedCombo(); 
-                 scheduleIdleCta();
+                 updateSpeechBubble(); updateBestCombo(); updateBestClaimedCombo(); scheduleIdleCta();
              }).catch((error) => {
                  console.error("Firebase Error:", error);
-                 showToast(isSpanish ? "ERROR DE CONEXIÓN" : "CONNECTION ERROR");
+                 if (error.code === 'PERMISSION_DENIED') {
+                     showToast(isSpanish ? "Error: Permiso denegado (Revisa conexión)" : "Error: Permission Denied");
+                 } else {
+                     showToast(isSpanish ? "ERROR DE CONEXIÓN" : "CONNECTION ERROR");
+                 }
              });
         }
 
         function subscribeToRoom(roomId) {
-            if (roomSubscription) {
-                db.ref('rooms/' + roomId + '/players').off();
-            }
-
+            if (roomSubscription) { db.ref('rooms/' + roomId + '/players').off(); }
             roomSubscription = db.ref('rooms/' + roomId + '/players').on('value', (snapshot) => {
                 const data = snapshot.val();
-                if (!data) {
-                    players = [];
-                    updateLeaderboard();
-                    return;
-                }
-
+                if (!data) { players = []; updateLeaderboard(); return; }
                 const oldPlayers = [...players];
                 players = [];
-
                 Object.keys(data).forEach(key => {
                     const pData = data[key];
                     const oldP = oldPlayers.find(op => op.id === key);
-                    
                     players.push({
                         id: key,
                         name: pData.name || 'Unknown',
                         score: pData.score || 0,
                         bestStreak: pData.bestStreak || 0,
                         bestClaimed: pData.bestClaimed || 0,
-                        isUser: (key === userId),
+                        isUser: (auth.currentUser && key === auth.currentUser.uid), // Check seguro
                         lastRank: oldP ? oldP.lastRank : 0
                     });
                 });
-                
-                // Aseguramos que la variable local coincida con la DB
                 const me = players.find(p => p.isUser);
-                if (me) {
-                    currentPlayerName = me.name;
-                }
-
+                if (me) currentPlayerName = me.name;
                 updateLeaderboard();
             });
         }
@@ -1776,30 +1127,23 @@
                 if (currentRoomId && roomSubscription) {
                     db.ref('rooms/' + currentRoomId + '/players').off();
                 }
-                currentRoomId = null;
-                currentGameMode = null;
+                currentRoomId = null; currentGameMode = null;
                 showMultiplayerMenu();
             }
         }
 
-        // --- EFFECTS ---
         function updateFireEffect(score) {
           fireContainer.innerHTML = ''; 
           if (score < 2) return;
           const streakLevel = Math.log2(score);
           const count = Math.floor(streakLevel * 12); 
           const fragment = document.createDocumentFragment();
-
           for (let i = 0; i < count; i++) {
             const el = document.createElement('div');
-            el.textContent = '🔥';
-            el.className = 'fire-particle';
-            const size = 1.5 + Math.random() * 2.0;
-            el.style.fontSize = size + 'rem';
+            el.textContent = '🔥'; el.className = 'fire-particle';
+            const size = 1.5 + Math.random() * 2.0; el.style.fontSize = size + 'rem';
             const side = Math.floor(Math.random() * 4); 
-            const offset = 10 + Math.random() * 80; 
-            const depth = (Math.random() * 10 - 5) + 'px';
-
+            const offset = 10 + Math.random() * 80; const depth = (Math.random() * 10 - 5) + 'px';
             switch(side) {
                 case 0: el.style.top = depth; el.style.left = offset + '%'; break;
                 case 1: el.style.right = depth; el.style.top = offset + '%'; break;
@@ -1811,23 +1155,19 @@
           }
           fireContainer.appendChild(fragment);
         }
-        
         function triggerSadness() {
           sadContainer.innerHTML = ''; 
           const fragment = document.createDocumentFragment();
           for (let i = 0; i < 15; i++) {
             const el = document.createElement('div');
-            el.textContent = '😢';
-            el.className = 'sad-particle';
-            el.style.left = (Math.random() * 100) + 'vw';
-            el.style.top = (Math.random() * 80) + 'vh'; 
+            el.textContent = '😢'; el.className = 'sad-particle';
+            el.style.left = (Math.random() * 100) + 'vw'; el.style.top = (Math.random() * 80) + 'vh'; 
             el.style.animationDuration = (0.6 + Math.random() * 0.3) + 's';
             fragment.appendChild(el);
           }
           sadContainer.appendChild(fragment);
           setTimeout(() => { sadContainer.innerHTML = ''; }, 850);
         }
-
         function triggerHappiness() {
           happyContainer.innerHTML = '';
           const fragment = document.createDocumentFragment();
@@ -1836,93 +1176,54 @@
             const el = document.createElement('div');
             el.textContent = happyEmojis[Math.floor(Math.random() * happyEmojis.length)];
             el.className = 'happy-particle';
-            el.style.left = (Math.random() * 100) + 'vw';
-            el.style.top = (50 + Math.random() * 40) + 'vh';
+            el.style.left = (Math.random() * 100) + 'vw'; el.style.top = (50 + Math.random() * 40) + 'vh';
             el.style.animationDuration = (0.8 + Math.random() * 0.4) + 's';
             fragment.appendChild(el);
           }
           happyContainer.appendChild(fragment);
           setTimeout(() => { happyContainer.innerHTML = ''; }, 1300);
         }
-
-        // --- NEW: STAR CELEBRATION EFFECT ---
         function triggerStars() {
             if (!starContainer) return;
             starContainer.innerHTML = '';
             const fragment = document.createDocumentFragment();
             const starTypes = ['⭐', '🌟', '✨', '💫', '✴️', '🤩'];
-            // Muchas particulas
             for (let i = 0; i < 50; i++) { 
                 const el = document.createElement('div');
                 el.textContent = starTypes[Math.floor(Math.random() * starTypes.length)];
                 el.className = 'star-particle';
-                
-                // Random Start Positions (around center)
                 const startX = 50 + (Math.random() * 20 - 10);
                 const startY = 30 + (Math.random() * 20 - 10);
-                
-                // Calculate random trajectory for animation
                 const endX = (Math.random() * 100 - 50) + 'vw';
                 const endY = (Math.random() * 100 - 50) + 'vh';
-                
-                el.style.left = startX + 'vw';
-                el.style.top = startY + 'vh';
+                el.style.left = startX + 'vw'; el.style.top = startY + 'vh';
                 el.style.setProperty('--tx', (Math.random() * 40 - 20) + 'vw');
                 el.style.setProperty('--ty', (Math.random() * 40 - 20) + 'vh');
-                el.style.setProperty('--tx-end', endX);
-                el.style.setProperty('--ty-end', endY);
-                
+                el.style.setProperty('--tx-end', endX); el.style.setProperty('--ty-end', endY);
                 el.style.animationDuration = (1.5 + Math.random() * 1.5) + 's';
                 fragment.appendChild(el);
             }
             starContainer.appendChild(fragment);
             setTimeout(() => { if(starContainer) starContainer.innerHTML = ''; }, 3500);
         }
-
         function showMilestoneCelebration(points) {
             if (!milestoneToast) return;
-            
-            const msg = isSpanish ? 
-                `¡ENHORABUENA!<br><span>${points} PUNTOS</span>` : 
-                `CONGRATULATIONS!<br><span>${points} POINTS</span>`;
-            
-            milestoneToast.innerHTML = msg;
-            milestoneToast.classList.add('visible');
+            const msg = isSpanish ? `¡ENHORABUENA!<br><span>${points} PUNTOS</span>` : `CONGRATULATIONS!<br><span>${points} POINTS</span>`;
+            milestoneToast.innerHTML = msg; milestoneToast.classList.add('visible');
             triggerStars();
-
-            // Desaparecer después de 3 segundos
-            setTimeout(() => {
-                milestoneToast.classList.remove('visible');
-            }, 3000);
+            setTimeout(() => { milestoneToast.classList.remove('visible'); }, 3000);
         }
         
-        // --- MILESTONE LOGIC ---
         const MILESTONES = [10, 25, 50, 100, 200, 300, 400, 500, 600, 700, 800, 1000];
-        
         function checkMilestones(oldScore, newScore) {
-             // Check explicit list
              let highestPassed = -1;
-             
-             // Check standard list
-             for (let m of MILESTONES) {
-                 if (oldScore < m && newScore >= m) {
-                     highestPassed = Math.max(highestPassed, m);
-                 }
-             }
-             
-             // Check generic > 1000 (every 1000?) or as prompt said "etc" implies sequence continuation
-             // Assuming prompt meant hundreds -> 1000. Let's assume every 1000 after 1000.
+             for (let m of MILESTONES) { if (oldScore < m && newScore >= m) { highestPassed = Math.max(highestPassed, m); } }
              if (newScore >= 1000) {
                  const oldThousands = Math.floor(oldScore / 1000);
                  const newThousands = Math.floor(newScore / 1000);
-                 if (newThousands > oldThousands && newThousands > 1) { // >1 because 1000 is in list
-                     highestPassed = Math.max(highestPassed, newThousands * 1000);
-                 }
+                 if (newThousands > oldThousands && newThousands > 1) { highestPassed = Math.max(highestPassed, newThousands * 1000); }
              }
-             
-             if (highestPassed > 0) {
-                 showMilestoneCelebration(highestPassed);
-             }
+             if (highestPassed > 0) { showMilestoneCelebration(highestPassed); }
         }
 
         function triggerHighlight(element) {
@@ -1931,24 +1232,16 @@
           setTimeout(() => { element.classList.remove('highlight'); }, 1000);
         }
 
-        // --- DATA PERSISTENCE ---
         function saveGameData() {
           if (currentGameMode !== 'story') return; 
-          
           const user = players.find(p => p.isUser);
           const gameData = {
             userScore: user ? user.score : 0,
             bestCombo: bestCombo,
             bestClaimedCombo: bestClaimedCombo,
-            playersScores: players.map(p => ({
-              id: p.id,
-              score: p.score,
-              name: p.isUser ? p.name : undefined 
-            }))
+            playersScores: players.map(p => ({ id: p.id, score: p.score, name: p.isUser ? p.name : undefined }))
           };
-          try {
-            localStorage.setItem('coinfliip_gameData', JSON.stringify(gameData));
-          } catch (e) { console.warn('Could not save game data:', e); }
+          try { localStorage.setItem('coinfliip_gameData', JSON.stringify(gameData)); } catch (e) { }
         }
 
         function loadGameData() {
@@ -1961,30 +1254,23 @@
                 user.score = gameData.userScore || 0;
                 if (gameData.playersScores) {
                   const savedUser = gameData.playersScores.find(p => p.id === 'user');
-                  if (savedUser && savedUser.name) {
-                    user.name = savedUser.name;
-                    currentPlayerName = savedUser.name;
-                  }
+                  if (savedUser && savedUser.name) { user.name = savedUser.name; currentPlayerName = savedUser.name; }
                 }
               }
               bestCombo = gameData.bestCombo || 0;
               bestClaimedCombo = gameData.bestClaimedCombo || 0;
-              
               if (gameData.playersScores) {
                 gameData.playersScores.forEach(savedPlayer => {
                   const player = players.find(p => p.id === savedPlayer.id);
-                  if (player && !player.isUser) {
-                    player.score = savedPlayer.score || player.score;
-                  }
+                  if (player && !player.isUser) { player.score = savedPlayer.score || player.score; }
                 });
               }
               return true;
             }
-          } catch (e) { console.warn('Could not load game data:', e); }
+          } catch (e) { }
           return false;
         }
 
-        // --- GAMEPLAY ---
         function rollOutcome() {
           const r = Math.random() * P_TOTAL;
           if (r < P_HEADS) return 'cara';
@@ -1993,33 +1279,24 @@
         }
 
         function showToast(message) {
-          toast.textContent = message;
-          toast.classList.add('visible');
+          toast.textContent = message; toast.classList.add('visible');
           setTimeout(function () { toast.classList.remove('visible'); }, 1300);
         }
 
         function updateSpeechBubble() {
-          if (currentPoints > 0) {
-            speechBubble.hidden = false;
-            speechBubble.textContent = String(currentPoints);
-          } else {
-            speechBubble.hidden = true;
-          }
+          if (currentPoints > 0) { speechBubble.hidden = false; speechBubble.textContent = String(currentPoints); } 
+          else { speechBubble.hidden = true; }
         }
 
         function updateBestCombo() { resultPillValue.textContent = String(bestCombo); }
         function updateBestClaimedCombo() { bestClaimedValue.textContent = String(bestClaimedCombo); }
 
         function resetStreak() {
-          currentPoints = 0;
-          updateSpeechBubble();
-          updateFireEffect(0); 
-          claimButton.disabled = true;
+          currentPoints = 0; updateSpeechBubble(); updateFireEffect(0); claimButton.disabled = true;
         }
 
         function formatScore(score) { return score.toLocaleString('es-ES'); }
 
-        // --- NAME MODAL ---
         let nameModalHandlers = null;
         function showNameModal(player) {
           const overlay = document.getElementById('nameModalOverlay');
@@ -2027,149 +1304,97 @@
           const title = document.getElementById('nameModalTitle');
           const cancelBtn = document.getElementById('nameModalCancel');
           const saveBtn = document.getElementById('nameModalSave');
-          
           if (!overlay) return;
-          
           if (nameModalHandlers) {
             saveBtn.removeEventListener('click', nameModalHandlers.save);
             cancelBtn.removeEventListener('click', nameModalHandlers.cancel);
             input.removeEventListener('keydown', nameModalHandlers.keydown);
             overlay.removeEventListener('click', nameModalHandlers.overlay);
           }
-          
-          input.value = player.name;
-          input.maxLength = 10;
-          
+          input.value = player.name; input.maxLength = 10;
           if (isSpanish) {
-            title.textContent = 'Cambiar nombre';
-            cancelBtn.textContent = 'Cancelar';
-            saveBtn.textContent = 'Guardar';
-            input.placeholder = 'Máx. 10 caracteres';
+            title.textContent = 'Cambiar nombre'; cancelBtn.textContent = 'Cancelar';
+            saveBtn.textContent = 'Guardar'; input.placeholder = 'Máx. 10 caracteres';
           } else {
-            title.textContent = 'Change name';
-            cancelBtn.textContent = 'Cancel';
-            saveBtn.textContent = 'Save';
-            input.placeholder = 'Max. 10 characters';
+            title.textContent = 'Change name'; cancelBtn.textContent = 'Cancel';
+            saveBtn.textContent = 'Save'; input.placeholder = 'Max. 10 characters';
           }
-          
           const handleSave = function() {
             const trimmedName = input.value.trim().substring(0, 10);
             if (trimmedName.length > 0) {
-              player.name = trimmedName;
-              currentPlayerName = trimmedName; 
-              
+              player.name = trimmedName; currentPlayerName = trimmedName; 
               if (currentGameMode === 'story') {
-                 saveGameData();
-                 updateLeaderboard();
+                 saveGameData(); updateLeaderboard();
               } else if (currentGameMode && currentGameMode.startsWith('multiplayer')) {
-                 // Update name in firebase IMMEDIATELY
-                 db.ref('rooms/' + currentRoomId + '/players/' + userId).update({
-                     name: trimmedName
-                 });
+                 if(auth.currentUser) {
+                     db.ref('rooms/' + currentRoomId + '/players/' + auth.currentUser.uid).update({ name: trimmedName });
+                 }
               }
             }
             hideNameModal();
           };
-          
           const handleCancel = function() { hideNameModal(); };
-          
           const handleKeyPress = function(e) {
             if (e.key === 'Enter') { e.preventDefault(); handleSave(); } 
             else if (e.key === 'Escape') { e.preventDefault(); handleCancel(); }
           };
-          
           const handleOverlayClick = function(e) { if (e.target === overlay) handleCancel(); };
-          
           nameModalHandlers = { save: handleSave, cancel: handleCancel, keydown: handleKeyPress, overlay: handleOverlayClick };
-          
-          saveBtn.addEventListener('click', handleSave);
-          cancelBtn.addEventListener('click', handleCancel);
-          input.addEventListener('keydown', handleKeyPress);
-          overlay.addEventListener('click', handleOverlayClick);
-          
+          saveBtn.addEventListener('click', handleSave); cancelBtn.addEventListener('click', handleCancel);
+          input.addEventListener('keydown', handleKeyPress); overlay.addEventListener('click', handleOverlayClick);
           overlay.classList.add('visible');
           setTimeout(() => { input.focus(); input.select(); }, 50);
         }
-        
-        function hideNameModal() {
-          const overlay = document.getElementById('nameModalOverlay');
-          if (overlay) overlay.classList.remove('visible');
-        }
+        function hideNameModal() { const overlay = document.getElementById('nameModalOverlay'); if (overlay) overlay.classList.remove('visible'); }
 
-        // --- LEADERBOARD ---
         function updateLeaderboard() {
-          if (!players || players.length === 0) {
-              leaderboardEl.innerHTML = '';
-              return;
-          }
-            
+          if (!players || players.length === 0) { leaderboardEl.innerHTML = ''; return; }
           const sorted = players.slice().sort((a, b) => b.score - a.score);
           leaderboardEl.innerHTML = '';
           let userPosition = null;
-
           for (let i = 0; i < sorted.length; i++) {
             const player = sorted[i];
             const currentRank = i + 1;
             const previousRank = player.lastRank;
-            
             const row = document.createElement('div');
             row.className = 'leaderboard-row' + (player.isUser ? ' is-user' : '');
-
             const pos = document.createElement('div');
             pos.className = 'leaderboard-pos';
             pos.textContent = currentRank + '.';
-
             const name = document.createElement('div');
             name.className = 'leaderboard-name';
-            
-            // 1. Name Text
             const nameText = document.createElement('div');
             nameText.className = 'leaderboard-name-text';
             nameText.textContent = player.name;
             name.appendChild(nameText);
-            
             if (player.isUser) {
-              userPosition = currentRank;
-              name.style.cursor = 'pointer';
+              userPosition = currentRank; name.style.cursor = 'pointer';
               name.title = isSpanish ? 'Toca para cambiar tu nombre' : 'Click to change your name';
               name.addEventListener('click', function() { showNameModal(player); });
             }
-            
-            // 2. Trend Icon
             let trendIcon = document.createElement('span');
             trendIcon.className = 'trend-icon';
             let hasChanged = false;
-            
             if (previousRank !== 0 && currentRank !== previousRank) {
-                if (currentRank < previousRank) {
-                    trendIcon.textContent = '▲'; trendIcon.classList.add('trend-up');
-                } else {
-                    trendIcon.textContent = '▼'; trendIcon.classList.add('trend-down');
-                }
+                if (currentRank < previousRank) { trendIcon.textContent = '▲'; trendIcon.classList.add('trend-up'); } 
+                else { trendIcon.textContent = '▼'; trendIcon.classList.add('trend-down'); }
                 hasChanged = true;
             } else { trendIcon.textContent = ''; }
-            
             player.lastRank = currentRank;
             name.appendChild(trendIcon);
-
             if (hasChanged) {
                 trendIcon.classList.add('visible');
                 setTimeout(() => { if (trendIcon) trendIcon.classList.remove('visible'); }, 60000);
             }
-            
-            // 3. You Tag
             if (player.isUser) {
                 const tag = document.createElement('span');
                 tag.className = 'leaderboard-tag';
                 tag.textContent = isSpanish ? 'Tú' : 'You';
                 name.appendChild(tag);
             }
-
-            // 4. Stats Tags (Only multiplayer)
             if (currentGameMode === 'multiplayer' && (player.bestStreak > 0 || player.bestClaimed > 0)) {
                 const tagsDiv = document.createElement('div');
                 tagsDiv.className = 'leaderboard-stats-tags';
-                
                 if (player.bestStreak > 0) {
                     const fireTag = document.createElement('span');
                     fireTag.className = 'stat-tag';
@@ -2184,11 +1409,9 @@
                 }
                 name.appendChild(tagsDiv);
             }
-
             const score = document.createElement('div');
             score.className = 'leaderboard-score';
             score.textContent = formatScore(player.score);
-
             row.appendChild(pos); row.appendChild(name); row.appendChild(score);
             leaderboardEl.appendChild(row);
           }
@@ -2215,63 +1438,45 @@
           coinFace.textContent = '';
           coinFaceLabel.textContent = isSpanish ? 'Lanzando...' : 'Flipping...';
           coinFaceLabel.classList.remove('cta');
-
           setTimeout(function () {
             const outcome = rollOutcome();
-            
             if (outcome === 'cara') {
               headsCount++;
               coinFace.innerHTML = '<strong>😊</strong>';
               coinFaceLabel.textContent = isSpanish ? 'Cara' : 'Heads';
               currentPoints = currentPoints === 0 ? 1 : currentPoints * 2;
-              
               if (currentPoints > bestCombo) {
                 bestCombo = currentPoints;
                 if (currentGameMode === 'story') saveGameData();
                 triggerHighlight(resultPill);
-                
-                if (currentGameMode === 'multiplayer') {
-                     db.ref('rooms/' + currentRoomId + '/players/' + userId).update({
-                         bestStreak: bestCombo
-                     });
+                if (currentGameMode === 'multiplayer' && auth.currentUser) {
+                     db.ref('rooms/' + currentRoomId + '/players/' + auth.currentUser.uid).update({ bestStreak: bestCombo });
                 }
               }
-              claimButton.disabled = false;
-              updateFireEffect(currentPoints);
-
+              claimButton.disabled = false; updateFireEffect(currentPoints);
             } else if (outcome === 'cruz') {
               tailsCount++;
               coinFace.innerHTML = '<strong>❌</strong>';
               coinFaceLabel.textContent = isSpanish ? 'Cruz (reinicio)' : 'Tails (reset)';
               if (currentPoints >= 2) triggerSadness();
               resetStreak();
-
             } else {
               edgesCount++;
               coinFace.innerHTML = '<strong>⭐</strong>';
               coinFaceLabel.textContent = isSpanish ? 'Canto (raro)' : 'Edge (rare)';
               currentPoints += 50000;
-              
               if (currentPoints > bestCombo) {
                 bestCombo = currentPoints;
                 if (currentGameMode === 'story') saveGameData();
                 triggerHighlight(resultPill);
-                
-                if (currentGameMode === 'multiplayer') {
-                     db.ref('rooms/' + currentRoomId + '/players/' + userId).update({
-                         bestStreak: bestCombo
-                     });
+                if (currentGameMode === 'multiplayer' && auth.currentUser) {
+                     db.ref('rooms/' + currentRoomId + '/players/' + auth.currentUser.uid).update({ bestStreak: bestCombo });
                 }
               }
-              claimButton.disabled = false;
-              showToast(isSpanish ? '⭐ ¡CANTO! +50000 puntos' : '⭐ EDGE! +50000 points');
+              claimButton.disabled = false; showToast(isSpanish ? '⭐ ¡CANTO! +50000 puntos' : '⭐ EDGE! +50000 points');
               updateFireEffect(currentPoints);
             }
-
-            totalFlips++;
-            updateSpeechBubble();
-            updateBestCombo();
-            scheduleIdleCta();
+            totalFlips++; updateSpeechBubble(); updateBestCombo(); scheduleIdleCta();
           }, 110);
         }
 
@@ -2279,46 +1484,21 @@
           if (currentPoints <= 0) return;
           const user = players.find(p => p.isUser);
           if (!user && currentGameMode === 'story') return; 
-
           sendAnalyticsEvent('claim_click', { current_streak: currentPoints });
-
-          if (currentPoints > bestClaimedCombo) {
-            bestClaimedCombo = currentPoints;
-            triggerHighlight(bestClaimedPill);
-          }
-          
-          let oldScore = 0;
-          let newScore = 0;
-          
-          if (user) {
-              oldScore = user.score;
-              user.score += currentPoints;
-              newScore = user.score;
-          }
-          
-          // --- CHECK MILESTONES ---
+          if (currentPoints > bestClaimedCombo) { bestClaimedCombo = currentPoints; triggerHighlight(bestClaimedPill); }
+          let oldScore = 0; let newScore = 0;
+          if (user) { oldScore = user.score; user.score += currentPoints; newScore = user.score; }
           checkMilestones(oldScore, newScore);
-
           triggerHappiness();
-          
           if (currentGameMode === 'story') {
-              randomBotProgress(currentPoints);
-              updateLeaderboard();
-              saveGameData();
-              
-          } else if (currentGameMode === 'multiplayer') {
-              // Firebase Update: Score + Best Claimed
-              db.ref('rooms/' + currentRoomId + '/players/' + userId).update({
-                  score: newScore,
-                  bestClaimed: bestClaimedCombo
+              randomBotProgress(currentPoints); updateLeaderboard(); saveGameData();
+          } else if (currentGameMode === 'multiplayer' && auth.currentUser) {
+              db.ref('rooms/' + currentRoomId + '/players/' + auth.currentUser.uid).update({
+                  score: newScore, bestClaimed: bestClaimedCombo
               });
           }
-
-          const pointsText = isSpanish
-            ? (currentPoints === 1 ? ' punto' : ' puntos')
-            : (currentPoints === 1 ? ' point' : ' points');
+          const pointsText = isSpanish ? (currentPoints === 1 ? ' punto' : ' puntos') : (currentPoints === 1 ? ' point' : ' points');
           showToast(isSpanish ? 'Has cobrado ' + currentPoints + pointsText : 'You claimed ' + currentPoints + pointsText);
-
           resetStreak();
           coinFace.textContent = '?';
           coinFaceLabel.innerHTML = isSpanish ? '<strong>Toca para lanzar</strong>' : '<strong>Tap to flip</strong>';
@@ -2326,79 +1506,57 @@
           updateBestClaimedCombo();
         }
         
-        // Copy Code Logic
         roomCodeDisplay.addEventListener('click', () => {
              const textToCopy = currentRoomId;
              const textArea = document.createElement("textarea");
-             textArea.value = textToCopy;
-             textArea.style.position = "fixed"; 
-             textArea.style.opacity = "0";
-             document.body.appendChild(textArea);
-             textArea.select();
-             
+             textArea.value = textToCopy; textArea.style.position = "fixed"; textArea.style.opacity = "0";
+             document.body.appendChild(textArea); textArea.select();
              try {
                  const successful = document.execCommand('copy');
                  if(successful) {
                      const originalText = roomCodeDisplay.textContent;
                      roomCodeDisplay.textContent = isSpanish ? 'COPIADO!' : 'COPIED!';
-                     setTimeout(() => {
-                         roomCodeDisplay.textContent = originalText;
-                     }, 1500);
+                     setTimeout(() => { roomCodeDisplay.textContent = originalText; }, 1500);
                  }
-             } catch (err) {
-                 console.error('Copy failed', err);
-             }
+             } catch (err) {}
              document.body.removeChild(textArea);
         });
 
-        // --- EVENT LISTENERS ---
         coinButton.addEventListener('click', handleCoinClick);
         claimButton.addEventListener('click', handleClaimClick);
         
         btnStoryMode.addEventListener('click', () => startGame('story'));
         btnMultiplayerMenu.addEventListener('click', showMultiplayerMenu);
         btnBackToMain.addEventListener('click', showMainMenu);
-        
         btnCreateRoom.addEventListener('click', () => {
              const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; 
              let code = '';
              for (let i = 0; i < 5; i++) code += chars.charAt(Math.floor(Math.random() * chars.length));
              joinRoom(code);
         });
-        
         btnJoinRoom.addEventListener('click', () => {
             const code = roomCodeInput.value.trim().toUpperCase();
             if (code) joinRoom(code);
         });
-
         btnGameExit.addEventListener('click', handleGameExit);
 
         const instagramLink = document.querySelector('.social-link[href*="instagram"]');
         const donateLink = document.querySelector('.social-link[href*="paypal"]');
-
         if (instagramLink) instagramLink.addEventListener('click', function() { sendAnalyticsEvent('social_click', { social_platform: 'instagram' }); });
         if (donateLink) donateLink.addEventListener('click', function() { sendAnalyticsEvent('social_click', { social_platform: 'donate' }); });
 
-        // --- SEO ACCORDION LOGIC ---
         document.querySelectorAll('.accordion-header').forEach(header => {
             header.addEventListener('click', () => {
                 const item = header.parentElement;
                 const isActive = item.classList.contains('active');
-                
-                if (!isActive) {
-                    item.classList.add('active');
-                    header.setAttribute('aria-expanded', 'true');
-                } else {
-                    item.classList.remove('active');
-                    header.setAttribute('aria-expanded', 'false');
-                }
+                if (!isActive) { item.classList.add('active'); header.setAttribute('aria-expanded', 'true'); } 
+                else { item.classList.remove('active'); header.setAttribute('aria-expanded', 'false'); }
             });
         });
 
       })();
     </script>
     
-    <!-- Name Edit Modal -->
     <div id="nameModalOverlay" class="name-modal-overlay">
       <div class="name-modal">
         <h3 id="nameModalTitle">Change name</h3>
@@ -2410,7 +1568,6 @@
       </div>
     </div>
 
-    <!-- Room Name Edit Modal (NEW) -->
     <div id="roomNameModalOverlay" class="name-modal-overlay">
       <div class="name-modal">
         <h3 id="roomNameModalTitle">Room Name</h3>
@@ -2422,7 +1579,6 @@
       </div>
     </div>
 
-    <!-- Delete Room Confirmation Modal (NEW) -->
     <div id="deleteRoomModalOverlay" class="name-modal-overlay">
       <div class="name-modal">
         <h3 id="deleteRoomModalTitle">ELIMINAR SALA</h3>
