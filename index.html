@@ -1342,10 +1342,20 @@
                  // Show share button in multiplayer
                  if(btnShareRoom) btnShareRoom.style.display = 'flex'; // Changed to flex for centering SVG
                  
-                 saveRoomToHistory(currentRoomId);
-                 multiplayerMenu.classList.add('hidden');
+                 // FIX: Force hide all screens first to prevent overlaps (Clean Slate)
+                 if(mainMenu) mainMenu.classList.add('hidden');
+                 if(multiplayerMenu) multiplayerMenu.classList.add('hidden');
+                 if(gameApp) gameApp.classList.add('hidden');
+
+                 // Then show game
                  gameApp.classList.remove('hidden');
                  document.body.classList.add('multiplayer-theme');
+                 
+                 // Move history save to end and protect it
+                 try {
+                     saveRoomToHistory(currentRoomId);
+                 } catch (e) { console.warn("History save error:", e); }
+
                  currentPoints = 0; 
                  updateSpeechBubble(); updateBestCombo(); updateBestClaimedCombo(); scheduleIdleCta();
              }).catch((error) => {
