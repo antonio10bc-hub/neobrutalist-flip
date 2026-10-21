@@ -163,6 +163,14 @@
   const coinButton = document.getElementById('coinButton');
   const coinBody = document.getElementById('coinBody');
   const coinShadow = document.getElementById('coinShadow');
+  const riskLine = document.getElementById('riskLine');
+  const riskHeadsValue = document.getElementById('riskHeadsValue');
+  const historyRow = document.getElementById('historyRow');
+  const historyTotals = document.getElementById('historyTotals');
+  const btnSound = document.getElementById('btnSound');
+  const edgeOverlay = document.getElementById('edgeOverlay');
+  const edgeShare = document.getElementById('edgeShare');
+  const edgeClose = document.getElementById('edgeClose');
   const coinFaceLabel = document.getElementById('coinFaceLabel');
   const speechBubble = document.getElementById('speechBubble');
   const claimButton = document.getElementById('claimButton');
@@ -201,6 +209,16 @@
           const coinBackText = document.getElementById('coinBackText');
           if(coinFrontText) coinFrontText.textContent = 'CARA';
           if(coinBackText) coinBackText.textContent = 'CRUZ';
+          const spanishTexts = {
+            riskHeadsLabel: 'SI CARA', riskTailsLabel: 'SI CRUZ', historyTitle: 'ÚLTIMAS TIRADAS',
+            edgeTitle: '¡CANTO!', edgeOdds: 'Probabilidad: 1 entre 50.000', edgeShare: 'COMPARTIR EN X', edgeClose: 'SEGUIR'
+          };
+          Object.keys(spanishTexts).forEach(function (id) {
+            const el = document.getElementById(id);
+            if (el) el.textContent = spanishTexts[id];
+          });
+          const keyHint = document.getElementById('keyHint');
+          if(keyHint) keyHint.innerHTML = '<kbd>ESPACIO</kbd> lanzar · <kbd>C</kbd> cobrar';
           if(roomCodeInput) roomCodeInput.placeholder = 'CÓDIGO';
           const rulesParagraph = document.querySelector('.coin-info p');
           if (rulesParagraph) {
@@ -539,6 +557,7 @@
 
   function startGame(mode) {
       currentGameMode = mode;
+      clearHistory();
       if (mode === 'story') {
           // FIX: Limpiamos variables ANTES de cargar para evitar datos basura del multijugador
           currentPoints = 0; 
@@ -574,6 +593,7 @@
   function joinRoom(code) {
        currentRoomId = code;
        currentGameMode = 'multiplayer';
+       clearHistory();
        
        // --- FIX: NO PERMITIR JOIN SI AUTH ES NULL ---
        // Fallback local mode
@@ -833,7 +853,91 @@
   function updateSpeechBubble() {
     if (currentPoints > 0) { speechBubble.hidden = false; speechBubble.textContent = String(currentPoints); } 
     else { speechBubble.hidden = true; }
+    updateRiskLine();
   }
+
+  // Streak at which a flip becomes a nail-biter: longer hang time, louder risk warning
+  const SUSPENSE_STREAK = 32;
+
+  function updateRiskLine() {
+    if (!riskLine) return;
+    riskLine.classList.toggle('idle', currentPoints <= 0);
+    riskLine.classList.toggle('danger', currentPoints >= SUSPENSE_STREAK);
+    riskHeadsValue.textContent = String(currentPoints === 0 ? 1 : currentPoints * 2);
+  }
+
+  // --- FLIP HISTORY ---
+  const HISTORY_SIZE = 10;
+  let flipHistory = [];
+  let historyCounts = { cara: 0, cruz: 0, canto: 0 };
+  const HISTORY_ICONS = { cara: '😊', cruz: '❌', canto: '⭐' };
+
+  function renderHistory(animateNewest) {
+    if (!historyRow) return;
+    historyRow.innerHTML = '';
+    flipHistory.forEach(function (outcome, i) {
+      const chip = document.createElement('span');
+      chip.className = 'flip-chip ' + outcome + (animateNewest && i === 0 ? ' new' : '');
+      chip.textContent = HISTORY_ICONS[outcome];
+      historyRow.appendChild(chip);
+    });
+    let totals = '😊 ' + historyCounts.cara + ' · ❌ ' + historyCounts.cruz;
+    if (historyCounts.canto > 0) totals += ' · ⭐ ' + historyCounts.canto;
+    historyTotals.textContent = totals;
+  }
+
+  function pushHistory(outcome) {
+    flipHistory.unshift(outcome);
+    if (flipHistory.length > HISTORY_SIZE) flipHistory.length = HISTORY_SIZE;
+    historyCounts[outcome]++;
+    renderHistory(true);
+  }
+
+  function clearHistory() {
+    flipHistory = [];
+    historyCounts = { cara: 0, cruz: 0, canto: 0 };
+    renderHistory(false);
+  }
+
+  // --- SOUND TOGGLE ---
+  function updateSoundButton() {
+    if (!btnSound) return;
+    const muted = Sfx.isMuted();
+    btnSound.textContent = muted ? '🔇' : '🔊';
+    const label = muted ? (isSpanish ? 'Activar sonido' : 'Unmute sound') : (isSpanish ? 'Silenciar sonido' : 'Mute sound');
+    btnSound.setAttribute('aria-label', label); btnSound.title = label;
+  }
+  if (btnSound) {
+    btnSound.addEventListener('click', function () { Sfx.setMuted(!Sfx.isMuted()); updateSoundButton(); });
+    updateSoundButton();
+  }
+
+  // --- EDGE CELEBRATION ---
+  function showEdgeCelebration() {
+    if (!edgeOverlay) return;
+    edgeOverlay.classList.add('visible');
+    document.body.classList.remove('edge-shake');
+    void document.body.offsetWidth;
+    document.body.classList.add('edge-shake');
+    triggerStars();
+    if (edgeClose) edgeClose.focus();
+  }
+
+  function hideEdgeCelebration() {
+    if (!edgeOverlay) return;
+    edgeOverlay.classList.remove('visible');
+    document.body.classList.remove('edge-shake');
+    coinButton.focus();
+  }
+
+  if (edgeClose) edgeClose.addEventListener('click', hideEdgeCelebration);
+  if (edgeShare) edgeShare.addEventListener('click', function () {
+    const text = isSpanish
+      ? '⭐ ¡Me ha salido CANTO en Coinfliip! Probabilidad: 1 entre 50.000. ¿Te atreves?'
+      : '⭐ I landed the coin on its EDGE in Coinfliip! 1 in 50,000 odds. Can you do it?';
+    const shareUrl = window.location.href.split('?')[0];
+    window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent(text) + '&url=' + encodeURIComponent(shareUrl), '_blank');
+  });
 
   function updateBestCombo() { resultPillValue.textContent = String(bestCombo); }
   function updateBestClaimedCombo() { bestClaimedValue.textContent = String(bestClaimedCombo); }
@@ -1087,7 +1191,7 @@
   let coinRotation = 0;
   let isFlipping = false;
 
-  function tossCoin(outcome, onLand) {
+  function tossCoin(outcome, onLand, suspense) {
     const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const target = outcome === 'cara' ? 0 : outcome === 'cruz' ? 180 : 78;
     const start = coinRotation;
@@ -1098,38 +1202,72 @@
       coinBody.style.transform = 'rotateX(' + end + 'deg)';
       onLand(); return;
     }
-    const duration = 1000;
     const lift = 'translateY(-120px) translateZ(50px)';
-    const mid = start + (end - start) * 0.5;
     const landTilt = outcome === 'canto' ? 0 : (outcome === 'cara' ? 14 : -14);
-    coinBody.animate([
-      { transform: 'translateY(0) translateZ(0) rotateX(' + start + 'deg)', easing: 'cubic-bezier(0.2, 0.7, 0.4, 1)' },
-      { transform: lift + ' rotateX(' + mid + 'deg)', offset: 0.45, easing: 'cubic-bezier(0.6, 0, 0.8, 0.4)' },
-      { transform: 'translateY(0) translateZ(0) rotateX(' + (end - landTilt) + 'deg)', offset: 0.82, easing: 'ease-out' },
-      { transform: 'translateY(-14px) translateZ(0) rotateX(' + (end + landTilt * 0.5) + 'deg)', offset: 0.91, easing: 'ease-in' },
-      { transform: 'translateY(0) translateZ(0) rotateX(' + end + 'deg)' }
-    ], { duration: duration, fill: 'forwards' });
     const landShadow = outcome === 'canto' ? 'translate(8px, 8px) scale(1, 0.3)' : 'translate(8px, 8px) scale(1)';
     const startShadow = getComputedStyle(coinShadow).transform;
-    coinShadow.animate([
-      { transform: startShadow === 'none' ? 'translate(8px, 8px) scale(1)' : startShadow },
-      { transform: 'translate(24px, 24px) scale(0.55)', offset: 0.45 },
-      { transform: landShadow, offset: 0.82 },
-      { transform: landShadow }
-    ], { duration: duration, fill: 'forwards' });
-    setTimeout(onLand, duration * 0.82);
+    const airShadow = 'translate(24px, 24px) scale(0.55)';
+    let duration, landAt, coinFrames, shadowFrames;
+    if (suspense) {
+      // Big streak: the coin rises, hangs spinning slowly at the top, then drops
+      duration = 2200; landAt = 0.86;
+      const hangStart = start + (end - start) * 0.35;
+      const hangEnd = start + (end - start) * 0.6;
+      coinFrames = [
+        { transform: 'translateY(0) translateZ(0) rotateX(' + start + 'deg)', easing: 'cubic-bezier(0.2, 0.7, 0.4, 1)' },
+        { transform: lift + ' rotateX(' + hangStart + 'deg)', offset: 0.22, easing: 'ease-in-out' },
+        { transform: 'translateY(-135px) translateZ(50px) rotateX(' + hangEnd + 'deg)', offset: 0.6, easing: 'cubic-bezier(0.6, 0, 0.8, 0.4)' },
+        { transform: 'translateY(0) translateZ(0) rotateX(' + (end - landTilt) + 'deg)', offset: landAt, easing: 'ease-out' },
+        { transform: 'translateY(-14px) translateZ(0) rotateX(' + (end + landTilt * 0.5) + 'deg)', offset: 0.93, easing: 'ease-in' },
+        { transform: 'translateY(0) translateZ(0) rotateX(' + end + 'deg)' }
+      ];
+      shadowFrames = [
+        { transform: startShadow === 'none' ? 'translate(8px, 8px) scale(1)' : startShadow },
+        { transform: airShadow, offset: 0.22 },
+        { transform: 'translate(26px, 26px) scale(0.5)', offset: 0.6 },
+        { transform: landShadow, offset: landAt },
+        { transform: landShadow }
+      ];
+      Sfx.suspense(duration * 0.6 / 1000);
+    } else {
+      duration = 1000; landAt = 0.82;
+      const mid = start + (end - start) * 0.5;
+      coinFrames = [
+        { transform: 'translateY(0) translateZ(0) rotateX(' + start + 'deg)', easing: 'cubic-bezier(0.2, 0.7, 0.4, 1)' },
+        { transform: lift + ' rotateX(' + mid + 'deg)', offset: 0.45, easing: 'cubic-bezier(0.6, 0, 0.8, 0.4)' },
+        { transform: 'translateY(0) translateZ(0) rotateX(' + (end - landTilt) + 'deg)', offset: landAt, easing: 'ease-out' },
+        { transform: 'translateY(-14px) translateZ(0) rotateX(' + (end + landTilt * 0.5) + 'deg)', offset: 0.91, easing: 'ease-in' },
+        { transform: 'translateY(0) translateZ(0) rotateX(' + end + 'deg)' }
+      ];
+      shadowFrames = [
+        { transform: startShadow === 'none' ? 'translate(8px, 8px) scale(1)' : startShadow },
+        { transform: airShadow, offset: 0.45 },
+        { transform: landShadow, offset: landAt },
+        { transform: landShadow }
+      ];
+    }
+    coinBody.animate(coinFrames, { duration: duration, fill: 'forwards' });
+    coinShadow.animate(shadowFrames, { duration: duration, fill: 'forwards' });
+    setTimeout(onLand, duration * landAt);
   }
 
   function handleCoinClick() {
     if (isFlipping) return;
     isFlipping = true;
     coinButton.classList.add('flipping');
-    coinFaceLabel.textContent = isSpanish ? 'Lanzando...' : 'Flipping...';
+    const suspense = currentPoints >= SUSPENSE_STREAK;
+    coinFaceLabel.textContent = suspense
+      ? (isSpanish ? '¡Todo o nada...!' : 'All or nothing...')
+      : (isSpanish ? 'Lanzando...' : 'Flipping...');
     coinFaceLabel.classList.remove('cta');
+    claimButton.disabled = true;
+    Sfx.flip();
     const outcome = rollOutcome();
     tossCoin(outcome, function () {
       isFlipping = false;
       coinButton.classList.remove('flipping');
+      Sfx.stopSuspense();
+      pushHistory(outcome);
       if (outcome === 'cara') {
         headsCount++;
         coinFaceLabel.textContent = isSpanish ? 'Cara' : 'Heads';
@@ -1143,8 +1281,10 @@
           }
         }
         claimButton.disabled = false; updateFireEffect(currentPoints);
+        Sfx.heads(currentPoints);
       } else if (outcome === 'cruz') {
         tailsCount++;
+        Sfx.tails();
         coinFaceLabel.textContent = isSpanish ? 'Cruz (reinicio)' : 'Tails (reset)';
         if (currentPoints >= 2) triggerSadness();
         resetStreak();
@@ -1160,15 +1300,17 @@
                db.ref('rooms/' + currentRoomId + '/players/' + auth.currentUser.uid).update({ bestStreak: bestCombo });
           }
         }
-        claimButton.disabled = false; showToast(isSpanish ? '⭐ ¡CANTO! +50000 puntos' : '⭐ EDGE! +50000 points');
+        claimButton.disabled = false;
         updateFireEffect(currentPoints);
+        Sfx.edge();
+        showEdgeCelebration();
       }
       totalFlips++; updateSpeechBubble(); updateBestCombo(); scheduleIdleCta();
-    });
+    }, suspense);
   }
 
   function handleClaimClick() {
-    if (currentPoints <= 0) return;
+    if (currentPoints <= 0 || isFlipping) return;
     const user = players.find(p => p.isUser);
     if (!user && currentGameMode === 'story') return; 
     sendAnalyticsEvent('claim_click', { current_streak: currentPoints });
@@ -1177,6 +1319,7 @@
     if (user) { oldScore = user.score; user.score += currentPoints; newScore = user.score; }
     checkMilestones(oldScore, newScore);
     triggerHappiness();
+    Sfx.claim();
     if (currentGameMode === 'story') {
         randomBotProgress(currentPoints); updateLeaderboard(); saveGameData();
     } else if (currentGameMode === 'multiplayer' && auth.currentUser) {
@@ -1192,20 +1335,44 @@
     updateBestClaimedCombo();
   }
   
+  let roomCodeResetTimer = null;
+  function flashRoomCode(message) {
+       if (roomCodeResetTimer) clearTimeout(roomCodeResetTimer);
+       roomCodeDisplay.textContent = message;
+       roomCodeResetTimer = setTimeout(() => { roomCodeDisplay.textContent = currentRoomId; roomCodeResetTimer = null; }, 1500);
+  }
+
   roomCodeDisplay.addEventListener('click', () => {
-       const textToCopy = currentRoomId;
-       const textArea = document.createElement("textarea");
-       textArea.value = textToCopy; textArea.style.position = "fixed"; textArea.style.opacity = "0";
-       document.body.appendChild(textArea); textArea.select();
-       try {
-           const successful = document.execCommand('copy');
-           if(successful) {
-               const originalText = roomCodeDisplay.textContent;
-               roomCodeDisplay.textContent = isSpanish ? 'COPIADO!' : 'COPIED!';
-               setTimeout(() => { roomCodeDisplay.textContent = originalText; }, 1500);
-           }
-       } catch (err) {}
-       document.body.removeChild(textArea);
+       if (!currentRoomId) return;
+       if (!navigator.clipboard || !window.isSecureContext) {
+           window.prompt(isSpanish ? 'Copia el código de la sala:' : 'Copy the room code:', currentRoomId);
+           return;
+       }
+       navigator.clipboard.writeText(currentRoomId)
+           .then(() => flashRoomCode(isSpanish ? 'COPIADO!' : 'COPIED!'))
+           .catch(() => flashRoomCode(isSpanish ? 'ERROR' : 'FAILED'));
+  });
+
+  // --- KEYBOARD: Space flips, C claims ---
+  function isTypingTarget(el) {
+       return el && (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.tagName === 'SELECT' || el.isContentEditable);
+  }
+  document.addEventListener('keydown', (e) => {
+       if (e.ctrlKey || e.metaKey || e.altKey) return;
+       if (edgeOverlay && edgeOverlay.classList.contains('visible')) {
+           if (e.key === 'Escape') { e.preventDefault(); hideEdgeCelebration(); }
+           return;
+       }
+       if (gameApp.classList.contains('hidden') || isTypingTarget(e.target)) return;
+       if (document.querySelector('.name-modal-overlay.visible')) return;
+       if (e.code === 'Space' || e.key === ' ') {
+           // A focused button already reacts to Space natively (the coin itself included)
+           if (e.target && e.target.tagName === 'BUTTON') return;
+           e.preventDefault();
+           if (!e.repeat) handleCoinClick();
+       } else if ((e.key === 'c' || e.key === 'C') && !e.repeat) {
+           if (!claimButton.disabled) { e.preventDefault(); handleClaimClick(); }
+       }
   });
 
   if (btnShareRoom) btnShareRoom.addEventListener('click', showShareModal);

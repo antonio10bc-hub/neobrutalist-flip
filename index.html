@@ -104,7 +104,10 @@
           <div class="header-left-col">
             Coinfliip
             <div class="header-author" id="headerAuthor">by antonio10bc</div>
-            <button id="btnGameExit" class="exit-btn-inline">MENU</button>
+            <div class="header-btns">
+              <button id="btnGameExit" class="exit-btn-inline">MENU</button>
+              <button id="btnSound" class="exit-btn-inline" aria-label="Mute sound" title="Mute sound">🔊</button>
+            </div>
           </div>
           <div class="header-badge">HEAD 49.999% / TAILS 49.999% / EDGE 0.002%</div>
         </div>
@@ -133,6 +136,11 @@
             <button class="claim-button" id="claimButton" disabled>
               CLAIM
             </button>
+            <div class="risk-line idle" id="riskLine" aria-live="polite">
+              <span class="risk-chip heads">😊 <span id="riskHeadsLabel">IF HEADS</span> <strong id="riskHeadsValue">0</strong></span>
+              <span class="risk-chip tails">❌ <span id="riskTailsLabel">IF TAILS</span> <strong>0</strong></span>
+            </div>
+            <div class="key-hint" id="keyHint"><kbd>SPACE</kbd> flip · <kbd>C</kbd> claim</div>
           </div>
 
           <div class="coin-info">
@@ -142,6 +150,13 @@
               <strong>EDGE</strong> ⭐ gives you 50000 points.<br />
               <strong>CLAIM</strong> banks your points but resets the streak.
             </p>
+            <div class="flip-history">
+              <div class="flip-history-head">
+                <span id="historyTitle">LAST FLIPS</span>
+                <span class="flip-history-totals" id="historyTotals">😊 0 · ❌ 0</span>
+              </div>
+              <div class="flip-history-row" id="historyRow"></div>
+            </div>
             <div class="result-pill" id="resultPill">
               <span id="bestStreakLabel">BEST STREAK:</span>
               <span id="bestStreakValue">0</span>
@@ -236,6 +251,21 @@
     <div class="toast" id="toast">EDGE IMPOSSIBLE (?)</div>
     <div id="milestoneToast" class="milestone-toast"></div>
 
+    <div id="edgeOverlay" class="edge-overlay" aria-live="assertive">
+      <div class="edge-rays"></div>
+      <div class="edge-card">
+        <div class="edge-star">⭐</div>
+        <div class="edge-title" id="edgeTitle">EDGE!</div>
+        <div class="edge-points">+50.000</div>
+        <div class="edge-odds" id="edgeOdds">1 in 50,000 chance</div>
+        <div class="edge-buttons">
+          <button id="edgeShare" class="name-modal-btn share-x">SHARE ON X</button>
+          <button id="edgeClose" class="name-modal-btn save">KEEP GOING</button>
+        </div>
+      </div>
+    </div>
+
+    <script src="js/sfx.js"></script>
     <script src="js/app.js"></script>
     
     <div id="nameModalOverlay" class="name-modal-overlay">
