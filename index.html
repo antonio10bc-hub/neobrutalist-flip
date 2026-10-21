@@ -271,14 +271,60 @@
 
       .coin-wrapper { position: relative; display: flex; flex-direction: column; align-items: center; gap: 16px; }
       .coin {
-        width: 200px; height: 200px; border-radius: 50%;
-        border: 4px solid var(--black); background: var(--white);
-        box-shadow: 8px 8px 0 var(--black); display: flex; align-items: center;
-        justify-content: center; font-size: 2.26rem; font-weight: 800;
-        color: var(--black); cursor: pointer; outline: none;
-        transition: transform 120ms ease-out, box-shadow 120ms ease-out, background 120ms ease-out;
+        position: relative; width: 200px; height: 200px; padding: 0;
+        border: none; background: none; cursor: pointer; outline: none;
+        perspective: 900px; -webkit-tap-highlight-color: transparent;
+        transition: transform 120ms ease-out;
       }
-      .coin:active { transform: translate(4px, 4px); box-shadow: 2px 2px 0 var(--black); background: var(--lime-soft); }
+      .coin:active:not(.flipping) { transform: translate(4px, 4px); }
+      .coin:focus-visible .coin-front { outline: 4px dashed var(--black); outline-offset: 6px; }
+      .coin.flipping { cursor: default; }
+      /* Hard neobrutalist shadow that stays on the "table" while the coin is in the air */
+      .coin-shadow {
+        position: absolute; inset: 0; border-radius: 50%;
+        background: var(--black); transform: translate(8px, 8px);
+      }
+      .coin-body {
+        position: absolute; inset: 0; display: block;
+        transform-style: preserve-3d; transform: rotateX(0deg);
+      }
+      .coin-face, .coin-edge {
+        position: absolute; inset: 0; border-radius: 50%; display: block;
+      }
+      .coin-edge { background: #b8860b; border: 4px solid var(--black); }
+      .coin-face {
+        display: flex; align-items: center; justify-content: center;
+        border: 4px solid var(--black);
+        background:
+          radial-gradient(circle at 32% 28%, rgba(255,255,255,0.75) 0 9%, rgba(255,255,255,0) 26%),
+          radial-gradient(circle, #ffd84a 0 58%, #f2b705 74%, #d99a00 100%);
+        backface-visibility: hidden; -webkit-backface-visibility: hidden;
+      }
+      /* Reeded rim like a real coin */
+      .coin-face::before {
+        content: ''; position: absolute; inset: 0; border-radius: 50%;
+        background: repeating-conic-gradient(rgba(5,5,5,0.55) 0 2deg, transparent 2deg 6deg);
+        -webkit-mask: radial-gradient(circle, transparent 0 85%, #000 86%);
+        mask: radial-gradient(circle, transparent 0 85%, #000 86%);
+      }
+      /* Raised inner ring */
+      .coin-face::after {
+        content: ''; position: absolute; inset: 22px; border-radius: 50%;
+        border: 3px solid var(--black);
+        box-shadow: inset 3px 3px 0 rgba(255,255,255,0.55), 3px 3px 0 rgba(5,5,5,0.25);
+      }
+      .coin-back { background:
+          radial-gradient(circle at 32% 28%, rgba(255,255,255,0.75) 0 9%, rgba(255,255,255,0) 26%),
+          radial-gradient(circle, #e6e6e6 0 58%, #c4c4c4 74%, #9a9a9a 100%); }
+      .coin-emblem {
+        position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center;
+        font-size: 3.6rem; line-height: 1;
+      }
+      .coin-emblem span { filter: drop-shadow(3px 3px 0 var(--black)); }
+      .coin-emblem small {
+        margin-top: 8px; font-size: 0.7rem; font-weight: 900; letter-spacing: 0.18em;
+        color: var(--black);
+      }
       .coin-face-label { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.08em; margin-top: 4px; }
       .coin-face-label.cta { animation: ctaPulse 1s ease-in-out infinite; }
       @keyframes ctaPulse { 0%, 100% { opacity: 0.5; transform: translateY(0); } 50% { opacity: 1; transform: translateY(-2px); } }
@@ -633,7 +679,20 @@
           <div class="coin-wrapper">
             <div class="speech-bubble" id="speechBubble" hidden>0</div>
             <button class="coin" id="coinButton" aria-label="Flip coin">
-              <span id="coinFace">?</span>
+              <span class="coin-shadow" id="coinShadow"></span>
+              <span class="coin-body" id="coinBody">
+                <span class="coin-edge" style="transform: translateZ(-5px)"></span>
+                <span class="coin-edge" style="transform: translateZ(-3.75px)"></span>
+                <span class="coin-edge" style="transform: translateZ(-2.5px)"></span>
+                <span class="coin-edge" style="transform: translateZ(-1.25px)"></span>
+                <span class="coin-edge" style="transform: translateZ(0px)"></span>
+                <span class="coin-edge" style="transform: translateZ(1.25px)"></span>
+                <span class="coin-edge" style="transform: translateZ(2.5px)"></span>
+                <span class="coin-edge" style="transform: translateZ(3.75px)"></span>
+                <span class="coin-edge" style="transform: translateZ(5px)"></span>
+                <span class="coin-face coin-front" style="transform: translateZ(6px)"><span class="coin-emblem"><span>😊</span><small id="coinFrontText">HEADS</small></span></span>
+                <span class="coin-face coin-back" style="transform: rotateX(180deg) translateZ(6px)"><span class="coin-emblem"><span>❌</span><small id="coinBackText">TAILS</small></span></span>
+              </span>
             </button>
             <div class="coin-face-label" id="coinFaceLabel"><strong>Tap to flip</strong></div>
 
@@ -907,7 +966,8 @@
         const roomHistoryList = document.getElementById('roomHistoryList');
 
         const coinButton = document.getElementById('coinButton');
-        const coinFace = document.getElementById('coinFace');
+        const coinBody = document.getElementById('coinBody');
+        const coinShadow = document.getElementById('coinShadow');
         const coinFaceLabel = document.getElementById('coinFaceLabel');
         const speechBubble = document.getElementById('speechBubble');
         const claimButton = document.getElementById('claimButton');
@@ -942,6 +1002,10 @@
                 if (headerBadge) headerBadge.textContent = 'CARA 49.999% / CRUZ 49.999% / CANTO 0.002%';
                 if(coinButton) coinButton.setAttribute('aria-label', 'Lanzar moneda');
                 if(coinFaceLabel) coinFaceLabel.innerHTML = '<strong>Toca para lanzar</strong>';
+                const coinFrontText = document.getElementById('coinFrontText');
+                const coinBackText = document.getElementById('coinBackText');
+                if(coinFrontText) coinFrontText.textContent = 'CARA';
+                if(coinBackText) coinBackText.textContent = 'CRUZ';
                 if(roomCodeInput) roomCodeInput.placeholder = 'CÓDIGO';
                 const rulesParagraph = document.querySelector('.coin-info p');
                 if (rulesParagraph) {
@@ -1824,15 +1888,55 @@
           ctaTimeoutId = setTimeout(function () { coinFaceLabel.classList.add('cta'); }, 5000);
         }
 
+        // Coin rotation around X: 0 = heads up, 180 = tails up, 78 = balanced on its edge
+        let coinRotation = 0;
+        let isFlipping = false;
+
+        function tossCoin(outcome, onLand) {
+          const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+          const target = outcome === 'cara' ? 0 : outcome === 'cruz' ? 180 : 78;
+          const start = coinRotation;
+          const base = start - (((start % 360) + 360) % 360);
+          const end = base + (reduceMotion ? 360 : 1440) + target;
+          coinRotation = end;
+          if (reduceMotion || !coinBody.animate) {
+            coinBody.style.transform = 'rotateX(' + end + 'deg)';
+            onLand(); return;
+          }
+          const duration = 1000;
+          const lift = 'translateY(-120px) translateZ(50px)';
+          const mid = start + (end - start) * 0.5;
+          const landTilt = outcome === 'canto' ? 0 : (outcome === 'cara' ? 14 : -14);
+          coinBody.animate([
+            { transform: 'translateY(0) translateZ(0) rotateX(' + start + 'deg)', easing: 'cubic-bezier(0.2, 0.7, 0.4, 1)' },
+            { transform: lift + ' rotateX(' + mid + 'deg)', offset: 0.45, easing: 'cubic-bezier(0.6, 0, 0.8, 0.4)' },
+            { transform: 'translateY(0) translateZ(0) rotateX(' + (end - landTilt) + 'deg)', offset: 0.82, easing: 'ease-out' },
+            { transform: 'translateY(-14px) translateZ(0) rotateX(' + (end + landTilt * 0.5) + 'deg)', offset: 0.91, easing: 'ease-in' },
+            { transform: 'translateY(0) translateZ(0) rotateX(' + end + 'deg)' }
+          ], { duration: duration, fill: 'forwards' });
+          const landShadow = outcome === 'canto' ? 'translate(8px, 8px) scale(1, 0.3)' : 'translate(8px, 8px) scale(1)';
+          const startShadow = getComputedStyle(coinShadow).transform;
+          coinShadow.animate([
+            { transform: startShadow === 'none' ? 'translate(8px, 8px) scale(1)' : startShadow },
+            { transform: 'translate(24px, 24px) scale(0.55)', opacity: 0.6, offset: 0.45 },
+            { transform: landShadow, opacity: 1, offset: 0.82 },
+            { transform: landShadow, opacity: 1 }
+          ], { duration: duration, fill: 'forwards' });
+          setTimeout(onLand, duration * 0.82);
+        }
+
         function handleCoinClick() {
-          coinFace.textContent = '';
+          if (isFlipping) return;
+          isFlipping = true;
+          coinButton.classList.add('flipping');
           coinFaceLabel.textContent = isSpanish ? 'Lanzando...' : 'Flipping...';
           coinFaceLabel.classList.remove('cta');
-          setTimeout(function () {
-            const outcome = rollOutcome();
+          const outcome = rollOutcome();
+          tossCoin(outcome, function () {
+            isFlipping = false;
+            coinButton.classList.remove('flipping');
             if (outcome === 'cara') {
               headsCount++;
-              coinFace.innerHTML = '<strong>😊</strong>';
               coinFaceLabel.textContent = isSpanish ? 'Cara' : 'Heads';
               currentPoints = currentPoints === 0 ? 1 : currentPoints * 2;
               if (currentPoints > bestCombo) {
@@ -1846,13 +1950,11 @@
               claimButton.disabled = false; updateFireEffect(currentPoints);
             } else if (outcome === 'cruz') {
               tailsCount++;
-              coinFace.innerHTML = '<strong>❌</strong>';
               coinFaceLabel.textContent = isSpanish ? 'Cruz (reinicio)' : 'Tails (reset)';
               if (currentPoints >= 2) triggerSadness();
               resetStreak();
             } else {
               edgesCount++;
-              coinFace.innerHTML = '<strong>⭐</strong>';
               coinFaceLabel.textContent = isSpanish ? 'Canto (raro)' : 'Edge (rare)';
               currentPoints += 50000;
               if (currentPoints > bestCombo) {
@@ -1867,7 +1969,7 @@
               updateFireEffect(currentPoints);
             }
             totalFlips++; updateSpeechBubble(); updateBestCombo(); scheduleIdleCta();
-          }, 110);
+          });
         }
 
         function handleClaimClick() {
@@ -1890,7 +1992,6 @@
           const pointsText = isSpanish ? (currentPoints === 1 ? ' punto' : ' puntos') : (currentPoints === 1 ? ' point' : ' points');
           showToast(isSpanish ? 'Has cobrado ' + currentPoints + pointsText : 'You claimed ' + currentPoints + pointsText);
           resetStreak();
-          coinFace.textContent = '?';
           coinFaceLabel.innerHTML = isSpanish ? '<strong>Toca para lanzar</strong>' : '<strong>Tap to flip</strong>';
           scheduleIdleCta();
           updateBestClaimedCombo();
